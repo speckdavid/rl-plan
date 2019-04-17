@@ -1,0 +1,9 @@
+Prototype:
+ - select heuristic (#2)
+ - alternating search space where always one is much better
+
+Questions:
+ - which statistics?
+
+TODOs:
+ - implement everything!
