@@ -1,12 +1,6 @@
-import os
-import time
 import typing
-import logging
 import socket
-import json
-import struct
 
-import numpy as np
 from gym.spaces import Discrete
 from gym import Env
 
@@ -15,7 +9,8 @@ from gym import Env
 
 class FDEnvSelHeur(Env):
 
-    def __init__(self, num_heuristics: int, host: str='', port: int=12345):
+    def __init__(self, num_heuristics: int, host: str='', port: int=12345,
+                 num_steps=None):
         """
         Initialize environment
         """
@@ -28,6 +23,7 @@ class FDEnvSelHeur(Env):
 
         self._state = None
         self._prev_state = None
+        self.num_steps = num_steps
 
     def send_msg(self, msg: bytes):
         """
@@ -92,8 +88,11 @@ class FDEnvSelHeur(Env):
         self._prev_state = self._state
         if not isinstance(action, int):
             action = action[0]
-        encoded_action = json.dumps(action)
-        self.send_msg(str.encode(encoded_action))
+        if self.num_steps:
+            msg = ','.join([str(action), str(self.num_steps)])
+        else:
+            msg = str(action)
+        self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
         self._state = s
         return s, r, d, {}
@@ -119,7 +118,6 @@ class FDEnvSelHeur(Env):
         self.conn, address = self.socket.accept()
         if self.conn:
             print('Connected from', address)
-        # TODO decode it from json?
         self._state, _, _ = self._process_data()
         return self._state
 
@@ -135,7 +133,7 @@ class FDEnvSelHeur(Env):
 
     def render(self, mode: str='human') -> None:
         """
-        Required by gym.Env
+        Required by gym.Env but not implemented
         :param mode:
         :return: None
         """
