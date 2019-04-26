@@ -24,6 +24,7 @@ LazySearch::LazySearch(const Options &opts)
       randomize_successors(opts.get<bool>("randomize_successors")),
       preferred_successors_first(opts.get<bool>("preferred_successors_first")),
       rng(utils::parse_rng_from_options(opts)),
+      rl(opts.get<bool>("rl")),
       current_state(state_registry.get_initial_state()),
       current_predecessor_id(StateID::no_state),
       current_operator_id(OperatorID::no_operator),
@@ -59,6 +60,11 @@ void LazySearch::initialize() {
     for (Evaluator *evaluator : path_dependent_evaluators) {
         evaluator->notify_initial_state(initial_state);
     }
+
+    if (rl) {
+        std::cout << "Setup connection to RL Agent!" << std::endl;
+    }
+
 }
 
 vector<OperatorID> LazySearch::get_successor_operators(

@@ -4,6 +4,7 @@
 #include "open_list.h"
 
 #include <memory>
+#include <map>
 
 
 class OpenListFactory {
@@ -15,6 +16,10 @@ public:
 
     virtual std::unique_ptr<StateOpenList> create_state_open_list() = 0;
     virtual std::unique_ptr<EdgeOpenList> create_edge_open_list() = 0;
+
+    virtual std::map<std::string, double> get_statistics() const {
+      return std::map<std::string, double>();
+    }
 
     /*
       The following template receives manual specializations (in the

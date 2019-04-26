@@ -755,6 +755,13 @@ fast_downward_plugin(
     DEPENDENCY_ONLY
 )
 
+fast_downward_plugin(
+    NAME RL_PLAN
+    HELP "Type-based open list"
+    SOURCES
+        open_lists/rl_open_list
+)
+
 fast_downward_add_plugin_sources(PLANNER_SOURCES)
 
 # The order in PLANNER_SOURCES influences the order in which object

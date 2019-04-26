@@ -2,6 +2,7 @@
 #define OPEN_LIST_H
 
 #include <set>
+#include <map>
 
 #include "evaluation_context.h"
 #include "operator_id.h"
@@ -123,6 +124,14 @@ public:
     virtual bool is_dead_end(EvaluationContext &eval_context) const = 0;
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const = 0;
+
+    virtual int get_size() const  {
+      return 0;
+    }
+
+    virtual std::map<std::string, double> get_statistics() const {
+      return std::map<std::string, double>();
+    }
 };
 
 

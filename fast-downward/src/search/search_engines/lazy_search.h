@@ -32,6 +32,9 @@ protected:
 
     std::vector<Evaluator *> path_dependent_evaluators;
     std::vector<std::shared_ptr<Evaluator>> preferred_operator_evaluators;
+    
+    // RL
+    bool rl;
 
     GlobalState current_state;
     StateID current_predecessor_id;
@@ -39,6 +42,7 @@ protected:
     int current_g;
     int current_real_g;
     EvaluationContext current_eval_context;
+
 
     virtual void initialize() override;
     virtual SearchStatus step() override;

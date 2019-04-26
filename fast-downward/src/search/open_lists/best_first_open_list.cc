@@ -40,6 +40,7 @@ public:
         EvaluationContext &eval_context) const override;
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
+    virtual int get_size() const override;
 };
 
 
@@ -108,6 +109,11 @@ template<class Entry>
 bool BestFirstOpenList<Entry>::is_reliable_dead_end(
     EvaluationContext &eval_context) const {
     return is_dead_end(eval_context) && evaluator->dead_ends_are_reliable();
+}
+
+template<class Entry>
+int BestFirstOpenList<Entry>::get_size() const {
+    return size;
 }
 
 BestFirstOpenListFactory::BestFirstOpenListFactory(

@@ -90,6 +90,9 @@ void SearchEngine::search() {
     utils::CountdownTimer timer(max_time);
     while (status == IN_PROGRESS) {
         status = step();
+        //std::cout << "-----------------" << std::endl;
+        //print_statistics();
+        //task_properties::print_variable_statistics(task_proxy);
         if (timer.is_expired()) {
             cout << "Time limit reached. Abort search." << endl;
             status = TIMEOUT;
