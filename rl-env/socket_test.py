@@ -44,7 +44,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     data = recv_msg(s)
     print('Received', repr(data))
     time.sleep(2)
-    send_msg(s, str.encode("THIS IS A FUCKING LOO" + "0" * 2000 + "NG string"))
+    send_msg(s, str.encode("THIS IS A F***ING LOO" + "0" * 2000 + "NG string"))
     data = recv_msg(s)
     print('Received', repr(data))
     time.sleep(3)
