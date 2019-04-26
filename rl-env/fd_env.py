@@ -148,7 +148,8 @@ if __name__ == '__main__':
 
     env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2)
     env.reset()
-    env.step(9)
-
-    env.step(10)
-    env.close()
+    try:
+        while True:
+            env.step(0)
+    finally:
+        env.close()
