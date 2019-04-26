@@ -11,6 +11,7 @@
 #include "../search_space.h"
 
 #include "../utils/rng.h"
+#include "rl_client.h"
 
 #include <memory>
 #include <vector>
@@ -34,6 +35,7 @@ protected:
     std::vector<std::shared_ptr<Evaluator>> preferred_operator_evaluators;
     
     // RL
+    rl_client::RLClient rl_client;
     bool rl;
 
     GlobalState current_state;

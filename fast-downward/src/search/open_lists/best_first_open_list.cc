@@ -41,6 +41,7 @@ public:
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
     virtual int get_size() const override;
+    virtual std::map<std::string, double> get_statistics() const;
 };
 
 
@@ -114,6 +115,14 @@ bool BestFirstOpenList<Entry>::is_reliable_dead_end(
 template<class Entry>
 int BestFirstOpenList<Entry>::get_size() const {
     return size;
+}
+
+template<class Entry>
+std::map<std::string, double> BestFirstOpenList<Entry>::get_statistics() const {
+    std::map<std::string, double> stats;
+    stats["Open List Entries"] = get_size();
+    stats["Dead Ends Reliable"] = evaluator->dead_ends_are_reliable();
+    return stats;
 }
 
 BestFirstOpenListFactory::BestFirstOpenListFactory(

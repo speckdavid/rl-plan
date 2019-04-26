@@ -1,0 +1,2 @@
+source activate rl-plan
+./fast-downward.py ~/git/classical-domains/classical/gripper/prob20.pddl --evaluator "hff=ff()" --evaluator "hcea=cea()" --search "lazy(rl([single(hff), single(hcea)]),rl=true)"

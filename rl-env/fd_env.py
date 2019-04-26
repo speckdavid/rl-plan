@@ -148,6 +148,6 @@ if __name__ == '__main__':
     env.reset()
     try:
         while True:
-            env.step(0)
+            env.step(1)
     finally:
         env.close()

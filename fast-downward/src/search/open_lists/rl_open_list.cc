@@ -28,6 +28,7 @@ public:
     virtual ~RLOpenList() override = default;
 
     virtual Entry remove_min() override;
+    virtual Entry remove_min(int choice) override;
     virtual bool empty() const override;
     virtual void clear() override;
     virtual void get_path_dependent_evaluators(
@@ -64,6 +65,16 @@ Entry RLOpenList<Entry>::remove_min() {
     int best = 1;
     assert(best != -1);
     const auto &best_list = open_lists[best];
+    assert(!best_list->empty());
+    return best_list->remove_min();
+}
+
+template<class Entry>
+Entry RLOpenList<Entry>::remove_min(int choice) {
+    //for (size_t i = 0; i < open_lists.size(); ++i) {
+    //    std::cout << "Size of open list " << i << ": " << open_lists[i]->get_size() << std::endl;
+    //}
+    const auto &best_list = open_lists[choice];
     assert(!best_list->empty());
     return best_list->remove_min();
 }

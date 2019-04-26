@@ -760,6 +760,7 @@ fast_downward_plugin(
     HELP "Type-based open list"
     SOURCES
         open_lists/rl_open_list
+        search_engines/rl_client
 )
 
 fast_downward_add_plugin_sources(PLANNER_SOURCES)

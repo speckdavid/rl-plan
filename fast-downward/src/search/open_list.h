@@ -52,6 +52,7 @@ public:
       Remove and return the entry that should be expanded next.
     */
     virtual Entry remove_min() = 0;
+    virtual Entry remove_min(int /*choice*/) { return remove_min(); };
 
     // Return true if the open list is empty.
     virtual bool empty() const = 0;

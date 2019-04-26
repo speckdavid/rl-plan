@@ -11,6 +11,8 @@ static shared_ptr<SearchEngine> _parse(OptionParser &parser) {
     parser.document_synopsis("Lazy best-first search", "");
     parser.add_option<shared_ptr<OpenListFactory>>("open", "open list");
     parser.add_option<bool>("reopen_closed", "reopen closed nodes", "false");
+    // parser.add_option<bool>("rl_client_address", "rl client address", "127.0.0.1");
+    parser.add_option<int>("rl_client_port", "rl client port", "54321");
     parser.add_option<bool>("rl", "use reinforcment learning agent", "false");
     parser.add_list_option<shared_ptr<Evaluator>>(
         "preferred",

@@ -8,6 +8,7 @@
 #include "../task_utils/task_properties.h"
 #include "../utils/rng.h"
 #include "../utils/rng_options.h"
+#include "../utils/system.h"
 
 #include <algorithm>
 #include <limits>
@@ -24,6 +25,7 @@ LazySearch::LazySearch(const Options &opts)
       randomize_successors(opts.get<bool>("randomize_successors")),
       preferred_successors_first(opts.get<bool>("preferred_successors_first")),
       rng(utils::parse_rng_from_options(opts)),
+      rl_client(opts.get<int>("rl_client_port"), "127.0.0.1"),
       rl(opts.get<bool>("rl")),
       current_state(state_registry.get_initial_state()),
       current_predecessor_id(StateID::no_state),
@@ -63,6 +65,11 @@ void LazySearch::initialize() {
 
     if (rl) {
         std::cout << "Setup connection to RL Agent!" << std::endl;
+        bool succ = rl_client.init_connection();
+        if (!succ) {
+            utils::exit_with(utils::ExitCode::SEARCH_INPUT_ERROR);
+        }
+        std::cout << "Connection created!" << std::endl;
     }
 
 }
@@ -125,9 +132,15 @@ SearchStatus LazySearch::fetch_next_state() {
         cout << "Completely explored state space -- no solution!" << endl;
         return FAILED;
     }
+  
+    std::string answer = ""; 
+    if (rl) { 
+        rl_client.send_msg("0005Hello");
+        answer = rl_client.read_msg();
+        std::cout << "Answer: " << answer << std::endl;
+    }
 
-    EdgeOpenListEntry next = open_list->remove_min();
-
+    EdgeOpenListEntry next = rl ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
     current_predecessor_id = next.first;
     current_operator_id = next.second;
     GlobalState current_predecessor = state_registry.lookup_state(current_predecessor_id);
