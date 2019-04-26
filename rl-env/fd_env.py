@@ -39,8 +39,7 @@ class FDEnvSelHeur(Env):
         :param msg: The message as byte
         """
         # Prefix each message with a 4-byte length (network byte order)
-        msg = str.encode(str(len(msg))) + msg
-        print(msg)
+        msg = str.encode("{:>04d}".format(len(msg))) + msg
         self.conn.sendall(msg)
 
     def recv_msg(self):
@@ -50,11 +49,9 @@ class FDEnvSelHeur(Env):
         """
         # Read message length and unpack it into an integer
         raw_msglen = self.recvall(4)
-        print(raw_msglen)
         if not raw_msglen:
             return None
         msglen = int(raw_msglen.decode())
-        print(msglen)
         # Read the message data
         return self.recvall(msglen)
 
