@@ -139,7 +139,10 @@ SearchStatus LazySearch::fetch_next_state() {
     std::string answer = ""; 
     if (rl) {
         double last_step_time = rl_timer();
-        rl_client.send_msg(open_list->get_lists_statistics(), -last_step_time);
+        std::map<std::string, double> stats;
+        stats["reward"] = -last_step_time;
+        stats["done"] = 0;
+        rl_client.send_msg(open_list->get_lists_statistics(), stats);
         answer = rl_client.read_msg();
         rl_timer.reset();
         std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
@@ -212,7 +215,11 @@ SearchStatus LazySearch::step() {
             node.close();
             if (check_goal_and_set_plan(current_state)) {
                 if (rl) {
-                    rl_client.send_msg("0004Done");
+                    double last_step_time = rl_timer();
+                    std::map<std::string, double> stats;
+                    stats["reward"] = -last_step_time;
+                    stats["done"] = 1;
+                    rl_client.send_msg(open_list->get_lists_statistics(), stats);
                 }
                 return SOLVED;
             }

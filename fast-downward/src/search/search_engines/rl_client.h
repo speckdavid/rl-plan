@@ -28,7 +28,8 @@ public:
 
     void send_msg(const std::string& msg) const;
 
-    void send_msg(const std::map<int, std::map<std::string, double>>& msg, double reward) const;
+    void send_msg(const std::map<int, std::map<std::string, double>>& open_lists_stats, 
+                const std::map<std::string, double>& additional_stats) const;
 
     std::string read_msg() const;
 };
