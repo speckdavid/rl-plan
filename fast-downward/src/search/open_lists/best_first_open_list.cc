@@ -42,6 +42,7 @@ public:
         EvaluationContext &eval_context) const override;
     virtual int get_size() const override;
     virtual std::map<std::string, double> get_statistics() const override;
+    virtual std::string get_description() const override;
 };
 
 
@@ -133,8 +134,12 @@ std::map<std::string, double> BestFirstOpenList<Entry>::get_statistics() const {
     if (!empty()) {
         stats["Average Value"] /= get_size();
     }
-
     return stats;
+}
+
+template<class Entry>
+std::string BestFirstOpenList<Entry>::get_description() const {
+    return "Best-First-Open-List + " + evaluator->get_description();
 }
 
 BestFirstOpenListFactory::BestFirstOpenListFactory(

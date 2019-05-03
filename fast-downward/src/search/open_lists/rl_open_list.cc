@@ -47,8 +47,11 @@ RLOpenList<Entry>::RLOpenList(const Options &opts) {
     vector<shared_ptr<OpenListFactory>> open_list_factories(
         opts.get_list<shared_ptr<OpenListFactory>>("sublists"));
     open_lists.reserve(open_list_factories.size());
-    for (const auto &factory : open_list_factories)
+    int i = 0;
+    for (const auto &factory : open_list_factories) {
         open_lists.push_back(factory->create_open_list<Entry>());
+        std::cout << "Open-List " << i++ << ": " << open_lists.back()->get_description() << std::endl;
+    }
 
 }
 

@@ -134,6 +134,10 @@ public:
       return std::map<std::string, double>();
     }
 
+    virtual std::string get_description() const {
+      return "";
+    }
+
     virtual std::map<int, std::map<std::string, double>> get_lists_statistics() const {
       return std::map<int, std::map<std::string, double>>();
     }
