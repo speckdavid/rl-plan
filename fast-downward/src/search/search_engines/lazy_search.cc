@@ -145,7 +145,7 @@ SearchStatus LazySearch::fetch_next_state() {
         rl_client.send_msg(open_list->get_lists_statistics(), stats);
         answer = rl_client.read_msg();
         rl_timer.reset();
-        std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+//        std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
     }
 
     EdgeOpenListEntry next = rl ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();

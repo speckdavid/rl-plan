@@ -18,6 +18,7 @@ class FDEnvSelHeur(Env):
         Initialize environment
         """
         self.action_space = Discrete(num_heuristics)
+        self.observation_space = np.zeros((10, 1))
         self.host = host
         self.port = port
 
@@ -109,8 +110,10 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
-
-        print('A, S, R: ', action, s, r)
+        # if action == 0:
+        #     r = -9999
+        # if d:
+        #     print('A, S, R: ', action, s, r)
         self._state = s
         return s, r, d, {}
 
@@ -129,14 +132,14 @@ class FDEnvSelHeur(Env):
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            print(self.host)
-            print(self.port)
+            # print(self.host)
+            # print(self.port)
             self.socket.bind((self.host, self.port))
         self.socket.listen()
         self.conn, address = self.socket.accept()
-        if self.conn:
-            print('Connected from', address)
-        print('Reset')
+        # if self.conn:
+        #     print('Connected from', address)
+        # print('Reset')
         self._state, _, _ = self._process_data()
         return self._state
 

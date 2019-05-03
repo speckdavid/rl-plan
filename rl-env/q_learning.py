@@ -58,14 +58,27 @@ def q_learning(env, num_episodes, discount_factor=1.0, alpha=0.5, epsilon=0.1,
     stats = EpisodeStats(
         episode_lengths=np.zeros(num_episodes),
         episode_rewards=np.zeros(num_episodes))
+    counts = defaultdict(int)
 
     # The policy we're following
     policy = make_epsilon_greedy_policy(Q, epsilon, env.action_space.n)
 
     for i_episode in range(num_episodes):
+        if i_episode > 0 and i_episode % 10 == 0:
+            epsilon -= 0.02
+            epsilon = max(0.01, epsilon)
+            policy = make_epsilon_greedy_policy(Q, epsilon, env.action_space.n)
         # Print out which episode we're on, useful for debugging.
-        if (i_episode + 1) % 100 == 0:
-            print("\rEpisode {}/{}.".format(i_episode + 1, num_episodes), end="")
+        if (i_episode + 1) % 10 == 0:
+            print("\rEpisode {}/{}.".format(i_episode + 1, num_episodes))
+            print("counts: ")
+            _sum = np.sum(list(counts.values()))
+            if _sum > 0:
+                for a in [0, 1]:
+                    print(a, counts[a]/_sum)
+                print(epsilon)
+
+            counts = defaultdict(int)
             sys.stdout.flush()
         s = env.reset()
         l = 0
@@ -76,6 +89,7 @@ def q_learning(env, num_episodes, discount_factor=1.0, alpha=0.5, epsilon=0.1,
                 a = int(np.random.choice(list(range(env.action_space.n)), p=policy(_s)))
             else:
                 a = int(np.random.choice(list(range(env.action_space.n)), p=policy(s)))
+            counts[a] += 1
             s_, r, done, _ = env.step(a)
             rs += r
             l += 1
@@ -103,7 +117,7 @@ if __name__ == '__main__':
     PORT = 54321  # The port used by the server
 
     env = ENV(host=HOST, port=PORT, num_heuristics=2)
-    Q, stats = q_learning(env, 500)
+    Q, stats = q_learning(env, 5000)
     print()
     for k in Q:
         print(Q[k])
