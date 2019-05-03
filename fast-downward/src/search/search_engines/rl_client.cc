@@ -69,7 +69,7 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open
         msg = "0" + msg;
     }
     msg += py_dict;
-    std::cout << msg << std::endl;
+    // std::cout << msg << std::endl;
     send_msg(msg);
 }
 
