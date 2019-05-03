@@ -6,11 +6,18 @@ display_usage() {
 	}
 
 # if less than two arguments supplied, display usage 
-	if [  $# -le 1 ] 
+	if [ $# -le 1 ] 
 	then 
 		display_usage
 		exit 1
 	fi 
+
+# if more than two arguments supplied, display usage 
+        if [ $# -ge 3 ]                      
+        then
+                display_usage
+                exit 1
+        fi
  
 # check whether user had supplied -h or --help . If yes display usage 
 	if [[ ( $# == "--help") ||  $# == "-h" ]] 
@@ -19,12 +26,10 @@ display_usage() {
 		exit 0
 	fi 
  
-echo "All good !!!"
-
 counter=1
 DIR=$(cd `dirname $0` && pwd)
 while [ $counter -le $2 ] 
 do
-    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hcea=cea()" --search "lazy(rl([single(hff), single(hcea)]),rl=true)" || exit 1 
+    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hblind=blind()" --search "lazy(rl([single(hff), single(hblind)]),rl=true)" || exit 1 
     ((counter++))
 done
