@@ -74,9 +74,9 @@ class FDEnvSelHeur(Env):
         :return:
         """
         msg = str(self.recv_msg().decode())
-        print(msg)
-        msg_json = json.loads(msg)
-        print(msg_json)
+        data = eval(msg)
+        print(type(data))
+        print(data)
         return 0, 1, 2
 
     def step(self, action: typing.Union[int, typing.List[int]]):

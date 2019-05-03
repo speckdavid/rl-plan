@@ -41,7 +41,7 @@ void RLClient::send_msg(const std::string& msg) const {
 }
 
 void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& configs_values, double reward) const {
-    std::string json = "'{";
+    std::string json = "{";
     for (auto& config_values : configs_values) {
         int config = config_values.first;
         json += "\"" + std::to_string(config) + "\" : {";
@@ -56,7 +56,7 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& conf
 
     json += ", \"reward\" : " + std::to_string(reward) + "";
 
-    json += "}'";
+    json += "}";
     std::string msg = std::to_string(json.size());
     for (size_t i = 0; i < 4 - msg.size(); i++) {
         msg = "0" + msg;
