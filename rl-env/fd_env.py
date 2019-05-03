@@ -88,7 +88,6 @@ class FDEnvSelHeur(Env):
         for heuristic_data in data:
             for field in self._state_fields:
                 state.append(data[heuristic_data][field])
-        print('S, R: ', state, r)
         return state, r, done
 
     def step(self, action: typing.Union[int, typing.List[int]]):
@@ -110,6 +109,8 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
+
+        print('A, S, R: ', action, s, r)
         self._state = s
         return s, r, d, {}
 
