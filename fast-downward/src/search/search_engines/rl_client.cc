@@ -40,9 +40,10 @@ void RLClient::send_msg(const std::string& msg) const {
     delete[] cstr_msg;
 }
 
-void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& configs_values, double reward) const {
+void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open_lists_stats, 
+                const std::map<std::string, double>& additional_stats) const {
     std::string py_dict = "{";
-    for (auto& config_values : configs_values) {
+    for (auto& config_values : open_lists_stats) {
         int config = config_values.first;
         py_dict += "\"" + std::to_string(config) + "\" : {";
 
@@ -52,9 +53,15 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& conf
         py_dict = py_dict.substr(0, py_dict.size() - 1);
         py_dict += "},";
     }
-    py_dict = py_dict.substr(0, py_dict.size() - 1);
 
-    py_dict += ", \"reward\" : " + std::to_string(reward) + "";
+    if (additional_stats.empty()) {
+        py_dict = py_dict.substr(0, py_dict.size() - 1);
+    }
+
+    for (auto& value_pair : additional_stats) {
+            py_dict += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
+    }
+    py_dict = py_dict.substr(0, py_dict.size() - 1);
 
     py_dict += "}";
     std::string msg = std::to_string(py_dict.size());
@@ -62,7 +69,7 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& conf
         msg = "0" + msg;
     }
     msg += py_dict;
-    // std::cout << msg << std::endl;
+    std::cout << msg << std::endl;
     send_msg(msg);
 }
 
