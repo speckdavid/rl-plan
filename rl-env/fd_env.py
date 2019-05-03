@@ -79,21 +79,17 @@ class FDEnvSelHeur(Env):
         :return:
         """
         msg = self.recv_msg().decode()
-        try:
-            data = eval(msg)
-            # print(data)
-            r = data['reward']
-            del data['reward']
-            state = []
-            for heuristic_data in data:
-                for field in self._state_fields:
-                    state.append(data[heuristic_data][field])
-        except:
-            print(msg)
-            state = self._prev_state
-            r = 0
+        data = eval(msg)
+        r = data['reward']
+        done = data['done']
+        del data['reward']
+        del data['done']
+        state = []
+        for heuristic_data in data:
+            for field in self._state_fields:
+                state.append(data[heuristic_data][field])
         print('S, R: ', state, r)
-        return state, r, "Done" in msg
+        return state, r, done
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
