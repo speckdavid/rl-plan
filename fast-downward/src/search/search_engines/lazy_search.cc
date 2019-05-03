@@ -134,10 +134,12 @@ SearchStatus LazySearch::fetch_next_state() {
     }
   
     std::string answer = ""; 
-    if (rl) { 
-        rl_client.send_msg(open_list->get_lists_statistics(), 0);
+    if (rl) {
+        double last_step_time = rl_timer();
+        rl_client.send_msg(open_list->get_lists_statistics(), -last_step_time);
         answer = rl_client.read_msg();
-        std::cout << "Answer: " << answer << std::endl;
+        rl_timer.reset();
+        std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
     }
 
     EdgeOpenListEntry next = rl ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();

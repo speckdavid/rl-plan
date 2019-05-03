@@ -41,28 +41,28 @@ void RLClient::send_msg(const std::string& msg) const {
 }
 
 void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& configs_values, double reward) const {
-    std::string json = "{";
+    std::string py_dict = "{";
     for (auto& config_values : configs_values) {
         int config = config_values.first;
-        json += "\"" + std::to_string(config) + "\" : {";
+        py_dict += "\"" + std::to_string(config) + "\" : {";
 
         for (auto& value_pair : config_values.second) {
-            json += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
+            py_dict += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
         }
-        json = json.substr(0, json.size() - 1);
-        json += "},";
+        py_dict = py_dict.substr(0, py_dict.size() - 1);
+        py_dict += "},";
     }
-    json = json.substr(0, json.size() - 1);
+    py_dict = py_dict.substr(0, py_dict.size() - 1);
 
-    json += ", \"reward\" : " + std::to_string(reward) + "";
+    py_dict += ", \"reward\" : " + std::to_string(reward) + "";
 
-    json += "}";
-    std::string msg = std::to_string(json.size());
+    py_dict += "}";
+    std::string msg = std::to_string(py_dict.size());
     for (size_t i = 0; i < 4 - msg.size(); i++) {
         msg = "0" + msg;
     }
-    msg += json;
-    std::cout << msg << std::endl;
+    msg += py_dict;
+    // std::cout << msg << std::endl;
     send_msg(msg);
 }
 

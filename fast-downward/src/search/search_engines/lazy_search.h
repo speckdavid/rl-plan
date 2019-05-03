@@ -11,6 +11,8 @@
 #include "../search_space.h"
 
 #include "../utils/rng.h"
+#include "../utils/timer.h"
+
 #include "rl_client.h"
 
 #include <memory>
@@ -37,6 +39,7 @@ protected:
     // RL
     rl_client::RLClient rl_client;
     bool rl;
+    utils::Timer rl_timer;
 
     GlobalState current_state;
     StateID current_predecessor_id;
