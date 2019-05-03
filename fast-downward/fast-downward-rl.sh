@@ -1,6 +1,9 @@
 #!/bin/bash
 # Basic while loop
 
+python test.py
+exit 0
+
 display_usage() { 
 	echo -e "\nUsage:\nfast-downward-rl.sh [instance.pddl] [#runs] \n" 
 	}
