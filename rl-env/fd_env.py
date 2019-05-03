@@ -1,5 +1,6 @@
 import typing
 import socket
+import json
 
 from gym.spaces import Discrete
 from gym import Env
@@ -72,7 +73,10 @@ class FDEnvSelHeur(Env):
         TODO, actually process the recieved message to something RL interpretable
         :return:
         """
-        print(self.recv_msg())
+        msg = str(self.recv_msg().decode())
+        print(msg)
+        msg_json = json.loads(msg)
+        print(msg_json)
         return 0, 1, 2
 
     def step(self, action: typing.Union[int, typing.List[int]]):

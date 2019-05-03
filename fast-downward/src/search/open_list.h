@@ -133,6 +133,10 @@ public:
     virtual std::map<std::string, double> get_statistics() const {
       return std::map<std::string, double>();
     }
+
+    virtual std::map<int, std::map<std::string, double>> get_lists_statistics() const {
+      return std::map<int, std::map<std::string, double>>();
+    }
 };
 
 

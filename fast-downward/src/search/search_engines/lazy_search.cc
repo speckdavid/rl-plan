@@ -135,7 +135,7 @@ SearchStatus LazySearch::fetch_next_state() {
   
     std::string answer = ""; 
     if (rl) { 
-        rl_client.send_msg("0005Hello");
+        rl_client.send_msg(open_list->get_lists_statistics(), 0);
         answer = rl_client.read_msg();
         std::cout << "Answer: " << answer << std::endl;
     }

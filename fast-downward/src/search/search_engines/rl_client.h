@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <string>
+#include <map>
 
 namespace rl_client {
 
@@ -26,6 +27,8 @@ public:
     bool init_connection();
 
     void send_msg(const std::string& msg) const;
+
+    void send_msg(const std::map<int, std::map<std::string, double>>& msg, double reward) const;
 
     std::string read_msg() const;
 };

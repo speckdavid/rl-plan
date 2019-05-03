@@ -37,6 +37,8 @@ public:
         EvaluationContext &eval_context) const override;
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
+
+    virtual std::map<int, std::map<std::string, double>> get_lists_statistics() const override;
 };
 
 
@@ -59,9 +61,9 @@ void RLOpenList<Entry>::do_insertion(
 
 template<class Entry>
 Entry RLOpenList<Entry>::remove_min() {
-    for (size_t i = 0; i < open_lists.size(); ++i) {
+    /*for (size_t i = 0; i < open_lists.size(); ++i) {
         std::cout << "Size of open list " << i << ": " << open_lists[i]->get_size() << std::endl;
-    }
+    }*/
     int best = 1;
     assert(best != -1);
     const auto &best_list = open_lists[best];
@@ -120,6 +122,15 @@ bool RLOpenList<Entry>::is_reliable_dead_end(
         if (sublist->is_reliable_dead_end(eval_context))
             return true;
     return false;
+}
+
+template<class Entry>
+std::map<int, std::map<std::string, double>> RLOpenList<Entry>::get_lists_statistics() const {
+    std::map<int, std::map<std::string, double>> result;
+    for (size_t i = 0; i < open_lists.size(); ++i) {
+        result[i] = open_lists.at(i)->get_statistics();
+    }
+    return result;
 }
 
 RLOpenListFactory::RLOpenListFactory(const Options &options)
