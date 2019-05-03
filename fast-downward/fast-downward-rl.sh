@@ -1,9 +1,6 @@
 #!/bin/bash
 # Basic while loop
 
-python test.py
-exit 0
-
 display_usage() { 
 	echo -e "\nUsage:\nfast-downward-rl.sh [instance.pddl] [#runs] \n" 
 	}
@@ -33,6 +30,6 @@ counter=1
 DIR=$(cd `dirname $0` && pwd)
 while [ $counter -le $2 ] 
 do
-    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hblind=blind()" --search "lazy(rl([single(hff), single(hblind)]),rl=true)" || exit 1 
+    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hblind=blind()" --evaluator "hadd=add()" --search "lazy(rl([single(hff), single(hblind), single(hadd)]),rl=true)" || exit 1 
     ((counter++))
 done

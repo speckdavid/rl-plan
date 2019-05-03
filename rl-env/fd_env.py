@@ -18,7 +18,7 @@ class FDEnvSelHeur(Env):
         Initialize environment
         """
         self.action_space = Discrete(num_heuristics)
-        self.observation_space = np.zeros((10, 1))
+        self.observation_space = np.zeros((15, 1))
         self.host = host
         self.port = port
 
@@ -86,7 +86,7 @@ class FDEnvSelHeur(Env):
         del data['reward']
         del data['done']
         state = []
-        for heuristic_data in data:
+        for heuristic_data in sorted(data.keys()):
             for field in self._state_fields:
                 state.append(data[heuristic_data][field])
         return state, r, done
