@@ -32,7 +32,7 @@ def make_epsilon_greedy_policy(Q, epsilon, nA):
 
 
 def q_learning(env, num_episodes, discount_factor=1.0, alpha=0.5, epsilon=0.1,
-               encode_state_as_string=False):
+               encode_state_as_string=True):
     """
     Q-Learning algorithm: Off-policy TD control. Finds the optimal greedy policy
     while following an epsilon-greedy policy
@@ -71,15 +71,19 @@ def q_learning(env, num_episodes, discount_factor=1.0, alpha=0.5, epsilon=0.1,
         l = 0
         rs = 0
         while True:
-            a = int(np.random.choice(list(range(env.action_space.n)), p=policy(s)))
+            if encode_state_as_string:
+                _s = ''.join(map(str, s))
+                a = int(np.random.choice(list(range(env.action_space.n)), p=policy(_s)))
+            else:
+                a = int(np.random.choice(list(range(env.action_space.n)), p=policy(s)))
             s_, r, done, _ = env.step(a)
             rs += r
             l += 1
             if encode_state_as_string:
                 _s = ''.join(map(str, s))
                 s_ = ''.join(map(str, s_))
-                Q[s][a] = Q[_s][a] + alpha*(
-                        (r + discount_factor * Q[s_][np.argmax(Q[s_])]) - Q[s][a])
+                Q[_s][a] = Q[_s][a] + alpha*(
+                        (r + discount_factor * Q[s_][np.argmax(Q[s_])]) - Q[_s][a])
             else:
                 Q[s][a] = Q[s][a] + alpha*(
                         (r + discount_factor * Q[s_][np.argmax(Q[s_])]) - Q[s][a])

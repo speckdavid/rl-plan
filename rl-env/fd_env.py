@@ -28,6 +28,9 @@ class FDEnvSelHeur(Env):
         self._prev_state = None
         self.num_steps = num_steps
 
+        self._state_fields = ['Average Value', 'Dead Ends Reliable', 'Max Value', 'Min Value', 'Open List Entries']
+# {'0': {'Average Value': 27.529799, 'Dead Ends Reliable': 1.0, 'Max Value': 85.0, 'Min Value': 1.0, 'Open List Entries': 49583.0}, '1': {'Average Value': 39.223404, 'Dead Ends Reliable': 0.0, 'Max Value': 126.0, 'Min Value': 1.0, 'Open List Entries': 51042.0}, 'reward': -2.6e-05}
+
     def send_msg(self, msg: bytes):
         """
         Send message and prepend the message size
@@ -78,10 +81,19 @@ class FDEnvSelHeur(Env):
         msg = self.recv_msg().decode()
         try:
             data = eval(msg)
-            print(data)
+            # print(data)
+            r = data['reward']
+            del data['reward']
+            state = []
+            for heuristic_data in data:
+                for field in self._state_fields:
+                    state.append(data[heuristic_data][field])
         except:
             print(msg)
-        return 0, 1, "Done" in msg
+            state = self._prev_state
+            r = 0
+        print('S, R: ', state, r)
+        return state, r, "Done" in msg
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
@@ -127,6 +139,7 @@ class FDEnvSelHeur(Env):
         self.conn, address = self.socket.accept()
         if self.conn:
             print('Connected from', address)
+        print('Reset')
         self._state, _, _ = self._process_data()
         return self._state
 
