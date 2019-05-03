@@ -30,40 +30,58 @@ int main(int argc, const char **argv) {
         unit_cost = task_properties::is_unit_cost(task_proxy);
     }
 
-    shared_ptr<SearchEngine> engine;
 
-    // The command line is parsed twice: once in dry-run mode, to
-    // check for simple input errors, and then in normal mode.
-    try {
-        options::Registry registry(*options::RawRegistry::instance());
-        parse_cmd_line(argc, argv, registry, true, unit_cost);
-        engine = parse_cmd_line(argc, argv, registry, false, unit_cost);
-    } catch (const ArgError &error) {
-        error.print();
-        usage(argv[0]);
-        utils::exit_with(ExitCode::SEARCH_INPUT_ERROR);
-    } catch (const OptionParserError &error) {
-        error.print();
-        usage(argv[0]);
-        utils::exit_with(ExitCode::SEARCH_INPUT_ERROR);
-    } catch (const ParseError &error) {
-        error.print();
-        utils::exit_with(ExitCode::SEARCH_INPUT_ERROR);
+    ExitCode exitcode;
+    for (int i=0; i < 2; i++) {
+        cout << "################################################################################################## "
+             << endl;
+        cout << "################################################################################################## "
+             << endl;
+        cout << "################################################################################################## "
+             << endl;
+        cout << "################################################################################################## "
+             << endl;
+        cout << "################################################################################################## "
+             << endl;
+        cout << "################################################################################################## "
+             << endl;
+        cout << "################################################################################################## "
+             << endl;
+
+        shared_ptr<SearchEngine> engine;
+
+        // The command line is parsed twice: once in dry-run mode, to
+        // check for simple input errors, and then in normal mode.
+        try {
+            options::Registry registry(*options::RawRegistry::instance());
+            parse_cmd_line(argc, argv, registry, true, unit_cost);
+            engine = parse_cmd_line(argc, argv, registry, false, unit_cost);
+        } catch (const ArgError &error) {
+            error.print();
+            usage(argv[0]);
+            utils::exit_with(ExitCode::SEARCH_INPUT_ERROR);
+        } catch (const OptionParserError &error) {
+            error.print();
+            usage(argv[0]);
+            utils::exit_with(ExitCode::SEARCH_INPUT_ERROR);
+        } catch (const ParseError &error) {
+            error.print();
+            utils::exit_with(ExitCode::SEARCH_INPUT_ERROR);
+        }
+        utils::Timer search_timer;
+        engine->search();
+        search_timer.stop();
+        utils::g_timer.stop();
+
+        engine->save_plan_if_necessary();
+        engine->print_statistics();
+        cout << "Search time: " << search_timer << endl;
+        cout << "Total time: " << utils::g_timer << endl;
+
+        exitcode = engine->found_solution()
+                            ? ExitCode::SUCCESS
+                            : ExitCode::SEARCH_UNSOLVED_INCOMPLETE;
+        utils::report_exit_code_reentrant(exitcode);
     }
-
-    utils::Timer search_timer;
-    engine->search();
-    search_timer.stop();
-    utils::g_timer.stop();
-
-    engine->save_plan_if_necessary();
-    engine->print_statistics();
-    cout << "Search time: " << search_timer << endl;
-    cout << "Total time: " << utils::g_timer << endl;
-
-    ExitCode exitcode = engine->found_solution()
-        ? ExitCode::SUCCESS
-        : ExitCode::SEARCH_UNSOLVED_INCOMPLETE;
-    utils::report_exit_code_reentrant(exitcode);
     return static_cast<int>(exitcode);
 }

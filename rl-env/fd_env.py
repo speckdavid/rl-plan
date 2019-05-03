@@ -2,6 +2,8 @@ import typing
 import socket
 import json
 
+import numpy as np
+
 from gym.spaces import Discrete
 from gym import Env
 
@@ -73,11 +75,13 @@ class FDEnvSelHeur(Env):
         TODO, actually process the recieved message to something RL interpretable
         :return:
         """
-        msg = str(self.recv_msg().decode())
-        data = eval(msg)
-        print(type(data))
-        print(data)
-        return 0, 1, 2
+        msg = self.recv_msg().decode()
+        try:
+            data = eval(msg)
+            print(data)
+        except:
+            print(msg)
+        return 0, 1, "Done" in msg
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
@@ -111,13 +115,14 @@ class FDEnvSelHeur(Env):
         self._state = None
         self._prev_state = None
         if self.conn:
+            self.conn.shutdown(2)
             self.conn.close()
-        if self.socket:
-            self.socket.close()
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print(self.host)
-        print(self.port)
-        self.socket.bind((self.host, self.port))
+        if not self.socket:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            print(self.host)
+            print(self.port)
+            self.socket.bind((self.host, self.port))
         self.socket.listen()
         self.conn, address = self.socket.accept()
         if self.conn:
@@ -132,8 +137,11 @@ class FDEnvSelHeur(Env):
         """
         # del self.fd
         if self.conn:
+            # self.conn.shutdown(2)
             self.conn.close()
-        self.socket.close()
+        if self.socket:
+            self.socket.shutdown(2)
+            self.socket.close()
 
     def render(self, mode: str='human') -> None:
         """
@@ -151,7 +159,13 @@ if __name__ == '__main__':
     env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2)
     env.reset()
     try:
-        while True:
-            env.step(1)
+        for i in range(100):
+            done = False
+            while not done:
+                s, r, done, _ = env.step(np.random.randint(0, 2))
+            print(i)
+            if i < 99:
+                env.reset()
     finally:
+        print('Closing Env')
         env.close()

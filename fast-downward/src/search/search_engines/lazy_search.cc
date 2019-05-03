@@ -130,6 +130,9 @@ void LazySearch::generate_successors() {
 SearchStatus LazySearch::fetch_next_state() {
     if (open_list->empty()) {
         cout << "Completely explored state space -- no solution!" << endl;
+        if (rl) {
+            rl_client.send_msg("0047Completely explored state space -- no solution!");
+        }
         return FAILED;
     }
   
@@ -207,8 +210,12 @@ SearchStatus LazySearch::step() {
                 }
             }
             node.close();
-            if (check_goal_and_set_plan(current_state))
+            if (check_goal_and_set_plan(current_state)) {
+                if (rl) {
+                    rl_client.send_msg("0004Done");
+                }
                 return SOLVED;
+            }
             if (search_progress.check_progress(current_eval_context)) {
                 print_checkpoint_line(current_g);
                 reward_progress();
