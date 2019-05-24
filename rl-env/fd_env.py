@@ -18,6 +18,7 @@ class FDEnvSelHeur(Env):
         Initialize environment
         """
         self.action_space = Discrete(num_heuristics)
+        self.observation_space = np.zeros((15, 1))
         self.host = host
         self.port = port
 
@@ -27,6 +28,9 @@ class FDEnvSelHeur(Env):
         self._state = None
         self._prev_state = None
         self.num_steps = num_steps
+
+        self._state_fields = ['Average Value', 'Dead Ends Reliable', 'Max Value', 'Min Value', 'Open List Entries']
+# {'0': {'Average Value': 27.529799, 'Dead Ends Reliable': 1.0, 'Max Value': 85.0, 'Min Value': 1.0, 'Open List Entries': 49583.0}, '1': {'Average Value': 39.223404, 'Dead Ends Reliable': 0.0, 'Max Value': 126.0, 'Min Value': 1.0, 'Open List Entries': 51042.0}, 'reward': -2.6e-05}
 
     def send_msg(self, msg: bytes):
         """
@@ -76,12 +80,16 @@ class FDEnvSelHeur(Env):
         :return:
         """
         msg = self.recv_msg().decode()
-        try:
-            data = eval(msg)
-            print(data)
-        except:
-            print(msg)
-        return 0, 1, "Done" in msg
+        data = eval(msg)
+        r = data['reward']
+        done = data['done']
+        del data['reward']
+        del data['done']
+        state = []
+        for heuristic_data in sorted(data.keys()):
+            for field in self._state_fields:
+                state.append(data[heuristic_data][field])
+        return state, r, done
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
@@ -102,6 +110,10 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
+        # if action == 0:
+        #     r = -9999
+        # if d:
+        #     print('A, S, R: ', action, s, r)
         self._state = s
         return s, r, d, {}
 
@@ -120,13 +132,14 @@ class FDEnvSelHeur(Env):
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            print(self.host)
-            print(self.port)
+            # print(self.host)
+            # print(self.port)
             self.socket.bind((self.host, self.port))
         self.socket.listen()
         self.conn, address = self.socket.accept()
-        if self.conn:
-            print('Connected from', address)
+        # if self.conn:
+        #     print('Connected from', address)
+        # print('Reset')
         self._state, _, _ = self._process_data()
         return self._state
 
