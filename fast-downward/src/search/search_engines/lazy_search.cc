@@ -27,6 +27,8 @@ LazySearch::LazySearch(const Options &opts)
       rng(utils::parse_rng_from_options(opts)),
       rl_client(opts.get<int>("rl_client_port"), "127.0.0.1"),
       rl(opts.get<bool>("rl")),
+      rl_control_interval(opts.get<int>("rl_control_interval")),
+      rl_steps_until_control(0),
       current_state(state_registry.get_initial_state()),
       current_predecessor_id(StateID::no_state),
       current_operator_id(OperatorID::no_operator),
@@ -64,6 +66,7 @@ void LazySearch::initialize() {
     }
 
     if (rl) {
+        assert(rl_control_interval >= 0);
         std::cout << "Setup connection to RL Agent!" << std::endl;
         bool succ = rl_client.init_connection();
         if (!succ) {
@@ -138,14 +141,19 @@ SearchStatus LazySearch::fetch_next_state() {
   
     std::string answer = ""; 
     if (rl) {
-        double last_step_time = rl_timer();
-        std::map<std::string, double> stats;
-        stats["reward"] = -last_step_time;
-        stats["done"] = 0;
-        rl_client.send_msg(open_list->get_lists_statistics(), stats);
-        answer = rl_client.read_msg();
-        rl_timer.reset();
-//        std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+        if (rl_steps_until_control == 0) {
+            rl_steps_until_control = rl_control_interval;
+            double last_step_time = rl_timer();
+            std::map<std::string, double> stats;
+            stats["reward"] = -last_step_time;
+            stats["done"] = 0;
+            rl_client.send_msg(open_list->get_lists_statistics(), stats);
+            answer = rl_client.read_msg();
+            rl_timer.reset();
+            // std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+        } else {
+            rl_steps_until_control--;
+        }
     }
 
     EdgeOpenListEntry next = rl ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
