@@ -17,9 +17,11 @@ class FDEnvSelHeur(Env):
         """
         Initialize environment
         """
+
+        self._state_fields = ['Average Value', 'Dead Ends Reliable', 'Max Value', 'Min Value', 'Open List Entries']
         self.action_space = Discrete(num_heuristics)
-        self.observation_space = Box(low=np.array([-np.inf for _ in range(15)]),
-                                     high=np.array([np.inf for _ in range(15)]),
+        self.observation_space = Box(low=np.array([-np.inf for _ in range(num_heuristics * len(self._state_fields))]),
+                                     high=np.array([np.inf for _ in range(num_heuristics * len(self._state_fields))]),
                                      dtype=np.float32)
         self.host = host
         self.port = port
@@ -30,8 +32,6 @@ class FDEnvSelHeur(Env):
         self._state = None
         self._prev_state = None
         self.num_steps = num_steps
-
-        self._state_fields = ['Average Value', 'Dead Ends Reliable', 'Max Value', 'Min Value', 'Open List Entries']
 # {'0': {'Average Value': 27.529799, 'Dead Ends Reliable': 1.0, 'Max Value': 85.0, 'Min Value': 1.0, 'Open List Entries': 49583.0}, '1': {'Average Value': 39.223404, 'Dead Ends Reliable': 0.0, 'Max Value': 126.0, 'Min Value': 1.0, 'Open List Entries': 51042.0}, 'reward': -2.6e-05}
 
     def send_msg(self, msg: bytes):
