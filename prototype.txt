@@ -6,5 +6,5 @@ Questions:
  - which statistics?
 
 TODOs:
- - Use sockets to communicate
+ - Use sockets to communicate (DONE)
  - implement everything!

@@ -4,7 +4,7 @@ import json
 
 import numpy as np
 
-from gym.spaces import Discrete
+from gym.spaces import Discrete, Box
 from gym import Env
 
 # from somewhere import Fast-Downward
@@ -18,7 +18,9 @@ class FDEnvSelHeur(Env):
         Initialize environment
         """
         self.action_space = Discrete(num_heuristics)
-        self.observation_space = np.zeros((15, 1))
+        self.observation_space = Box(low=np.array([-np.inf for _ in range(15)]),
+                                     high=np.array([np.inf for _ in range(15)]),
+                                     dtype=np.float32)
         self.host = host
         self.port = port
 
@@ -102,7 +104,7 @@ class FDEnvSelHeur(Env):
         #  3. Get FD state description and reward signal
         #  4. Process state and reward s.t. RL-agent can interpret it
         self._prev_state = self._state
-        if not isinstance(action, int):
+        if not isinstance(action, int) and not isinstance(action, np.int64):
             action = action[0]
         if self.num_steps:
             msg = ','.join([str(action), str(self.num_steps)])

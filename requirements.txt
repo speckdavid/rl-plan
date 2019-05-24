@@ -1,3 +1,4 @@
 gym
 ray[rllib]
 ray[debug]
+tensorflow
