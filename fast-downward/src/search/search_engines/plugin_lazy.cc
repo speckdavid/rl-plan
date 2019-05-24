@@ -14,6 +14,7 @@ static shared_ptr<SearchEngine> _parse(OptionParser &parser) {
     // parser.add_option<bool>("rl_client_address", "rl client address", "127.0.0.1");
     parser.add_option<int>("rl_client_port", "rl client port", "54321");
     parser.add_option<bool>("rl", "use reinforcment learning agent", "false");
+    parser.add_option<int>("rl_control_interval", "rl control interval", "0");
     parser.add_list_option<shared_ptr<Evaluator>>(
         "preferred",
         "use preferred operators of these evaluators", "[]");

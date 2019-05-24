@@ -40,6 +40,8 @@ protected:
     rl_client::RLClient rl_client;
     bool rl;
     utils::Timer rl_timer;
+    int rl_control_interval;
+    int rl_steps_until_control;
 
     GlobalState current_state;
     StateID current_predecessor_id;
