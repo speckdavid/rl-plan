@@ -139,8 +139,9 @@ SearchStatus LazySearch::fetch_next_state() {
         return FAILED;
     }
   
-    std::string answer = ""; 
+    std::string answer = "";
     if (rl) {
+        // std::cout << rl_steps_until_control << std::endl;
         if (rl_steps_until_control == 0) {
             rl_steps_until_control = rl_control_interval;
             double last_step_time = rl_timer();
@@ -150,13 +151,14 @@ SearchStatus LazySearch::fetch_next_state() {
             rl_client.send_msg(open_list->get_lists_statistics(), stats);
             answer = rl_client.read_msg();
             rl_timer.reset();
+            // std::cout << "RL Decision => " << answer.substr(4,1) << std::endl;
             // std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
         } else {
             rl_steps_until_control--;
         }
     }
 
-    EdgeOpenListEntry next = rl ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
+    EdgeOpenListEntry next = (rl && !answer.empty()) ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
     current_predecessor_id = next.first;
     current_operator_id = next.second;
     GlobalState current_predecessor = state_registry.lookup_state(current_predecessor_id);

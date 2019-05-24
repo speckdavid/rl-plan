@@ -2,18 +2,18 @@
 # Basic while loop
 
 display_usage() { 
-	echo -e "\nUsage:\nfast-downward-rl.sh [instance.pddl] [#runs] \n" 
+	echo -e "\nUsage:\nfast-downward-rl.sh [instance.pddl] [#control interval] [#runs] \n" 
 	}
 
 # if less than two arguments supplied, display usage 
-	if [ $# -le 1 ] 
+	if [ $# -le 2 ] 
 	then 
 		display_usage
 		exit 1
 	fi 
 
 # if more than two arguments supplied, display usage 
-        if [ $# -ge 3 ]                      
+        if [ $# -ge 4 ]                      
         then
                 display_usage
                 exit 1
@@ -28,8 +28,8 @@ display_usage() {
  
 counter=1
 DIR=$(cd `dirname $0` && pwd)
-while [ $counter -le $2 ] 
+while [ $counter -le $3 ] 
 do
-    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hblind=blind()" --evaluator "hadd=add()" --search "lazy(rl([single(hff), single(hblind), single(hadd)]),rl=true)" || exit 1 
+    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hblind=blind()" --evaluator "hadd=add()" --search "lazy(rl([single(hff), single(hblind), single(hadd)]),rl=true,rl_control_interval=$2)" || exit 1 
     ((counter++))
 done
