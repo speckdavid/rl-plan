@@ -1,19 +1,31 @@
 import typing
 import socket
-import json
+from enum import Enum
+from typing import Union
+from copy import deepcopy
 
 import numpy as np
 
 from gym.spaces import Discrete, Box
 from gym import Env
 
-# from somewhere import Fast-Downward
+
+class StateType(Enum):
+
+    """Class to define numbers for state types"""
+    RAW = 1
+    DIFF = 2
+    ABSDIFF = 3
+    NORMAL = 4
+    NORMDIFF = 5
+    NORMABSDIFF = 6
 
 
 class FDEnvSelHeur(Env):
 
     def __init__(self, num_heuristics: int, host: str='', port: int=12345,
-                 num_steps=None):
+                 num_steps=None, state_type: Union[int, StateType]=StateType.RAW,
+                 seed: int=12345, max_rand_steps: int=0):
         """
         Initialize environment
         """
@@ -29,10 +41,27 @@ class FDEnvSelHeur(Env):
         self.socket = None
         self.conn = None
 
-        self._state = None
         self._prev_state = None
         self.num_steps = num_steps
-# {'0': {'Average Value': 27.529799, 'Dead Ends Reliable': 1.0, 'Max Value': 85.0, 'Min Value': 1.0, 'Open List Entries': 49583.0}, '1': {'Average Value': 39.223404, 'Dead Ends Reliable': 0.0, 'Max Value': 126.0, 'Min Value': 1.0, 'Open List Entries': 51042.0}, 'reward': -2.6e-05}
+
+        self.__state_type = state_type
+        self.__norm_vals = []
+
+        self._transformation_func = None
+        # create state transformation function with inputs (current state, previous state, normalization values)
+        if self.__state_type == StateType.DIFF:
+            self._transformation_func = lambda x, y, z: x - y
+        elif self.__state_type == StateType.ABSDIFF:
+            self._transformation_func = lambda x, y, z: abs(x - y)
+        elif self.__state_type == StateType.NORMAL:
+            self._transformation_func = lambda x, y, z: x / z
+        elif self.__state_type == StateType.NORMDIFF:
+            self._transformation_func = lambda x, y, z: (x / z) - (y / z)
+        elif self.__state_type == StateType.NORMABSDIFF:
+            self._transformation_func = lambda x, y, z: abs((x / z) - (y / z))
+
+        self.rng = np.random.RandomState(seed=seed)
+        self.max_rand_steps = max_rand_steps
 
     def send_msg(self, msg: bytes):
         """
@@ -78,7 +107,7 @@ class FDEnvSelHeur(Env):
 
     def _process_data(self):
         """
-        TODO, actually process the recieved message to something RL interpretable
+        Split received json into state reward and done
         :return:
         """
         msg = self.recv_msg().decode()
@@ -91,6 +120,14 @@ class FDEnvSelHeur(Env):
         for heuristic_data in sorted(data.keys()):
             for field in self._state_fields:
                 state.append(data[heuristic_data][field])
+
+        if self._prev_state is None:
+            self.__norm_vals = deepcopy(state)
+            self._prev_state = deepcopy(state)
+        if self.__state_type != StateType.RAW:  # Transform state to DIFF state or normalize
+            tmp_state = state
+            state = list(map(self._transformation_func, state, self._prev_state, self.__norm_vals))
+            self._prev_state = tmp_state
         return state, r, done
 
     def step(self, action: typing.Union[int, typing.List[int]]):
@@ -99,11 +136,6 @@ class FDEnvSelHeur(Env):
         :param action:
         :return:
         """
-        #  1. Process action
-        #  2. Run FD for N steps
-        #  3. Get FD state description and reward signal
-        #  4. Process state and reward s.t. RL-agent can interpret it
-        self._prev_state = self._state
         if not isinstance(action, int) and not isinstance(action, np.int64):
             action = action[0]
         if self.num_steps:
@@ -112,21 +144,13 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
-        # if action == 0:
-        #     r = -9999
-        # if d:
-        #     print('A, S, R: ', action, s, r)
-        self._state = s
         return s, r, d, {}
 
-    def reset(self, seed=None):
+    def reset(self):
         """
         Initialize FD
-        :param seed:
         :return:
         """
-
-        self._state = None
         self._prev_state = None
         if self.conn:
             self.conn.shutdown(2)
@@ -134,25 +158,21 @@ class FDEnvSelHeur(Env):
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            # print(self.host)
-            # print(self.port)
             self.socket.bind((self.host, self.port))
         self.socket.listen()
         self.conn, address = self.socket.accept()
-        # if self.conn:
-        #     print('Connected from', address)
-        # print('Reset')
-        self._state, _, _ = self._process_data()
-        return self._state
+        s, _, _ = self._process_data()
+        num_rand_steps = self.rng.randint(self.max_rand_steps + 1)
+        for i in range(num_rand_steps):  # Random initial steps
+            s, _, _, _ = self.step(self.action_space.sample())
+        return s
 
     def close(self):
         """
         Needs to "kill" the environment
         :return:
         """
-        # del self.fd
         if self.conn:
-            # self.conn.shutdown(2)
             self.conn.close()
         if self.socket:
             self.socket.shutdown(2)
@@ -168,6 +188,9 @@ class FDEnvSelHeur(Env):
 
 
 if __name__ == '__main__':
+    """
+    Only for debugging purposes
+    """
     HOST = ''  # The server's hostname or IP address
     PORT = 54321  # The port used by the server
 

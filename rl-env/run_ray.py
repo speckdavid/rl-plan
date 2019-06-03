@@ -14,7 +14,7 @@ from ray.tune.registry import register_env
 from ray.rllib.agents import dqn as ray_dqn
 from ray.tune.logger import pretty_print, UnifiedLogger
 
-from fd_env import FDEnvSelHeur as ENV
+from fd_env import StateType, FDEnvSelHeur as ENV
 
 
 def eval_ray_agent(agent, environment):
@@ -95,9 +95,19 @@ if __name__ == '__main__':
                         type=int,
                         help='Checkpoint ray DQN after this number of training iterations')
     parser.add_argument('--num_heuristics',
-                        default=2,
+                        default=3,  # in fast-downward-rl the default is 3
                         type=int,
                         help='Number of heuristics to choose from')
+    parser.add_argument('--state_type',
+                        default=6,
+                        choices=[1, 2, 3, 4, 5, 6],
+                        help="State type to use: 1 -> Raw; 2 -> Diff; 3 -> AbsDiff; "
+                             "4 -> Normalized; 5 -> NormDiff; 6 -> NormAbsDiff",
+                        type=int)
+    parser.add_argument('--random_init',
+                        default=0,
+                        help="Number of random steps to take at each restart.",
+                        type=int)
     # HOST = ''  # The server's hostname or IP address
     # PORT = 54321  # The port used by the server
     parser.add_argument('--host',
@@ -115,7 +125,9 @@ if __name__ == '__main__':
     np.random.seed(args.seed)
 
     conf = setup_ray()
-    conf['env_config'] = {'num_heuristics': args.num_heuristics, "host": args.host, "port": args.port}
+    conf['env_config'] = {'num_heuristics': args.num_heuristics, "host": args.host, "port": args.port,
+                          "state_type": StateType(args.state_type), "seed": args.seed,
+                          "max_rand_steps": args.random_init}
     log_creator = partial(logger_creator, model='DQN', adp='FD', seed=args.seed)
 
     agent = ray_dqn.DQNAgent(config=conf, env='fd_env', logger_creator=log_creator)
