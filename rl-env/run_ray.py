@@ -18,12 +18,8 @@ from fd_env import StateType, FDEnvSelHeur as ENV
 
 
 def eval_ray_agent(agent, environment):
-    s = environment.reset()  # Need to parse to string to easily handle list as state with defaultdict
+    s = environment.reset()
     episode_length, cummulative_reward = 0, 0
-    # _, _, policy_result = agent.local_evaluator.for_policy(
-    #     lambda p: p.compute_single_action(s, []),
-    #     policy_id='default')
-    expected_reward = None
     while True:  # roll out episode
         a = agent.compute_action(s)
         s_, r, done, _ = environment.step(a)
@@ -59,7 +55,13 @@ def setup_ray():
 
     register_env('fd_env', env_creator)
     ray_conf = ray_dqn.DEFAULT_CONFIG.copy()
-    ray_conf["hiddens"] = [50]  # keep everything on default except the number of hidden units
+    ray_conf["hiddens"] = [50]
+    ray_conf['min_iter_time_s'] = 0  # For the toy environments we don't care about time
+    ray_conf['timesteps_per_iteration'] = 1000
+    ray_conf['exploration_fraction'] = 0.5
+    ray_conf['target_network_update_freq'] = 10
+    ray_conf['batch_mode'] = 'complete_episodes'
+    ray_conf['schedule_max_timesteps'] = 10**6
 
     return ray_conf
 
@@ -74,6 +76,25 @@ def ray_dqn_learn(num_eps, agent, c_freq=10):
         if total_eps % c_freq == 0:
             agent.save()
 
+        # TODO candidate for evaluation after training. Have to be careful to not break the socket comm
+        # print(eval_ray_agent(agent, agent.local_evaluator.async_env.vector_env.envs[0]))
+
+
+def restore(param_path, checkpoint_path):
+    ray.init(ignore_reinit_error=True, num_cpus=1, num_gpus=0, object_store_memory=int(4e+9))
+
+    def env_creator(env_config):
+        return ENV(**env_config)
+    register_env('fd_env', env_creator)
+
+    with open(param_path) as fh:
+        config = json.load(fh)
+    config['evaluation_interval'] = None
+    agent_class = get_agent_class('DQN')
+    agent = agent_class(env='fd_env', config=config)
+    agent.restore(checkpoint_path)
+    return agent, config['env_config']
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Tabular Q-learning example')
@@ -84,14 +105,11 @@ if __name__ == '__main__':
     parser.add_argument('-v', '--verbose',
                         action='store_true',
                         help='Use debug output')
-    # parser.add_argument('-o', '--out-dir', dest='out_dir',
-    #                     default='.',
-    #                     help='Dir to store result files in')
     parser.add_argument('-s', '--seed',
                         default=0,
                         type=int)
     parser.add_argument('--dqn_c_freq',
-                        default=500,
+                        default=10,
                         type=int,
                         help='Checkpoint ray DQN after this number of training iterations')
     parser.add_argument('--num_heuristics',
