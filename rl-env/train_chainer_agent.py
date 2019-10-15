@@ -18,7 +18,6 @@ import os
 import sys
 
 from chainer import optimizers
-import gym
 from gym import spaces
 from fd_env import FDEnvSelHeur
 import numpy as np
@@ -26,6 +25,7 @@ import numpy as np
 import chainerrl
 from chainerrl.agents.dqn import DQN
 from chainerrl import experiments
+from chainerrl.experiments.train_agent import save_agent, save_agent_replay_buffer
 from chainerrl import explorers
 from chainerrl import links
 from chainerrl import misc
@@ -48,8 +48,10 @@ def main():
     parser.add_argument('--start-epsilon', type=float, default=1.0)
     parser.add_argument('--end-epsilon', type=float, default=0.1)
     parser.add_argument('--noisy-net-sigma', type=float, default=None)
-    parser.add_argument('--evaluate', action='store_true', default=False, help="Run evaluation mode")
-    parser.add_argument('--load', type=str, default=None, help="Load saved_model")
+    parser.add_argument('--evaluate', action='store_true', default=False,
+                        help="Run evaluation mode")
+    parser.add_argument('--load', type=str, default=None,
+                        help="Load saved_model")
     parser.add_argument('--steps', type=int, default=10 ** 5)
     parser.add_argument('--prioritized-replay', action='store_true')
     parser.add_argument('--replay-start-size', type=int, default=1000)
@@ -67,6 +69,8 @@ def main():
     parser.add_argument('--render-eval', action='store_true')
     parser.add_argument('--monitor', action='store_true')
     parser.add_argument('--reward-scale-factor', type=float, default=1e-3)
+    parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
+                        help="Nuber of steps to checkpoint after")
     args = parser.parse_args()
 
     # Set a random seed used in ChainerRL ALSO SETS NUMPY SEED!
@@ -180,12 +184,30 @@ def main():
             args.eval_n_runs, eval_stats['mean'], eval_stats['median'],
             eval_stats['stdev']))
     else:
+        criterion = 'steps'  # can be made an argument if we support any other form of checkpointing
+
+        def checkpoint(env, agent, step):
+            if criterion == 'steps':
+                if step % args.checkpoint_frequency == 0:
+                    save_agent_replay_buffer(agent, step, args.outdir, suffix='_chkpt')
+                    save_agent(agent, step, args.outdir, suffix='_chkpt', logger=logging.getLogger(__name__))
+            else:
+                # TODO seems to checkpoint given wall_time we would have to modify the environment such that it tracks
+                # time or number of episodes
+                raise NotImplementedError
+
         experiments.train_agent_with_evaluation(
-            agent=agent, env=env, steps=args.steps,
-            eval_n_steps=None,
-            eval_n_episodes=args.eval_n_runs, eval_interval=args.eval_interval,
-            outdir=args.outdir, eval_env=eval_env,
-            train_max_episode_len=timestep_limit)
+            agent=agent,
+            env=env,
+            steps=args.steps,
+            eval_n_steps=None,  # unlimited number of steps per evaluation rollout
+            eval_n_episodes=args.eval_n_runs,
+            eval_interval=args.eval_interval,
+            outdir=args.outdir,
+            eval_env=eval_env,
+            train_max_episode_len=timestep_limit,
+            step_hooks=[checkpoint]
+        )
 
 
 if __name__ == '__main__':
