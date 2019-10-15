@@ -8,6 +8,7 @@ import numpy as np
 
 from gym.spaces import Discrete, Box
 from gym import Env
+from gym.utils import seeding
 
 
 class StateType(Enum):
@@ -128,7 +129,7 @@ class FDEnvSelHeur(Env):
             tmp_state = state
             state = list(map(self._transformation_func, state, self._prev_state, self.__norm_vals))
             self._prev_state = tmp_state
-        return state, r, done
+        return np.array(state), r, done
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
@@ -136,8 +137,12 @@ class FDEnvSelHeur(Env):
         :param action:
         :return:
         """
-        if not isinstance(action, int) and not isinstance(action, np.int64):
-            action = action[0]
+        if not np.issubdtype(type(action), np.integer):  # check for core int and any numpy-int
+            try:
+                action = action[0]
+            except IndexError as e:
+                print(type(action))
+                raise e
         if self.num_steps:
             msg = ','.join([str(action), str(self.num_steps)])
         else:
@@ -172,9 +177,9 @@ class FDEnvSelHeur(Env):
         Needs to "kill" the environment
         :return:
         """
-        if self.conn:
-            self.conn.close()
-        if self.socket:
+        if self.conn:                   # TODO Sometimes we still get an Address already in use error
+            self.conn.close()           # TODO check if able to use this suggestion https://stackoverflow.com/a/6380198
+        if self.socket:                 # TODO However I haven'T figured where to close the connection in FD C++
             self.socket.shutdown(2)
             self.socket.close()
 
@@ -185,6 +190,10 @@ class FDEnvSelHeur(Env):
         :return: None
         """
         pass
+
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
 
 if __name__ == '__main__':
