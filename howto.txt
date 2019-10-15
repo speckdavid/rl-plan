@@ -1,5 +1,5 @@
  - source activate rl-plan
- - python rl-evn/run_ray.py -num_heuristics #num -v
+ - python rl-env/python train_chainer_agent.py       # curently hardcoded number of heuristics used to 3
  - ./fast-downward/fast-downward-rl.sh [#control interval] [#runs]
 
 
