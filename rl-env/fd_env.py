@@ -3,6 +3,8 @@ import socket
 from enum import Enum
 from typing import Union
 from copy import deepcopy
+from os.path import join as joinpath
+from os import remove
 
 import numpy as np
 
@@ -26,7 +28,7 @@ class FDEnvSelHeur(Env):
 
     def __init__(self, num_heuristics: int, host: str='', port: int=12345,
                  num_steps=None, state_type: Union[int, StateType]=StateType.RAW,
-                 seed: int=12345, max_rand_steps: int=0):
+                 seed: int=12345, max_rand_steps: int=0, config_dir: str='.'):
         """
         Initialize environment
         """
@@ -47,6 +49,7 @@ class FDEnvSelHeur(Env):
 
         self.__state_type = state_type
         self.__norm_vals = []
+        self._config_dir = config_dir
 
         self._transformation_func = None
         # create state transformation function with inputs (current state, previous state, normalization values)
@@ -149,6 +152,8 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
+        if d:
+            self.kill_connection()
         return s, r, d, {}
 
     def reset(self):
@@ -160,28 +165,47 @@ class FDEnvSelHeur(Env):
         if self.conn:
             self.conn.shutdown(2)
             self.conn.close()
+            self.socket.shutdown(2)
+            self.socket.close()
+            self.socket = None
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.socket.bind((self.host, self.port))
+
+        # write down port such that FD can potentially read where to connect to
+        fp = joinpath(self._config_dir, 'port.txt')
+        with open(fp, 'w') as portfh:
+            portfh.write(str(self.port))
+        print(fp)
+
         self.socket.listen()
         self.conn, address = self.socket.accept()
         s, _, _ = self._process_data()
         num_rand_steps = self.rng.randint(self.max_rand_steps + 1)
         for i in range(num_rand_steps):  # Random initial steps
             s, _, _, _ = self.step(self.action_space.sample())
+
+        remove(fp)  # remove the port file such that there is no chance of loading the old port
         return s
+
+    def kill_connection(self):
+        """Kill the connection"""
+        if self.conn:
+            self.conn.shutdown(2)
+            self.conn.close()
+            self.conn = None
+        if self.socket:
+            self.socket.shutdown(2)
+            self.socket.close()
+            self.socket = None
 
     def close(self):
         """
         Needs to "kill" the environment
         :return:
         """
-        if self.conn:                   # TODO Sometimes we still get an Address already in use error
-            self.conn.close()           # TODO check if able to use this suggestion https://stackoverflow.com/a/6380198
-        if self.socket:                 # TODO However I haven'T figured where to close the connection in FD C++
-            self.socket.shutdown(2)
-            self.socket.close()
+        self.kill_connection()
 
     def render(self, mode: str='human') -> None:
         """

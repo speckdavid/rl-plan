@@ -135,6 +135,7 @@ SearchStatus LazySearch::fetch_next_state() {
         cout << "Completely explored state space -- no solution!" << endl;
         if (rl) {
             rl_client.send_msg("0047Completely explored state space -- no solution!");
+            rl_client.closeConn();
         }
         return FAILED;
     }
@@ -230,6 +231,7 @@ SearchStatus LazySearch::step() {
                     stats["reward"] = -last_step_time;
                     stats["done"] = 1;
                     rl_client.send_msg(open_list->get_lists_statistics(), stats);
+                    rl_client.closeConn();
                 }
                 return SOLVED;
             }

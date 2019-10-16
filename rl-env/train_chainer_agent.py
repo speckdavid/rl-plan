@@ -34,9 +34,6 @@ from chainerrl import replay_buffer
 
 
 def main():
-    import logging
-    logging.basicConfig(level=logging.DEBUG)
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--outdir', type=str, default='/tmp/chainerRL_results',
                         help='Directory path to save output files.'
@@ -59,7 +56,7 @@ def main():
     parser.add_argument('--target-update-method', type=str, default='hard')
     parser.add_argument('--soft-update-tau', type=float, default=1e-2)
     parser.add_argument('--update-interval', type=int, default=1)
-    parser.add_argument('--eval-n-runs', type=int, default=100)
+    parser.add_argument('--eval-n-runs', type=int, default=10)
     parser.add_argument('--eval-interval', type=int, default=10 ** 4)
     parser.add_argument('--n-hidden-channels', type=int, default=100)
     parser.add_argument('--n-hidden-layers', type=int, default=2)
@@ -67,11 +64,13 @@ def main():
     parser.add_argument('--minibatch-size', type=int, default=None)
     parser.add_argument('--render-train', action='store_true')
     parser.add_argument('--render-eval', action='store_true')
-    parser.add_argument('--monitor', action='store_true')
     parser.add_argument('--reward-scale-factor', type=float, default=1e-3)
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
+    parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
     args = parser.parse_args()
+    import logging
+    logging.basicConfig(level=logging.INFO if not args.verbose else logging.DEBUG)
 
     # Set a random seed used in ChainerRL ALSO SETS NUMPY SEED!
     misc.set_random_seed(args.seed)
@@ -87,15 +86,18 @@ def main():
     def make_env(test):
         HOST = ''  # The server's hostname or IP address
         PORT = 54321  # The port used by the server
+        if test:                        # Just such that eval and train env don't have the same port
+            PORT += 1
 
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=3)                  # TODO don't hardcode env params
+        # TODO don't hardcode env params
+        # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
+        # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=3, config_dir=args.outdir)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
         # Cast observations to float32 because our model uses float32
         env = chainerrl.wrappers.CastObservationToFloat32(env)
-        if args.monitor:
-            env = chainerrl.wrappers.Monitor(env, args.outdir)
         if isinstance(env.action_space, spaces.Box):
             misc.env_modifiers.make_action_filtered(env, clip_action_filter)
         if not test:
@@ -108,13 +110,13 @@ def main():
         return env
 
     env = make_env(test=False)
-    timestep_limit = 10**3                                                          # TODO don't hardcode env params
+    timestep_limit = 10**6                                                          # TODO don't hardcode env params
     obs_space = env.observation_space
     obs_size = obs_space.low.size
     action_space = env.action_space
 
-    if isinstance(action_space, spaces.Box):                                        # TODO figure out if we ever need this
-        action_size = action_space.low.size
+    if isinstance(action_space, spaces.Box):                                        # Usefull if we want to control
+        action_size = action_space.low.size                                         # other continous parameters
         # Use NAF to apply DQN to continuous action spaces
         q_func = q_functions.FCQuadraticStateQFunction(
             obs_size, action_size,
@@ -185,12 +187,13 @@ def main():
             eval_stats['stdev']))
     else:
         criterion = 'steps'  # can be made an argument if we support any other form of checkpointing
+        l = logging.getLogger('Checkpoint_Hook')
 
         def checkpoint(env, agent, step):
             if criterion == 'steps':
                 if step % args.checkpoint_frequency == 0:
-                    save_agent_replay_buffer(agent, step, args.outdir, suffix='_chkpt')
-                    save_agent(agent, step, args.outdir, suffix='_chkpt', logger=logging.getLogger(__name__))
+                    save_agent_replay_buffer(agent, step, args.outdir, suffix='_chkpt', logger=l)
+                    save_agent(agent, step, args.outdir, suffix='_chkpt', logger=l)
             else:
                 # TODO seems to checkpoint given wall_time we would have to modify the environment such that it tracks
                 # time or number of episodes

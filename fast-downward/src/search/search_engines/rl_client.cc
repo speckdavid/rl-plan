@@ -6,6 +6,8 @@ namespace rl_client {
 RLClient::RLClient(int port, std::string ip_address) : port(port), ip_address(ip_address), sock(0) {}
 
 bool RLClient::init_connection() {
+
+    printf("\nPort: %i\n", port);
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
@@ -23,8 +25,10 @@ bool RLClient::init_connection() {
         printf("\nInvalid address/ Address not supported \n");
         return false;
     }
-    
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+
+    sockfd = connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+
+    if (sockfd < 0)
     {
         printf("\nConnection Failed \n");
         return false;
@@ -77,6 +81,13 @@ std::string RLClient::read_msg() const {
     char buffer[1024] = {0};
     int valread = read( sock, buffer, 1024);
     return std::string(buffer);
+}
+
+void RLClient::closeConn() const {
+    shutdown(sock, 2);
+    close(sock);
+    shutdown(sockfd, 2);
+    close(sockfd);
 }
 
 }
