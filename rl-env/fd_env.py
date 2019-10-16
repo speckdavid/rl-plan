@@ -66,6 +66,7 @@ class FDEnvSelHeur(Env):
 
         self.rng = np.random.RandomState(seed=seed)
         self.max_rand_steps = max_rand_steps
+        self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
 
     def send_msg(self, msg: bytes):
         """
@@ -153,6 +154,7 @@ class FDEnvSelHeur(Env):
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
         if d:
+            self.done = True
             self.kill_connection()
         return s, r, d, {}
 
@@ -162,9 +164,15 @@ class FDEnvSelHeur(Env):
         :return:
         """
         self._prev_state = None
+        if not self.done:  # This means we interrupt FD before a plan was found
+            print(self.action_space.n)
+            # Inform FD about imminent shutdown of the connection
+            self.send_msg(str.encode(str(self.action_space.n)))
+        self.done = False
         if self.conn:
             self.conn.shutdown(2)
             self.conn.close()
+            self.conn = None
             self.socket.shutdown(2)
             self.socket.close()
             self.socket = None

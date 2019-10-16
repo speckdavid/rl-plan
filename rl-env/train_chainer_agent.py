@@ -110,7 +110,7 @@ def main():
         return env
 
     env = make_env(test=False)
-    timestep_limit = 10**6                                                          # TODO don't hardcode env params
+    timestep_limit = 10**2                                                         # TODO don't hardcode env params
     obs_space = env.observation_space
     obs_size = obs_space.low.size
     action_space = env.action_space
