@@ -57,14 +57,16 @@ def main():
     parser.add_argument('--soft-update-tau', type=float, default=1e-2)
     parser.add_argument('--update-interval', type=int, default=1)
     parser.add_argument('--eval-n-runs', type=int, default=10)
-    parser.add_argument('--eval-interval', type=int, default=10 ** 4)
-    parser.add_argument('--n-hidden-channels', type=int, default=100)
-    parser.add_argument('--n-hidden-layers', type=int, default=2)
+    parser.add_argument('--eval-interval', type=int, default=-1, help="After how many steps to evaluate the agent."
+                                                                      "(-1 -> never)")
+    parser.add_argument('--n-hidden-channels', type=int, default=20)
+    parser.add_argument('--n-hidden-layers', type=int, default=20)
     parser.add_argument('--gamma', type=float, default=0.99)
     parser.add_argument('--minibatch-size', type=int, default=None)
     parser.add_argument('--render-train', action='store_true')
     parser.add_argument('--render-eval', action='store_true')
     parser.add_argument('--reward-scale-factor', type=float, default=1)
+    parser.add_argument('--time-step-limit', type=int, default=1e3)
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
@@ -110,7 +112,7 @@ def main():
         return env
 
     env = make_env(test=False)
-    timestep_limit = 10**2                                                         # TODO don't hardcode env params
+    timestep_limit = args.time_step_limit
     obs_space = env.observation_space
     obs_size = obs_space.low.size
     action_space = env.action_space
@@ -205,7 +207,7 @@ def main():
             steps=args.steps,
             eval_n_steps=None,  # unlimited number of steps per evaluation rollout
             eval_n_episodes=args.eval_n_runs,
-            eval_interval=args.eval_interval,
+            eval_interval=args.eval_interval if args.eval_interval > 0 else 1e99,
             outdir=args.outdir,
             eval_env=eval_env,
             train_max_episode_len=timestep_limit,
