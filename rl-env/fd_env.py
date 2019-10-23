@@ -169,9 +169,8 @@ class FDEnvSelHeur(Env):
         """
         self._prev_state = None
         if not self.done:  # This means we interrupt FD before a plan was found
-            print(self.action_space.n)
             # Inform FD about imminent shutdown of the connection
-            self.send_msg(str.encode(str(self.action_space.n)))
+            self.send_msg(str.encode("END"))
         self.done = False
         if self.conn:
             self.conn.shutdown(2)

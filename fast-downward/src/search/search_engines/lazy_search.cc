@@ -141,8 +141,8 @@ SearchStatus LazySearch::fetch_next_state() {
     }
   
     std::string answer = "";
+    int selectionAction = -1;
     if (rl) {
-        // std::cout << rl_steps_until_control << std::endl;
         if (rl_steps_until_control == 0) {
             rl_steps_until_control = rl_control_interval;
             double last_step_time = rl_timer();
@@ -152,16 +152,38 @@ SearchStatus LazySearch::fetch_next_state() {
             rl_client.send_msg(open_list->get_lists_statistics(), stats);
             answer = rl_client.read_msg();
             rl_timer.reset();
+            if (answer.empty()) {
+                return FAILED;  // This can only happen if the RL agent crashes
+            }
             int msg_size = std::atoi(answer.substr(0,4).c_str());
-            std::cout << "%d" << std::endl;
-            std::cout << "RL Decision => " << answer.substr(4,1) << std::endl;
-            std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+            std::string msg = answer.substr(4, msg_size);
+            if (msg == "END") {  // Handle RL-request to close connection
+                printf("\nReceived %s\n\n", msg.c_str());
+                rl_client.closeConn();
+                // set_plan needed to pass fake SOLVE to avoid raising an Error
+                Plan p;
+                set_plan(p);
+                return SOLVED;
+//            } else if (std::atoi(msg.c_str()) == 0) {  // Used for sanity checking if the agent learns to avoid expensive actions
+//                int a = 0;
+//                for (int i = 0; i < 99999999; i++) {
+//                    if (i % 2 == 0) {
+//                        a = i + 1;
+//                    } else {
+//                        a = i - 1;
+//                    }
+//                    printf("%d\n", a);
+//                    selectionAction = std::atoi(msg.c_str());
+//                }
+            } else {  // We assume only correct action values are received (i.e. valid integers)
+                selectionAction = std::atoi(msg.c_str());
+            }
         } else {
             rl_steps_until_control--;
         }
     }
 
-    EdgeOpenListEntry next = (rl && !answer.empty()) ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
+    EdgeOpenListEntry next = (rl && !answer.empty()) ? open_list->remove_min(selectionAction) : open_list->remove_min();
     current_predecessor_id = next.first;
     current_operator_id = next.second;
     GlobalState current_predecessor = state_registry.lookup_state(current_predecessor_id);
