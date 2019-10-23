@@ -64,7 +64,7 @@ def main():
     parser.add_argument('--minibatch-size', type=int, default=None)
     parser.add_argument('--render-train', action='store_true')
     parser.add_argument('--render-eval', action='store_true')
-    parser.add_argument('--reward-scale-factor', type=float, default=1e-3)
+    parser.add_argument('--reward-scale-factor', type=float, default=1)
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')

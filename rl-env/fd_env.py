@@ -58,15 +58,19 @@ class FDEnvSelHeur(Env):
         elif self.__state_type == StateType.ABSDIFF:
             self._transformation_func = lambda x, y, z: abs(x - y)
         elif self.__state_type == StateType.NORMAL:
-            self._transformation_func = lambda x, y, z: x / z
+            self._transformation_func = lambda x, y, z: FDEnvSelHeur._save_div(x, z)
         elif self.__state_type == StateType.NORMDIFF:
-            self._transformation_func = lambda x, y, z: (x / z) - (y / z)
+            self._transformation_func = lambda x, y, z: FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z)
         elif self.__state_type == StateType.NORMABSDIFF:
-            self._transformation_func = lambda x, y, z: abs((x / z) - (y / z))
+            self._transformation_func = lambda x, y, z: abs(FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z))
 
         self.rng = np.random.RandomState(seed=seed)
         self.max_rand_steps = max_rand_steps
         self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
+
+    @staticmethod
+    def _save_div(a, b):
+        return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
 
     def send_msg(self, msg: bytes):
         """
