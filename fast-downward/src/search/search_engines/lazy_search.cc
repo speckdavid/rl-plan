@@ -152,8 +152,10 @@ SearchStatus LazySearch::fetch_next_state() {
             rl_client.send_msg(open_list->get_lists_statistics(), stats);
             answer = rl_client.read_msg();
             rl_timer.reset();
-            // std::cout << "RL Decision => " << answer.substr(4,1) << std::endl;
-            // std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+            int msg_size = std::atoi(answer.substr(0,4).c_str());
+            std::cout << "%d" << std::endl;
+            std::cout << "RL Decision => " << answer.substr(4,1) << std::endl;
+            std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
         } else {
             rl_steps_until_control--;
         }
