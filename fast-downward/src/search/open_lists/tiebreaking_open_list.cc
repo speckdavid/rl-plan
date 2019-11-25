@@ -49,6 +49,8 @@ public:
         EvaluationContext &eval_context) const override;
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
+    virtual int get_size() const override;
+    virtual std::map<std::string, double> get_statistics() const override;
 };
 
 
@@ -76,6 +78,7 @@ Entry TieBreakingOpenList<Entry>::remove_min() {
     assert(size > 0);
     typename map<const vector<int>, Bucket>::iterator it;
     it = buckets.begin();
+    // std::cout << "h:" << it->first.at(0) << std::endl;
     assert(it != buckets.end());
     assert(!it->second.empty());
     --size;
@@ -136,6 +139,31 @@ bool TieBreakingOpenList<Entry>::is_reliable_dead_end(
             evaluator->dead_ends_are_reliable())
             return true;
     return false;
+}
+
+
+template<class Entry>
+int TieBreakingOpenList<Entry>::get_size() const {
+    return size;
+}
+
+template<class Entry>
+std::map<std::string, double> TieBreakingOpenList<Entry>::get_statistics() const {
+    std::map<std::string, double> stats;
+    stats["Open List Entries"] = get_size();
+    stats["Dead Ends Reliable"] = evaluators.at(0)->dead_ends_are_reliable();
+    stats["Min Value"] = std::numeric_limits<double>::infinity();
+    stats["Max Value"] = -std::numeric_limits<double>::infinity();
+    stats["Average Value"] = 0;
+    for (auto& entry : buckets) {
+        stats["Min Value"] = std::min(stats["Min Value"], (double) entry.first.at(0));
+        stats["Max Value"] = std::max(stats["Min Value"], (double) entry.first.at(0));
+        stats["Average Value"] += entry.first.at(0) * entry.second.size();
+    }
+    if (!empty()) {
+        stats["Average Value"] /= get_size();
+    }
+    return stats;
 }
 
 TieBreakingOpenListFactory::TieBreakingOpenListFactory(const Options &options)

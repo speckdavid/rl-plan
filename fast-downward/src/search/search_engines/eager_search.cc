@@ -26,7 +26,11 @@ EagerSearch::EagerSearch(const Options &opts)
       f_evaluator(opts.get<shared_ptr<Evaluator>>("f_eval", nullptr)),
       preferred_operator_evaluators(opts.get_list<shared_ptr<Evaluator>>("preferred")),
       lazy_evaluator(opts.get<shared_ptr<Evaluator>>("lazy_evaluator", nullptr)),
-      pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")) {
+      pruning_method(opts.get<shared_ptr<PruningMethod>>("pruning")),
+      rl_client(opts.get<int>("rl_client_port"), "127.0.0.1"),
+      rl(opts.get<bool>("rl")),
+      rl_control_interval(opts.get<int>("rl_control_interval")),
+      rl_steps_until_control(0) {
     if (lazy_evaluator && !lazy_evaluator->does_cache_estimates()) {
         cerr << "lazy_evaluator must cache its estimates" << endl;
         utils::exit_with(utils::ExitCode::SEARCH_INPUT_ERROR);
@@ -98,6 +102,17 @@ void EagerSearch::initialize() {
     print_initial_evaluator_values(eval_context);
 
     pruning_method->initialize(task);
+
+
+    if (rl) {
+        assert(rl_control_interval >= 0);
+        std::cout << "Setup connection to RL Agent!" << std::endl;
+        bool succ = rl_client.init_connection();
+        if (!succ) {
+            utils::exit_with(utils::ExitCode::SEARCH_INPUT_ERROR);
+        }
+        std::cout << "Connection created!" << std::endl;
+    }
 }
 
 void EagerSearch::print_checkpoint_line(int g) const {
@@ -117,9 +132,35 @@ SearchStatus EagerSearch::step() {
     while (true) {
         if (open_list->empty()) {
             cout << "Completely explored state space -- no solution!" << endl;
+            if (rl) {
+                rl_client.send_msg("0047Completely explored state space -- no solution!");
+            }
             return FAILED;
         }
-        StateID id = open_list->remove_min();
+
+        std::cout << "IN WHILE LOOP => " << rl << std::endl;
+        std::string answer = "";
+        if (rl) {
+            std::cout << "controll step: " << rl_steps_until_control << std::endl;
+            if (rl_steps_until_control == 0) {
+                rl_steps_until_control = rl_control_interval;
+                double last_step_time = rl_timer();
+                std::map<std::string, double> stats;
+                stats["reward"] = -last_step_time;
+                stats["done"] = 0;
+                std::cout << "SENDINGS MSG" << std::endl;
+                rl_client.send_msg(open_list->get_lists_statistics(), stats);
+                answer = rl_client.read_msg();
+                rl_timer.reset();
+                // std::cout << "RL Decision => " << answer.substr(4,1) << std::endl;
+                std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+            } else {
+                rl_steps_until_control--;
+            }
+        }
+
+        StateID id = (rl && !answer.empty()) ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
+        // StateID id = open_list->remove_min();
         // TODO is there a way we can avoid creating the state here and then
         //      recreate it outside of this function with node.get_state()?
         //      One way would be to store GlobalState objects inside SearchNodes
@@ -177,8 +218,16 @@ SearchStatus EagerSearch::step() {
     }
 
     GlobalState s = node->get_state();
-    if (check_goal_and_set_plan(s))
+    if (check_goal_and_set_plan(s)) {
+        if (rl) {
+            double last_step_time = rl_timer();
+            std::map<std::string, double> stats;
+            stats["reward"] = -last_step_time;
+            stats["done"] = 1;
+            rl_client.send_msg(open_list->get_lists_statistics(), stats);
+        }
         return SOLVED;
+    }
 
     vector<OperatorID> applicable_ops;
     successor_generator.generate_applicable_ops(s, applicable_ops);

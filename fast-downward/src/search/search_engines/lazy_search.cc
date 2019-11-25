@@ -148,6 +148,7 @@ SearchStatus LazySearch::fetch_next_state() {
             std::map<std::string, double> stats;
             stats["reward"] = -last_step_time;
             stats["done"] = 0;
+            std::cout << "Sending Message" << std::endl;
             rl_client.send_msg(open_list->get_lists_statistics(), stats);
             answer = rl_client.read_msg();
             rl_timer.reset();
