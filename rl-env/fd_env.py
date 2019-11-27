@@ -3,11 +3,14 @@ import socket
 from enum import Enum
 from typing import Union
 from copy import deepcopy
+from os.path import join as joinpath
+from os import remove
 
 import numpy as np
 
 from gym.spaces import Discrete, Box
 from gym import Env
+from gym.utils import seeding
 
 
 class StateType(Enum):
@@ -25,7 +28,7 @@ class FDEnvSelHeur(Env):
 
     def __init__(self, num_heuristics: int, host: str='', port: int=12345,
                  num_steps=None, state_type: Union[int, StateType]=StateType.RAW,
-                 seed: int=12345, max_rand_steps: int=0):
+                 seed: int=12345, max_rand_steps: int=0, config_dir: str='.'):
         """
         Initialize environment
         """
@@ -46,6 +49,7 @@ class FDEnvSelHeur(Env):
 
         self.__state_type = state_type
         self.__norm_vals = []
+        self._config_dir = config_dir
 
         self._transformation_func = None
         # create state transformation function with inputs (current state, previous state, normalization values)
@@ -62,6 +66,11 @@ class FDEnvSelHeur(Env):
 
         self.rng = np.random.RandomState(seed=seed)
         self.max_rand_steps = max_rand_steps
+        self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
+
+    @staticmethod
+    def _save_div(a, b):
+        return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
 
     @staticmethod
     def _save_div(a, b):
@@ -133,7 +142,7 @@ class FDEnvSelHeur(Env):
             tmp_state = state
             state = list(map(self._transformation_func, state, self._prev_state, self.__norm_vals))
             self._prev_state = tmp_state
-        return state, r, done
+        return np.array(state), r, done
 
     def step(self, action: typing.Union[int, typing.List[int]]):
         """
@@ -141,14 +150,21 @@ class FDEnvSelHeur(Env):
         :param action:
         :return:
         """
-        if not isinstance(action, int) and not isinstance(action, np.int64):
-            action = action[0]
+        if not np.issubdtype(type(action), np.integer):  # check for core int and any numpy-int
+            try:
+                action = action[0]
+            except IndexError as e:
+                print(type(action))
+                raise e
         if self.num_steps:
             msg = ','.join([str(action), str(self.num_steps)])
         else:
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
+        if d:
+            self.done = True
+            self.kill_connection()
         return s, r, d, {}
 
     def reset(self):
@@ -157,31 +173,55 @@ class FDEnvSelHeur(Env):
         :return:
         """
         self._prev_state = None
+        if not self.done:  # This means we interrupt FD before a plan was found
+            # Inform FD about imminent shutdown of the connection
+            self.send_msg(str.encode("END"))
+        self.done = False
         if self.conn:
             self.conn.shutdown(2)
             self.conn.close()
+            self.conn = None
+            self.socket.shutdown(2)
+            self.socket.close()
+            self.socket = None
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.socket.bind((self.host, self.port))
+
+        # write down port such that FD can potentially read where to connect to
+        fp = joinpath(self._config_dir, 'port.txt')
+        with open(fp, 'w') as portfh:
+            portfh.write(str(self.port))
+        print(fp)
+
         self.socket.listen()
         self.conn, address = self.socket.accept()
         s, _, _ = self._process_data()
         num_rand_steps = self.rng.randint(self.max_rand_steps + 1)
         for i in range(num_rand_steps):  # Random initial steps
             s, _, _, _ = self.step(self.action_space.sample())
+
+        remove(fp)  # remove the port file such that there is no chance of loading the old port
         return s
+
+    def kill_connection(self):
+        """Kill the connection"""
+        if self.conn:
+            self.conn.shutdown(2)
+            self.conn.close()
+            self.conn = None
+        if self.socket:
+            self.socket.shutdown(2)
+            self.socket.close()
+            self.socket = None
 
     def close(self):
         """
         Needs to "kill" the environment
         :return:
         """
-        if self.conn:
-            self.conn.close()
-        if self.socket:
-            self.socket.shutdown(2)
-            self.socket.close()
+        self.kill_connection()
 
     def render(self, mode: str='human') -> None:
         """
@@ -190,6 +230,10 @@ class FDEnvSelHeur(Env):
         :return: None
         """
         pass
+
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
 
 if __name__ == '__main__':
