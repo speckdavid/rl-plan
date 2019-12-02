@@ -30,7 +30,8 @@ EagerSearch::EagerSearch(const Options &opts)
       rl_client(opts.get<int>("rl_client_port"), "127.0.0.1"),
       rl(opts.get<bool>("rl")),
       rl_control_interval(opts.get<int>("rl_control_interval")),
-      rl_steps_until_control(0) {
+      rl_steps_until_control(0),
+      rl_answer("") {
     if (lazy_evaluator && !lazy_evaluator->does_cache_estimates()) {
         cerr << "lazy_evaluator must cache its estimates" << endl;
         utils::exit_with(utils::ExitCode::SEARCH_INPUT_ERROR);
@@ -138,28 +139,26 @@ SearchStatus EagerSearch::step() {
             return FAILED;
         }
 
-        std::cout << "IN WHILE LOOP => " << rl << std::endl;
-        std::string answer = "";
         if (rl) {
-            std::cout << "controll step: " << rl_steps_until_control << std::endl;
+            // std::cout << "controll step: " << rl_steps_until_control << std::endl;
             if (rl_steps_until_control == 0) {
                 rl_steps_until_control = rl_control_interval;
                 double last_step_time = rl_timer();
                 std::map<std::string, double> stats;
                 stats["reward"] = -last_step_time;
                 stats["done"] = 0;
-                std::cout << "SENDINGS MSG" << std::endl;
+                // std::cout << "SENDINGS MSG" << std::endl;
                 rl_client.send_msg(open_list->get_lists_statistics(), stats);
-                answer = rl_client.read_msg();
+                rl_answer = rl_client.read_msg();
                 rl_timer.reset();
-                // std::cout << "RL Decision => " << answer.substr(4,1) << std::endl;
-                std::cout << "RL-Action: " << answer.substr(4,1) << std::endl;
+                // std::cout << "RL Decision => " << rl_answer.substr(4,1) << std::endl;
+                std::cout << "RL-Action: " << rl_answer.substr(4,1) << std::endl;
             } else {
                 rl_steps_until_control--;
             }
         }
 
-        StateID id = (rl && !answer.empty()) ? open_list->remove_min(std::atoi(answer.substr(4,1).c_str())) : open_list->remove_min();
+        StateID id = (rl && !rl_answer.empty()) ? open_list->remove_min(std::atoi(rl_answer.substr(4,1).c_str())) : open_list->remove_min();
         // StateID id = open_list->remove_min();
         // TODO is there a way we can avoid creating the state here and then
         //      recreate it outside of this function with node.get_state()?

@@ -94,7 +94,7 @@ def main():
         # TODO don't hardcode env params
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=3, config_dir=args.outdir)
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
@@ -110,8 +110,16 @@ def main():
                 (args.render_train and not test)):
             env = chainerrl.wrappers.Render(env)
         return env
-
+ 
     env = make_env(test=False)
+    state = env.reset()
+    #while True:
+    #for x in [1,1,1,1,0,0,0,0]:
+    #    state, reward, done, _ = env.step(x)
+    #    print(x)
+    #    if done:
+    #        break
+
     timestep_limit = args.time_step_limit
     obs_space = env.observation_space
     obs_size = obs_space.low.size

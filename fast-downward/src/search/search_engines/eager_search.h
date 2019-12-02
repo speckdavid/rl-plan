@@ -36,6 +36,7 @@ class EagerSearch : public SearchEngine {
     utils::Timer rl_timer;
     int rl_control_interval;
     int rl_steps_until_control;
+    std::string rl_answer;
 
     void start_f_value_statistics(EvaluationContext &eval_context);
     void update_f_value_statistics(EvaluationContext &eval_context);

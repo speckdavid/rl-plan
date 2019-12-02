@@ -80,6 +80,7 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open
 std::string RLClient::read_msg() const {
     char buffer[1024] = {0};
     int valread = read( sock, buffer, 1024);
+    std::cout << std::string(buffer) << std::endl;
     return std::string(buffer);
 }
 
