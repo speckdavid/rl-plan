@@ -1,6 +1,7 @@
 import typing
 import socket
 from enum import Enum
+import time
 from typing import Union
 from copy import deepcopy
 from os.path import join as joinpath
@@ -66,6 +67,8 @@ class FDEnvSelHeur(Env):
 
         self.rng = np.random.RandomState(seed=seed)
         self.max_rand_steps = max_rand_steps
+        self.__step = 0
+        self.__start_time = None
         self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
 
     @staticmethod
@@ -150,6 +153,7 @@ class FDEnvSelHeur(Env):
         :param action:
         :return:
         """
+        self.__step += 1
         if not np.issubdtype(type(action), np.integer):  # check for core int and any numpy-int
             try:
                 action = action[0]
@@ -165,6 +169,10 @@ class FDEnvSelHeur(Env):
         if d:
             self.done = True
             self.kill_connection()
+            # r = -1*(time.time() - self.__start_time)
+        #     r = -self.__step
+        # else:
+        #     r = 0
         return s, r, d, {}
 
     def reset(self):
@@ -173,6 +181,8 @@ class FDEnvSelHeur(Env):
         :return:
         """
         self._prev_state = None
+        self.__step = 0
+        self.__start_time = time.time()
         if not self.done:  # This means we interrupt FD before a plan was found
             # Inform FD about imminent shutdown of the connection
             self.send_msg(str.encode("END"))
@@ -200,7 +210,8 @@ class FDEnvSelHeur(Env):
         s, _, _ = self._process_data()
         num_rand_steps = self.rng.randint(self.max_rand_steps + 1)
         for i in range(num_rand_steps):  # Random initial steps
-            s, _, _, _ = self.step(self.action_space.sample())
+            # s, _, _, _ = self.step(self.action_space.sample())
+            s, _, _, _ = self.step(0)  # hard coded to zero as initial step
 
         remove(fp)  # remove the port file such that there is no chance of loading the old port
         return s
