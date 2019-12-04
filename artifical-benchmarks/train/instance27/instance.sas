@@ -4,11 +4,11 @@ end_version
 begin_metric
 1
 end_metric
-13
+11
 begin_variable
 ss
 -1
-13
+9
 value-0
 value-1
 value-2
@@ -18,15 +18,11 @@ value-5
 value-6
 value-7
 value-8
-value-9
-value-10
-value-11
-value-12
 end_variable
 begin_variable
 v0
 -1
-12
+10
 value-0
 value-1
 value-2
@@ -37,13 +33,11 @@ value-6
 value-7
 value-8
 value-9
-value-10
-value-11
 end_variable
 begin_variable
 v1
 -1
-12
+10
 value-0
 value-1
 value-2
@@ -54,8 +48,6 @@ value-6
 value-7
 value-8
 value-9
-value-10
-value-11
 end_variable
 begin_variable
 x0
@@ -113,24 +105,8 @@ x7
 value-0
 value-1
 end_variable
-begin_variable
-x8
--1
-2
-value-0
-value-1
-end_variable
-begin_variable
-x9
--1
-2
-value-0
-value-1
-end_variable
 0
 begin_state
-0
-0
 0
 0
 0
@@ -145,9 +121,9 @@ begin_state
 end_state
 begin_goal
 1
-0 12
+0 8
 end_goal
-164
+96
 begin_operator
 set_x0_to_0
 0
@@ -261,34 +237,6 @@ set_x7_to_1
 1
 end_operator
 begin_operator
-set_x8_to_0
-0
-1
-0 11 -1 0
-1
-end_operator
-begin_operator
-set_x8_to_1
-0
-1
-0 11 -1 1
-1
-end_operator
-begin_operator
-set_x9_to_0
-0
-1
-0 12 -1 0
-1
-end_operator
-begin_operator
-set_x9_to_1
-0
-1
-0 12 -1 1
-1
-end_operator
-begin_operator
 inc_ss_0_v0_0_1
 1
 0 0
@@ -362,121 +310,89 @@ inc_ss_0_v0_8_9
 end_operator
 begin_operator
 inc_ss_0_v0_9_10
-1
-0 0
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_0_v0_10_11
-1
-0 0
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_0_v0_11_12
 0
 2
-0 1 11 0
+0 1 9 0
 0 0 0 1
 1
 end_operator
 begin_operator
-inc_ss_1_v1_0_1
+inc_ss_1_v0_0_1
 1
 0 1
 1
-0 2 0 1
+0 1 0 1
 1
 end_operator
 begin_operator
-inc_ss_1_v1_1_2
+inc_ss_1_v0_1_2
 1
 0 1
 1
-0 2 1 2
+0 1 1 2
 1
 end_operator
 begin_operator
-inc_ss_1_v1_2_3
+inc_ss_1_v0_2_3
 1
 0 1
 1
-0 2 2 3
+0 1 2 3
 1
 end_operator
 begin_operator
-inc_ss_1_v1_3_4
+inc_ss_1_v0_3_4
 1
 0 1
 1
-0 2 3 4
+0 1 3 4
 1
 end_operator
 begin_operator
-inc_ss_1_v1_4_5
+inc_ss_1_v0_4_5
 1
 0 1
 1
-0 2 4 5
+0 1 4 5
 1
 end_operator
 begin_operator
-inc_ss_1_v1_5_6
+inc_ss_1_v0_5_6
 1
 0 1
 1
-0 2 5 6
+0 1 5 6
 1
 end_operator
 begin_operator
-inc_ss_1_v1_6_7
+inc_ss_1_v0_6_7
 1
 0 1
 1
-0 2 6 7
+0 1 6 7
 1
 end_operator
 begin_operator
-inc_ss_1_v1_7_8
+inc_ss_1_v0_7_8
 1
 0 1
 1
-0 2 7 8
+0 1 7 8
 1
 end_operator
 begin_operator
-inc_ss_1_v1_8_9
+inc_ss_1_v0_8_9
 1
 0 1
 1
-0 2 8 9
+0 1 8 9
 1
 end_operator
 begin_operator
-inc_ss_1_v1_9_10
-1
-0 1
-1
-0 2 9 10
-1
-end_operator
-begin_operator
-inc_ss_1_v1_10_11
-1
-0 1
-1
-0 2 10 11
-1
-end_operator
-begin_operator
-inc_ss_1_v1_11_12
+inc_ss_1_v0_9_10
 0
 2
-0 2 11 0
+0 1 9 0
 0 0 1 2
 1
 end_operator
@@ -554,25 +470,9 @@ inc_ss_2_v1_8_9
 end_operator
 begin_operator
 inc_ss_2_v1_9_10
-1
-0 2
-1
-0 2 9 10
-1
-end_operator
-begin_operator
-inc_ss_2_v1_10_11
-1
-0 2
-1
-0 2 10 11
-1
-end_operator
-begin_operator
-inc_ss_2_v1_11_12
 0
 2
-0 2 11 0
+0 2 9 0
 0 0 2 3
 1
 end_operator
@@ -650,25 +550,9 @@ inc_ss_3_v0_8_9
 end_operator
 begin_operator
 inc_ss_3_v0_9_10
-1
-0 3
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_3_v0_10_11
-1
-0 3
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_3_v0_11_12
 0
 2
-0 1 11 0
+0 1 9 0
 0 0 3 4
 1
 end_operator
@@ -746,217 +630,169 @@ inc_ss_4_v1_8_9
 end_operator
 begin_operator
 inc_ss_4_v1_9_10
-1
-0 4
-1
-0 2 9 10
-1
-end_operator
-begin_operator
-inc_ss_4_v1_10_11
-1
-0 4
-1
-0 2 10 11
-1
-end_operator
-begin_operator
-inc_ss_4_v1_11_12
 0
 2
-0 2 11 0
+0 2 9 0
 0 0 4 5
 1
 end_operator
 begin_operator
-inc_ss_5_v0_0_1
+inc_ss_5_v1_0_1
 1
 0 5
 1
-0 1 0 1
+0 2 0 1
 1
 end_operator
 begin_operator
-inc_ss_5_v0_1_2
+inc_ss_5_v1_1_2
 1
 0 5
 1
-0 1 1 2
+0 2 1 2
 1
 end_operator
 begin_operator
-inc_ss_5_v0_2_3
+inc_ss_5_v1_2_3
 1
 0 5
 1
-0 1 2 3
+0 2 2 3
 1
 end_operator
 begin_operator
-inc_ss_5_v0_3_4
+inc_ss_5_v1_3_4
 1
 0 5
 1
-0 1 3 4
+0 2 3 4
 1
 end_operator
 begin_operator
-inc_ss_5_v0_4_5
+inc_ss_5_v1_4_5
 1
 0 5
 1
-0 1 4 5
+0 2 4 5
 1
 end_operator
 begin_operator
-inc_ss_5_v0_5_6
+inc_ss_5_v1_5_6
 1
 0 5
 1
-0 1 5 6
+0 2 5 6
 1
 end_operator
 begin_operator
-inc_ss_5_v0_6_7
+inc_ss_5_v1_6_7
 1
 0 5
 1
-0 1 6 7
+0 2 6 7
 1
 end_operator
 begin_operator
-inc_ss_5_v0_7_8
+inc_ss_5_v1_7_8
 1
 0 5
 1
-0 1 7 8
+0 2 7 8
 1
 end_operator
 begin_operator
-inc_ss_5_v0_8_9
+inc_ss_5_v1_8_9
 1
 0 5
 1
-0 1 8 9
+0 2 8 9
 1
 end_operator
 begin_operator
-inc_ss_5_v0_9_10
-1
-0 5
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_5_v0_10_11
-1
-0 5
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_5_v0_11_12
+inc_ss_5_v1_9_10
 0
 2
-0 1 11 0
+0 2 9 0
 0 0 5 6
 1
 end_operator
 begin_operator
-inc_ss_6_v0_0_1
+inc_ss_6_v1_0_1
 1
 0 6
 1
-0 1 0 1
+0 2 0 1
 1
 end_operator
 begin_operator
-inc_ss_6_v0_1_2
+inc_ss_6_v1_1_2
 1
 0 6
 1
-0 1 1 2
+0 2 1 2
 1
 end_operator
 begin_operator
-inc_ss_6_v0_2_3
+inc_ss_6_v1_2_3
 1
 0 6
 1
-0 1 2 3
+0 2 2 3
 1
 end_operator
 begin_operator
-inc_ss_6_v0_3_4
+inc_ss_6_v1_3_4
 1
 0 6
 1
-0 1 3 4
+0 2 3 4
 1
 end_operator
 begin_operator
-inc_ss_6_v0_4_5
+inc_ss_6_v1_4_5
 1
 0 6
 1
-0 1 4 5
+0 2 4 5
 1
 end_operator
 begin_operator
-inc_ss_6_v0_5_6
+inc_ss_6_v1_5_6
 1
 0 6
 1
-0 1 5 6
+0 2 5 6
 1
 end_operator
 begin_operator
-inc_ss_6_v0_6_7
+inc_ss_6_v1_6_7
 1
 0 6
 1
-0 1 6 7
+0 2 6 7
 1
 end_operator
 begin_operator
-inc_ss_6_v0_7_8
+inc_ss_6_v1_7_8
 1
 0 6
 1
-0 1 7 8
+0 2 7 8
 1
 end_operator
 begin_operator
-inc_ss_6_v0_8_9
+inc_ss_6_v1_8_9
 1
 0 6
 1
-0 1 8 9
+0 2 8 9
 1
 end_operator
 begin_operator
-inc_ss_6_v0_9_10
-1
-0 6
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_6_v0_10_11
-1
-0 6
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_6_v0_11_12
+inc_ss_6_v1_9_10
 0
 2
-0 1 11 0
+0 2 9 0
 0 0 6 7
 1
 end_operator
@@ -1034,410 +870,10 @@ inc_ss_7_v1_8_9
 end_operator
 begin_operator
 inc_ss_7_v1_9_10
-1
-0 7
-1
-0 2 9 10
-1
-end_operator
-begin_operator
-inc_ss_7_v1_10_11
-1
-0 7
-1
-0 2 10 11
-1
-end_operator
-begin_operator
-inc_ss_7_v1_11_12
 0
 2
-0 2 11 0
+0 2 9 0
 0 0 7 8
-1
-end_operator
-begin_operator
-inc_ss_8_v1_0_1
-1
-0 8
-1
-0 2 0 1
-1
-end_operator
-begin_operator
-inc_ss_8_v1_1_2
-1
-0 8
-1
-0 2 1 2
-1
-end_operator
-begin_operator
-inc_ss_8_v1_2_3
-1
-0 8
-1
-0 2 2 3
-1
-end_operator
-begin_operator
-inc_ss_8_v1_3_4
-1
-0 8
-1
-0 2 3 4
-1
-end_operator
-begin_operator
-inc_ss_8_v1_4_5
-1
-0 8
-1
-0 2 4 5
-1
-end_operator
-begin_operator
-inc_ss_8_v1_5_6
-1
-0 8
-1
-0 2 5 6
-1
-end_operator
-begin_operator
-inc_ss_8_v1_6_7
-1
-0 8
-1
-0 2 6 7
-1
-end_operator
-begin_operator
-inc_ss_8_v1_7_8
-1
-0 8
-1
-0 2 7 8
-1
-end_operator
-begin_operator
-inc_ss_8_v1_8_9
-1
-0 8
-1
-0 2 8 9
-1
-end_operator
-begin_operator
-inc_ss_8_v1_9_10
-1
-0 8
-1
-0 2 9 10
-1
-end_operator
-begin_operator
-inc_ss_8_v1_10_11
-1
-0 8
-1
-0 2 10 11
-1
-end_operator
-begin_operator
-inc_ss_8_v1_11_12
-0
-2
-0 2 11 0
-0 0 8 9
-1
-end_operator
-begin_operator
-inc_ss_9_v0_0_1
-1
-0 9
-1
-0 1 0 1
-1
-end_operator
-begin_operator
-inc_ss_9_v0_1_2
-1
-0 9
-1
-0 1 1 2
-1
-end_operator
-begin_operator
-inc_ss_9_v0_2_3
-1
-0 9
-1
-0 1 2 3
-1
-end_operator
-begin_operator
-inc_ss_9_v0_3_4
-1
-0 9
-1
-0 1 3 4
-1
-end_operator
-begin_operator
-inc_ss_9_v0_4_5
-1
-0 9
-1
-0 1 4 5
-1
-end_operator
-begin_operator
-inc_ss_9_v0_5_6
-1
-0 9
-1
-0 1 5 6
-1
-end_operator
-begin_operator
-inc_ss_9_v0_6_7
-1
-0 9
-1
-0 1 6 7
-1
-end_operator
-begin_operator
-inc_ss_9_v0_7_8
-1
-0 9
-1
-0 1 7 8
-1
-end_operator
-begin_operator
-inc_ss_9_v0_8_9
-1
-0 9
-1
-0 1 8 9
-1
-end_operator
-begin_operator
-inc_ss_9_v0_9_10
-1
-0 9
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_9_v0_10_11
-1
-0 9
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_9_v0_11_12
-0
-2
-0 1 11 0
-0 0 9 10
-1
-end_operator
-begin_operator
-inc_ss_10_v0_0_1
-1
-0 10
-1
-0 1 0 1
-1
-end_operator
-begin_operator
-inc_ss_10_v0_1_2
-1
-0 10
-1
-0 1 1 2
-1
-end_operator
-begin_operator
-inc_ss_10_v0_2_3
-1
-0 10
-1
-0 1 2 3
-1
-end_operator
-begin_operator
-inc_ss_10_v0_3_4
-1
-0 10
-1
-0 1 3 4
-1
-end_operator
-begin_operator
-inc_ss_10_v0_4_5
-1
-0 10
-1
-0 1 4 5
-1
-end_operator
-begin_operator
-inc_ss_10_v0_5_6
-1
-0 10
-1
-0 1 5 6
-1
-end_operator
-begin_operator
-inc_ss_10_v0_6_7
-1
-0 10
-1
-0 1 6 7
-1
-end_operator
-begin_operator
-inc_ss_10_v0_7_8
-1
-0 10
-1
-0 1 7 8
-1
-end_operator
-begin_operator
-inc_ss_10_v0_8_9
-1
-0 10
-1
-0 1 8 9
-1
-end_operator
-begin_operator
-inc_ss_10_v0_9_10
-1
-0 10
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_10_v0_10_11
-1
-0 10
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_10_v0_11_12
-0
-2
-0 1 11 0
-0 0 10 11
-1
-end_operator
-begin_operator
-inc_ss_11_v0_0_1
-1
-0 11
-1
-0 1 0 1
-1
-end_operator
-begin_operator
-inc_ss_11_v0_1_2
-1
-0 11
-1
-0 1 1 2
-1
-end_operator
-begin_operator
-inc_ss_11_v0_2_3
-1
-0 11
-1
-0 1 2 3
-1
-end_operator
-begin_operator
-inc_ss_11_v0_3_4
-1
-0 11
-1
-0 1 3 4
-1
-end_operator
-begin_operator
-inc_ss_11_v0_4_5
-1
-0 11
-1
-0 1 4 5
-1
-end_operator
-begin_operator
-inc_ss_11_v0_5_6
-1
-0 11
-1
-0 1 5 6
-1
-end_operator
-begin_operator
-inc_ss_11_v0_6_7
-1
-0 11
-1
-0 1 6 7
-1
-end_operator
-begin_operator
-inc_ss_11_v0_7_8
-1
-0 11
-1
-0 1 7 8
-1
-end_operator
-begin_operator
-inc_ss_11_v0_8_9
-1
-0 11
-1
-0 1 8 9
-1
-end_operator
-begin_operator
-inc_ss_11_v0_9_10
-1
-0 11
-1
-0 1 9 10
-1
-end_operator
-begin_operator
-inc_ss_11_v0_10_11
-1
-0 11
-1
-0 1 10 11
-1
-end_operator
-begin_operator
-inc_ss_11_v0_11_12
-0
-2
-0 1 11 0
-0 0 11 12
 1
 end_operator
 0
