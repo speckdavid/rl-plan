@@ -189,7 +189,7 @@ def main():
     opt = optimizers.Adam(eps=1e-2)
     logging.info('Optimizer: %s', str(opt))
     opt.setup(q_func)
-    opt.add_hook(GradientClipping(5))
+    # opt.add_hook(GradientClipping(5))
 
     rbuf_capacity = 5 * 10 ** 5
     if args.minibatch_size is None:
