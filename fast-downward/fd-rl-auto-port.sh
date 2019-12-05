@@ -32,19 +32,19 @@ DIR=$(cd `dirname $0` && pwd)
 while [ $counter -le $3 ] 
 do
     tmpcount=0
-    while [ $tmpcount -le 4 ]
+    while [ $tmpcount -le 20 ]
     do
-        if [ ! -f $4 ];
+        if [ ! -f "$4" ];
         then
-            sleep 2
+            sleep 1
             ((tmpcount++))
         else
-            tmpcount=9
+            tmpcount=999
         fi
     done
     tmpcount=0
     port=$(<$4)
     echo "Port: $port"
-    python3 $DIR/fast-downward.py $1 --evaluator "hff=ff()" --evaluator "hblind=blind()" --evaluator "hadd=add()" --search "lazy(rl([single(hff), single(hblind), single(hadd)]),rl=true,rl_control_interval=$2,rl_client_port=$port)" || exit 1
+    python3 $DIR/fast-downward.py $1 --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])]),rl=true,rl_control_interval=$2,rl_client_port=$port)" || exit 1
     ((counter++))
 done

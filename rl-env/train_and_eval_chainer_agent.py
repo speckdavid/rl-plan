@@ -224,7 +224,7 @@ def main():
         except ValueError:
             t_offset = 0
 
-    eval_env = make_env(test=False)
+    eval_env = make_env(test=True)
 
     if args.evaluate:
         eval_stats = experiments.eval_performance(
@@ -250,12 +250,36 @@ def main():
                 # time or number of episodes
                 raise NotImplementedError
 
+        # def eval_hook(env, agent, step):  # TODO for differentiation between TRAIN/VALID and TEST
+        #     if step % args.eval_interval == 0:
+        #         to_eval = env.n_insts
+        #         train_reward = 0
+        #         for _ in range(to_eval):
+        #             obs = env.reset()
+        #             done = False
+        #             rews = 0
+        #             while not done:
+        #                 obs, r, done, _ = env.step(agent.act(obs))
+        #                 rews += r
+        #             train_reward += rews
+        #         train_reward = train_reward / to_eval
+        #         with open(os.path.join(args.outdir, 'train_reward.txt'), 'a') as fh:
+        #             fh.writelines(str(train_reward) + '\t' + str(step) + '\t' + str(to_eval) + '\n')
+
         hooks = [checkpoint]
-        experiments.train_agent(
+        # if args.exponential:
+        #     hooks.append(eval_hook)
+
+        experiments.train_agent_with_evaluation(
             agent=agent,
             env=env,
             steps=args.steps,
+            eval_n_steps=None,  # unlimited number of steps per evaluation rollout
+            eval_n_episodes=args.eval_n_runs,
+            eval_interval=args.eval_interval,
             outdir=args.outdir,
+            eval_env=eval_env,
+            train_max_episode_len=timestep_limit,
             step_hooks=hooks,
             step_offset=t_offset
         )
