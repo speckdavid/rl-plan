@@ -83,6 +83,7 @@ def main():
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
+    parser.add_argument('--port', default=None, help='port to use', type=int)
     args = parser.parse_args()
     import logging
     logging.basicConfig(level=logging.INFO if not args.verbose else logging.DEBUG)
@@ -113,7 +114,10 @@ def main():
 
     def make_env(test):
         HOST = ''  # The server's hostname or IP address
-        PORT = 54321  # The port used by the server
+        if args.port:
+            PORT = args.port
+        else:
+            PORT = 54321  # The port used by the server
         if test:  # Just such that eval and train env don't have the same port
             PORT += 1
 
