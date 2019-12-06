@@ -29,7 +29,8 @@ class FDEnvSelHeur(Env):
 
     def __init__(self, num_heuristics: int, host: str='', port: int=12345,
                  num_steps=None, state_type: Union[int, StateType]=StateType.RAW,
-                 seed: int=12345, max_rand_steps: int=0, config_dir: str='.'):
+                 seed: int=12345, max_rand_steps: int=0, config_dir: str='.',
+                 port_file_id=None):
         """
         Initialize environment
         """
@@ -51,6 +52,7 @@ class FDEnvSelHeur(Env):
         self.__state_type = state_type
         self.__norm_vals = []
         self._config_dir = config_dir
+        self._port_file_id = port_file_id
 
         self._transformation_func = None
         # create state transformation function with inputs (current state, previous state, normalization values)
@@ -200,7 +202,10 @@ class FDEnvSelHeur(Env):
             self.socket.bind((self.host, self.port))
 
         # write down port such that FD can potentially read where to connect to
-        fp = joinpath(self._config_dir, 'port.txt')
+        if self._port_file_id:
+            fp = joinpath(self._config_dir, 'port_{:d}.txt'.format(self._port_file_id))
+        else:
+            fp = joinpath(self._config_dir, 'port.txt')
         with open(fp, 'w') as portfh:
             portfh.write(str(self.port))
         print(fp)

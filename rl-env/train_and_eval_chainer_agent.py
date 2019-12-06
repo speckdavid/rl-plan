@@ -81,6 +81,9 @@ def main():
     parser.add_argument('--time-step-limit', type=int, default=1e5)
     parser.add_argument('--outdir-time-suffix', choices=['empty', 'none', 'time'], default='empty', type=str.lower)
     parser.add_argument('--save-eval-stats', default=None, help='File name in which evaluation data will be saved')
+    parser.add_argument('--port-file-id', default=None, type=int, dest='pfid',
+                        help='ID (int) appended to port file. Useful when running multiple environment instances on'
+                             ' a compute cluster.')
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
@@ -128,7 +131,7 @@ def main():
         # TODO don't hardcode env params
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir)
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir, port_file_id=args.pfid)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
