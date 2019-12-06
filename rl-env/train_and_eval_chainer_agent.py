@@ -80,6 +80,7 @@ def main():
     parser.add_argument('--reward-scale-factor', type=float, default=1)
     parser.add_argument('--time-step-limit', type=int, default=1e5)
     parser.add_argument('--outdir-time-suffix', choices=['empty', 'none', 'time'], default='empty', type=str.lower)
+    parser.add_argument('--save-eval-stats', default=None, help='File name in which evaluation data will be saved')
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
@@ -91,23 +92,26 @@ def main():
     # Set a random seed used in ChainerRL ALSO SETS NUMPY SEED!
     misc.set_random_seed(args.seed)
 
-    if args.outdir and not args.load:
-        outdir_suffix_dict = {'none': '', 'empty': '', 'time': '%Y%m%dT%H%M%S.%f'}
-        args.outdir = experiments.prepare_output_dir(
-            args, args.outdir, argv=sys.argv, time_format=outdir_suffix_dict[args.outdir_time_suffix])
-    elif args.load:
-        if args.load.endswith(os.path.sep):
-            args.load = args.load[:-1]
-        args.outdir = os.path.dirname(args.load)
-        count = 0
-        fn = os.path.join(args.outdir.format(count), 'scores_{:>03d}')
-        while os.path.exists(fn.format(count)):
-            count += 1
-        os.rename(os.path.join(args.outdir, 'scores.txt'), fn.format(count))
-        if os.path.exists(os.path.join(args.outdir, 'best')):
-            os.rename(os.path.join(args.outdir, 'best'), os.path.join(args.outdir, 'best_{:>03d}'.format(count)))
+    if not args.evaluate:
+        if args.outdir and not args.load:
+            outdir_suffix_dict = {'none': '', 'empty': '', 'time': '%Y%m%dT%H%M%S.%f'}
+            args.outdir = experiments.prepare_output_dir(
+                args, args.outdir, argv=sys.argv, time_format=outdir_suffix_dict[args.outdir_time_suffix])
+        elif args.load:
+            if args.load.endswith(os.path.sep):
+                args.load = args.load[:-1]
+            args.outdir = os.path.dirname(args.load)
+            count = 0
+            fn = os.path.join(args.outdir.format(count), 'scores_{:>03d}')
+            while os.path.exists(fn.format(count)):
+                count += 1
+            os.rename(os.path.join(args.outdir, 'scores.txt'), fn.format(count))
+            if os.path.exists(os.path.join(args.outdir, 'best')):
+                os.rename(os.path.join(args.outdir, 'best'), os.path.join(args.outdir, 'best_{:>03d}'.format(count)))
 
-    logging.info('Output files are saved in {}'.format(args.outdir))
+        logging.info('Output files are saved in {}'.format(args.outdir))
+    else:
+        args.outdir = args.load
 
     def clip_action_filter(a):
         return np.clip(a, action_space.low, action_space.high)
@@ -218,15 +222,16 @@ def main():
     t_offset = 0
     if args.load:  # Continue training model or load for evaluation
         agent.load(args.load)
-        rbuf.load(os.path.join(args.load, 'replay_buffer.pkl'))
-        try:
-            t_offset = int(os.path.basename(args.load).split('_')[0])
-        except TypeError:
-            with open(os.path.join(args.load, 't.txt'), 'r') as fh:
-                data = fh.readlines()
-            t_offset = int(data[0])
-        except ValueError:
-            t_offset = 0
+        if not args.evaluate:
+            rbuf.load(os.path.join(args.load, 'replay_buffer.pkl'))
+            try:
+                t_offset = int(os.path.basename(args.load).split('_')[0])
+            except TypeError:
+                with open(os.path.join(args.load, 't.txt'), 'r') as fh:
+                    data = fh.readlines()
+                t_offset = int(data[0])
+            except ValueError:
+                t_offset = 0
 
     eval_env = make_env(test=True)
 
@@ -240,6 +245,12 @@ def main():
         print('n_runs: {} mean: {} median: {} stdev {}'.format(
             args.eval_n_runs, eval_stats['mean'], eval_stats['median'],
             eval_stats['stdev']))
+        if args.save_eval_stats:
+            import json
+            if not args.save_eval_stats.endswith('.json'):
+                args.save_eval_stats += '.json'
+            with open(os.path.join(args.outdir, args.save_eval_stats), 'w') as outfile:
+                json.dump(eval_stats, outfile)
     else:
         criterion = 'steps'  # can be made an argument if we support any other form of checkpointing
         l = logging.getLogger('Checkpoint_Hook')
