@@ -4,3 +4,4 @@ chainerrl
 pandas
 matplotlib
 seaborn
+jupyter
