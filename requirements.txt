@@ -1,3 +1,6 @@
 gym
 chainer
 chainerrl
+pandas
+matplotlib
+seaborn
