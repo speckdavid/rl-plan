@@ -80,9 +80,14 @@ def main():
     parser.add_argument('--reward-scale-factor', type=float, default=1)
     parser.add_argument('--time-step-limit', type=int, default=1e5)
     parser.add_argument('--outdir-time-suffix', choices=['empty', 'none', 'time'], default='empty', type=str.lower)
+    parser.add_argument('--save-eval-stats', default=None, help='File name in which evaluation data will be saved')
+    parser.add_argument('--port-file-id', default=None, type=int, dest='pfid',
+                        help='ID (int) appended to port file. Useful when running multiple environment instances on'
+                             ' a compute cluster.')
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
+    parser.add_argument('--port', default=None, help='port to use', type=int)
     args = parser.parse_args()
     import logging
     logging.basicConfig(level=logging.INFO if not args.verbose else logging.DEBUG)
@@ -90,37 +95,43 @@ def main():
     # Set a random seed used in ChainerRL ALSO SETS NUMPY SEED!
     misc.set_random_seed(args.seed)
 
-    if args.outdir and not args.load:
-        outdir_suffix_dict = {'none': '', 'empty': '', 'time': '%Y%m%dT%H%M%S.%f'}
-        args.outdir = experiments.prepare_output_dir(
-            args, args.outdir, argv=sys.argv, time_format=outdir_suffix_dict[args.outdir_time_suffix])
-    elif args.load:
-        if args.load.endswith(os.path.sep):
-            args.load = args.load[:-1]
-        args.outdir = os.path.dirname(args.load)
-        count = 0
-        fn = os.path.join(args.outdir.format(count), 'scores_{:>03d}')
-        while os.path.exists(fn.format(count)):
-            count += 1
-        os.rename(os.path.join(args.outdir, 'scores.txt'), fn.format(count))
-        if os.path.exists(os.path.join(args.outdir, 'best')):
-            os.rename(os.path.join(args.outdir, 'best'), os.path.join(args.outdir, 'best_{:>03d}'.format(count)))
+    if not args.evaluate:
+        if args.outdir and not args.load:
+            outdir_suffix_dict = {'none': '', 'empty': '', 'time': '%Y%m%dT%H%M%S.%f'}
+            args.outdir = experiments.prepare_output_dir(
+                args, args.outdir, argv=sys.argv, time_format=outdir_suffix_dict[args.outdir_time_suffix])
+        elif args.load:
+            if args.load.endswith(os.path.sep):
+                args.load = args.load[:-1]
+            args.outdir = os.path.dirname(args.load)
+            count = 0
+            fn = os.path.join(args.outdir.format(count), 'scores_{:>03d}')
+            while os.path.exists(fn.format(count)):
+                count += 1
+            os.rename(os.path.join(args.outdir, 'scores.txt'), fn.format(count))
+            if os.path.exists(os.path.join(args.outdir, 'best')):
+                os.rename(os.path.join(args.outdir, 'best'), os.path.join(args.outdir, 'best_{:>03d}'.format(count)))
 
-    logging.info('Output files are saved in {}'.format(args.outdir))
+        logging.info('Output files are saved in {}'.format(args.outdir))
+    else:
+        args.outdir = args.load
 
     def clip_action_filter(a):
         return np.clip(a, action_space.low, action_space.high)
 
     def make_env(test):
         HOST = ''  # The server's hostname or IP address
-        PORT = 54321  # The port used by the server
+        if args.port:
+            PORT = args.port
+        else:
+            PORT = 54321  # The port used by the server
         if test:  # Just such that eval and train env don't have the same port
             PORT += 1
 
         # TODO don't hardcode env params
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir)
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir, port_file_id=args.pfid)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
@@ -189,7 +200,7 @@ def main():
     opt = optimizers.Adam(eps=1e-2)
     logging.info('Optimizer: %s', str(opt))
     opt.setup(q_func)
-    opt.add_hook(GradientClipping(5))
+    # opt.add_hook(GradientClipping(5))
 
     rbuf_capacity = 5 * 10 ** 5
     if args.minibatch_size is None:
@@ -214,17 +225,18 @@ def main():
     t_offset = 0
     if args.load:  # Continue training model or load for evaluation
         agent.load(args.load)
-        rbuf.load(os.path.join(args.load, 'replay_buffer.pkl'))
-        try:
-            t_offset = int(os.path.basename(args.load).split('_')[0])
-        except TypeError:
-            with open(os.path.join(args.load, 't.txt'), 'r') as fh:
-                data = fh.readlines()
-            t_offset = int(data[0])
-        except ValueError:
-            t_offset = 0
+        if not args.evaluate:
+            rbuf.load(os.path.join(args.load, 'replay_buffer.pkl'))
+            try:
+                t_offset = int(os.path.basename(args.load).split('_')[0])
+            except TypeError:
+                with open(os.path.join(args.load, 't.txt'), 'r') as fh:
+                    data = fh.readlines()
+                t_offset = int(data[0])
+            except ValueError:
+                t_offset = 0
 
-    eval_env = make_env(test=False)
+    eval_env = make_env(test=True)
 
     if args.evaluate:
         eval_stats = experiments.eval_performance(
@@ -236,6 +248,12 @@ def main():
         print('n_runs: {} mean: {} median: {} stdev {}'.format(
             args.eval_n_runs, eval_stats['mean'], eval_stats['median'],
             eval_stats['stdev']))
+        if args.save_eval_stats:
+            import json
+            if not args.save_eval_stats.endswith('.json'):
+                args.save_eval_stats += '.json'
+            with open(os.path.join(args.outdir, args.save_eval_stats), 'w') as outfile:
+                json.dump(eval_stats, outfile)
     else:
         criterion = 'steps'  # can be made an argument if we support any other form of checkpointing
         l = logging.getLogger('Checkpoint_Hook')
@@ -250,12 +268,36 @@ def main():
                 # time or number of episodes
                 raise NotImplementedError
 
+        # def eval_hook(env, agent, step):  # TODO for differentiation between TRAIN/VALID and TEST
+        #     if step % args.eval_interval == 0:
+        #         to_eval = env.n_insts
+        #         train_reward = 0
+        #         for _ in range(to_eval):
+        #             obs = env.reset()
+        #             done = False
+        #             rews = 0
+        #             while not done:
+        #                 obs, r, done, _ = env.step(agent.act(obs))
+        #                 rews += r
+        #             train_reward += rews
+        #         train_reward = train_reward / to_eval
+        #         with open(os.path.join(args.outdir, 'train_reward.txt'), 'a') as fh:
+        #             fh.writelines(str(train_reward) + '\t' + str(step) + '\t' + str(to_eval) + '\n')
+
         hooks = [checkpoint]
-        experiments.train_agent(
+        # if args.exponential:
+        #     hooks.append(eval_hook)
+
+        experiments.train_agent_with_evaluation(
             agent=agent,
             env=env,
             steps=args.steps,
+            eval_n_steps=None,  # unlimited number of steps per evaluation rollout
+            eval_n_episodes=args.eval_n_runs,
+            eval_interval=args.eval_interval,
             outdir=args.outdir,
+            eval_env=eval_env,
+            train_max_episode_len=timestep_limit,
             step_hooks=hooks,
             step_offset=t_offset
         )
