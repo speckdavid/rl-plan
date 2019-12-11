@@ -145,6 +145,14 @@ SearchStatus EagerSearch::step() {
                 rl_steps_until_control = rl_control_interval;
                 double last_step_time = rl_timer();
                 std::map<std::string, double> stats;
+                stats["expanded_states"] = statistics.get_expanded();
+                stats["evaluated_states"] = statistics.get_evaluated_states();
+                stats["evaluations"] = statistics.get_evaluations();
+                stats["generated_states"] = statistics.get_generated();
+                stats["reopened_states"] = statistics.get_reopened();
+                stats["generated_ops"] = statistics.get_generated_ops();
+                stats["registered_states"] = state_registry.size();
+                stats["num_variables"] = state_registry.get_num_variables();
                 stats["reward"] = -(rl_control_interval+1);
                 stats["done"] = 0;
                 // std::cout << "SENDINGS MSG" << std::endl;
@@ -221,8 +229,16 @@ SearchStatus EagerSearch::step() {
         if (rl) {
             double last_step_time = rl_timer();
             std::map<std::string, double> stats;
+            stats["expanded_states"] = statistics.get_expanded();
+            stats["evaluated_states"] = statistics.get_evaluated_states();
+            stats["evaluations"] = statistics.get_evaluations();
+            stats["generated_states"] = statistics.get_generated();
+            stats["reopened_states"] = statistics.get_reopened();
+            stats["generated_ops"] = statistics.get_generated_ops();
+            stats["registered_states"] = state_registry.size();
+            stats["num_variables"] = state_registry.get_num_variables();
             stats["reward"] = -(rl_control_interval+1);
-            stats["done"] = 1;
+            stats["done"] = 0;
             rl_client.send_msg(open_list->get_lists_statistics(), stats);
         }
         return SOLVED;

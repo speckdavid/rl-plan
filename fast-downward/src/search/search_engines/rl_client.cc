@@ -58,12 +58,9 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open
         py_dict += "},";
     }
 
-    if (additional_stats.empty()) {
-        py_dict = py_dict.substr(0, py_dict.size() - 1);
-    }
 
     for (auto& value_pair : additional_stats) {
-            py_dict += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
+        py_dict += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
     }
     py_dict = py_dict.substr(0, py_dict.size() - 1);
 
