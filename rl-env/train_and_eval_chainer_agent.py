@@ -21,7 +21,6 @@ import sys
 import chainerrl
 import numpy as np
 from chainer import optimizers
-from chainer.optimizer_hooks import GradientClipping
 from chainerrl import experiments
 from chainerrl import explorers
 from chainerrl import links
@@ -88,6 +87,7 @@ def main():
                         help="Nuber of steps to checkpoint after")
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
     parser.add_argument('--port', default=None, help='port to use', type=int)
+    parser.add_argument('--use-gsi', '-u', action='store_true', help='Use general state features')
     args = parser.parse_args()
     import logging
     logging.basicConfig(level=logging.INFO if not args.verbose else logging.DEBUG)
@@ -131,7 +131,8 @@ def main():
         # TODO don't hardcode env params
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir, port_file_id=args.pfid)
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir, port_file_id=args.pfid,
+                           use_general_state_info=args.use_gsi)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)

@@ -238,7 +238,7 @@ SearchStatus EagerSearch::step() {
             stats["registered_states"] = state_registry.size();
             stats["num_variables"] = state_registry.get_num_variables();
             stats["reward"] = -(rl_control_interval+1);
-            stats["done"] = 0;
+            stats["done"] = 1;
             rl_client.send_msg(open_list->get_lists_statistics(), stats);
         }
         return SOLVED;

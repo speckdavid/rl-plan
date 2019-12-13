@@ -1,21 +1,19 @@
-import typing
 import socket
-from enum import Enum
 import time
-from typing import Union
+import typing
 from copy import deepcopy
-from os.path import join as joinpath
+from enum import Enum
 from os import remove
+from os.path import join as joinpath
+from typing import Union
 
 import numpy as np
-
-from gym.spaces import Discrete, Box
 from gym import Env
+from gym.spaces import Discrete, Box
 from gym.utils import seeding
 
 
 class StateType(Enum):
-
     """Class to define numbers for state types"""
     RAW = 1
     DIFF = 2
@@ -27,19 +25,30 @@ class StateType(Enum):
 
 class FDEnvSelHeur(Env):
 
-    def __init__(self, num_heuristics: int, host: str='', port: int=12345,
-                 num_steps=None, state_type: Union[int, StateType]=StateType.RAW,
-                 seed: int=12345, max_rand_steps: int=0, config_dir: str='.',
-                 port_file_id=None):
+    def __init__(self, num_heuristics: int, host: str = '', port: int = 12345,
+                 num_steps=None, state_type: Union[int, StateType] = StateType.RAW,
+                 seed: int = 12345, max_rand_steps: int = 0, config_dir: str = '.',
+                 port_file_id=None, use_general_state_info: bool = True):
         """
         Initialize environment
         """
 
-        self._state_fields = ['Average Value', 'Dead Ends Reliable', 'Max Value', 'Min Value', 'Open List Entries']
+        self._heuristic_state_features = ['Average Value', 'Dead Ends Reliable',
+                                          'Max Value', 'Min Value', 'Open List Entries']
         self.action_space = Discrete(num_heuristics)
-        self.observation_space = Box(low=np.array([-np.inf for _ in range(num_heuristics * len(self._state_fields))]),
-                                     high=np.array([np.inf for _ in range(num_heuristics * len(self._state_fields))]),
-                                     dtype=np.float32)
+        self._general_state_features = ['evaluated_states', 'evaluations', 'expanded_states',
+                                        'generated_ops', 'generated_states', 'num_variables',
+                                        'registered_states', 'reopened_states']
+        total_state_features = (num_heuristics * len(self._heuristic_state_features))
+        self._use_gsi = use_general_state_info
+        if use_general_state_info:
+            total_state_features += len(self._general_state_features)
+        self.observation_space = Box(
+            low=np.array([-np.inf for _ in range(total_state_features)]),
+            high=np.array([np.inf for _ in range(total_state_features)]),
+            dtype=np.float32
+        )
+        self.__num_heuristics = num_heuristics
         self.host = host
         self.port = port
 
@@ -80,7 +89,6 @@ class FDEnvSelHeur(Env):
     @staticmethod
     def _save_div(a, b):
         return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
-
 
     def send_msg(self, msg: bytes):
         """
@@ -136,9 +144,13 @@ class FDEnvSelHeur(Env):
         del data['reward']
         del data['done']
         state = []
-        for heuristic_data in sorted(data.keys()):
-            for field in self._state_fields:
-                state.append(data[heuristic_data][field])
+
+        if self._use_gsi:
+            for feature in self._general_state_features:
+                state.append(data[feature])
+        for heuristic_id in range(self.__num_heuristics):  # process heuristic data
+            for feature in self._heuristic_state_features:
+                state.append(data["%d" % heuristic_id][feature])
 
         if self._prev_state is None:
             self.__norm_vals = deepcopy(state)
@@ -239,7 +251,7 @@ class FDEnvSelHeur(Env):
         """
         self.kill_connection()
 
-    def render(self, mode: str='human') -> None:
+    def render(self, mode: str = 'human') -> None:
         """
         Required by gym.Env but not implemented
         :param mode:
