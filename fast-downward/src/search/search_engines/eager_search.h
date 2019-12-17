@@ -37,11 +37,13 @@ class EagerSearch : public SearchEngine {
     int rl_control_interval;
     int rl_steps_until_control;
     std::string rl_answer;
+    std::map<std::string, double> rl_stats;
 
     void start_f_value_statistics(EvaluationContext &eval_context);
     void update_f_value_statistics(EvaluationContext &eval_context);
     void reward_progress();
     void print_checkpoint_line(int g) const;
+    void update_rl_stats(bool done);
 
 protected:
     virtual void initialize() override;

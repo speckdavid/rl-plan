@@ -32,7 +32,7 @@ public:
     void closeConn() const;
 
     void send_msg(const std::map<int, std::map<std::string, double>>& open_lists_stats, 
-                const std::map<std::string, double>& additional_stats) const;
+                const std::map<std::string, double>& engine_stats) const;
 
     std::string read_msg() const;
 };
