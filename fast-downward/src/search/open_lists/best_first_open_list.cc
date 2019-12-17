@@ -41,7 +41,6 @@ public:
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
     virtual int get_size() const override;
-    virtual std::map<std::string, double> get_statistics() const override;
     virtual std::string get_description() const override;
 };
 
@@ -116,25 +115,6 @@ bool BestFirstOpenList<Entry>::is_reliable_dead_end(
 template<class Entry>
 int BestFirstOpenList<Entry>::get_size() const {
     return size;
-}
-
-template<class Entry>
-std::map<std::string, double> BestFirstOpenList<Entry>::get_statistics() const {
-    std::map<std::string, double> stats;
-    stats["Open List Entries"] = get_size();
-    stats["Dead Ends Reliable"] = evaluator->dead_ends_are_reliable();
-    stats["Min Value"] = std::numeric_limits<double>::infinity();
-    stats["Max Value"] = -std::numeric_limits<double>::infinity();
-    stats["Average Value"] = 0;
-    for (auto& entry : buckets) {
-        stats["Min Value"] = std::min(stats["Min Value"], (double) entry.first);
-        stats["Max Value"] = std::max(stats["Min Value"], (double) entry.first);
-        stats["Average Value"] += entry.first * entry.second.size();
-    }
-    if (!empty()) {
-        stats["Average Value"] /= get_size();
-    }
-    return stats;
 }
 
 template<class Entry>

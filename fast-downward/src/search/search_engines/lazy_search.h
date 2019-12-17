@@ -11,9 +11,6 @@
 #include "../search_space.h"
 
 #include "../utils/rng.h"
-#include "../utils/timer.h"
-
-#include "rl_client.h"
 
 #include <memory>
 #include <vector>
@@ -35,13 +32,6 @@ protected:
 
     std::vector<Evaluator *> path_dependent_evaluators;
     std::vector<std::shared_ptr<Evaluator>> preferred_operator_evaluators;
-    
-    // RL
-    rl_client::RLClient rl_client;
-    bool rl;
-    utils::Timer rl_timer;
-    int rl_control_interval;
-    int rl_steps_until_control;
 
     GlobalState current_state;
     StateID current_predecessor_id;
@@ -49,7 +39,6 @@ protected:
     int current_g;
     int current_real_g;
     EvaluationContext current_eval_context;
-
 
     virtual void initialize() override;
     virtual SearchStatus step() override;

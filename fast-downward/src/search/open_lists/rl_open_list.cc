@@ -38,7 +38,7 @@ public:
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
 
-    virtual std::map<int, std::map<std::string, double>> get_lists_statistics() const override;
+    virtual void get_open_lists_statistics(std::map<int, std::map<std::string, double>>& open_lists_stats) const override;
 };
 
 
@@ -128,12 +128,15 @@ bool RLOpenList<Entry>::is_reliable_dead_end(
 }
 
 template<class Entry>
-std::map<int, std::map<std::string, double>> RLOpenList<Entry>::get_lists_statistics() const {
-    std::map<int, std::map<std::string, double>> result;
-    for (size_t i = 0; i < open_lists.size(); ++i) {
-        result[i] = open_lists.at(i)->get_statistics();
+void RLOpenList<Entry>::get_open_lists_statistics(std::map<int, std::map<std::string, double>>& open_lists_stats) const {
+    if (open_lists_stats.size() == 0) {
+        for (size_t i = 0; i < open_lists.size(); ++i) {
+            open_lists_stats[i] = std::map<std::string, double>();
+        }
     }
-    return result;
+    for (size_t i = 0; i < open_lists.size(); ++i) {
+        open_lists.at(i)->get_open_list_statistics(open_lists_stats[i]);
+    }
 }
 
 RLOpenListFactory::RLOpenListFactory(const Options &options)

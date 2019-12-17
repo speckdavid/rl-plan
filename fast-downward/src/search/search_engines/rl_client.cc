@@ -45,7 +45,7 @@ void RLClient::send_msg(const std::string& msg) const {
 }
 
 void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open_lists_stats, 
-                const std::map<std::string, double>& additional_stats) const {
+                const std::map<std::string, double>& engine_stats) const {
     std::string py_dict = "{";
     for (auto& config_values : open_lists_stats) {
         int config = config_values.first;
@@ -59,7 +59,7 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open
     }
 
 
-    for (auto& value_pair : additional_stats) {
+    for (auto& value_pair : engine_stats) {
         py_dict += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
     }
     py_dict = py_dict.substr(0, py_dict.size() - 1);
