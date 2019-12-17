@@ -33,11 +33,12 @@ class FDEnvSelHeur(Env):
         Initialize environment
         """
 
-        self._heuristic_state_features = ['Average Value', 'Dead Ends Reliable',
+        self._heuristic_state_features = ['Average Value',  # 'Dead Ends Reliable',
                                           'Max Value', 'Min Value', 'Open List Entries']
         self.action_space = Discrete(num_heuristics)
         self._general_state_features = ['evaluated_states', 'evaluations', 'expanded_states',
-                                        'generated_ops', 'generated_states', 'num_variables',
+                                        # 'generated_ops',
+                                        'generated_states', 'num_variables',
                                         'registered_states', 'reopened_states',
                                         "cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"]
 
@@ -52,7 +53,11 @@ class FDEnvSelHeur(Env):
         )
 
         self.__skip_transform = [False for _ in range(total_state_features)]
-        self.__skip_transform[5] = True  # skip num_variables transform
+        if use_general_state_info:
+            self.__skip_transform[4] = True  # skip num_variables transform
+            self.__skip_transform[7] = True
+            self.__skip_transform[8] = True
+            self.__skip_transform[9] = True
 
         self.__num_heuristics = num_heuristics
         self.host = host
@@ -152,14 +157,10 @@ class FDEnvSelHeur(Env):
 
         if self._use_gsi:
             for feature in self._general_state_features:
-                # print(feature, data[feature], end=', ')
                 state.append(data[feature])
         for heuristic_id in range(self.__num_heuristics):  # process heuristic data
             for feature in self._heuristic_state_features:
-                # print(feature, data["%d" % heuristic_id][feature], end=', ')
                 state.append(data["%d" % heuristic_id][feature])
-        # print()
-        # print()
 
         if self._prev_state is None:
             self.__norm_vals = deepcopy(state)
@@ -193,10 +194,6 @@ class FDEnvSelHeur(Env):
         if d:
             self.done = True
             self.kill_connection()
-            # r = -1*(time.time() - self.__start_time)
-        #     r = -self.__step
-        # else:
-        #     r = 0
         return s, r, d, {}
 
     def reset(self):
@@ -235,9 +232,10 @@ class FDEnvSelHeur(Env):
         self.socket.listen()
         self.conn, address = self.socket.accept()
         s, _, _ = self._process_data()
-        num_rand_steps = self.rng.randint(self.max_rand_steps + 1)
-        for i in range(num_rand_steps):  # Random initial steps
-            # s, _, _, _ = self.step(self.action_space.sample())
+        if self.max_rand_steps > 1:
+            for _ in range(self.rng.randint(1, self.max_rand_steps + 1)):
+                s, _, _, _ = self.step(self.action_space.sample())
+        else:
             s, _, _, _ = self.step(0)  # hard coded to zero as initial step
 
         remove(fp)  # remove the port file such that there is no chance of loading the old port

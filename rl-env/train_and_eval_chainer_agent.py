@@ -141,7 +141,8 @@ def main():
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
         env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir, port_file_id=args.pfid,
-                           use_general_state_info=args.use_gsi, state_type=args.state)
+                           use_general_state_info=args.use_gsi, state_type=args.state,
+                           max_rand_steps=0 if test else 5)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)

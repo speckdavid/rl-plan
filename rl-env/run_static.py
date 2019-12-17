@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
         env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir='.', port_file_id=None,
-                           use_general_state_info=args.use_gsi, state_type=5)
+                           use_general_state_info=args.use_gsi)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
