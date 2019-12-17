@@ -8,7 +8,6 @@
 #include "../task_utils/task_properties.h"
 #include "../utils/rng.h"
 #include "../utils/rng_options.h"
-#include "../utils/system.h"
 
 #include <algorithm>
 #include <limits>
@@ -25,10 +24,6 @@ LazySearch::LazySearch(const Options &opts)
       randomize_successors(opts.get<bool>("randomize_successors")),
       preferred_successors_first(opts.get<bool>("preferred_successors_first")),
       rng(utils::parse_rng_from_options(opts)),
-      rl_client(opts.get<int>("rl_client_port"), "127.0.0.1"),
-      rl(opts.get<bool>("rl")),
-      rl_control_interval(opts.get<int>("rl_control_interval")),
-      rl_steps_until_control(0),
       current_state(state_registry.get_initial_state()),
       current_predecessor_id(StateID::no_state),
       current_operator_id(OperatorID::no_operator),
@@ -64,17 +59,6 @@ void LazySearch::initialize() {
     for (Evaluator *evaluator : path_dependent_evaluators) {
         evaluator->notify_initial_state(initial_state);
     }
-
-    if (rl) {
-        assert(rl_control_interval >= 0);
-        std::cout << "Setup connection to RL Agent!" << std::endl;
-        bool succ = rl_client.init_connection();
-        if (!succ) {
-            utils::exit_with(utils::ExitCode::SEARCH_INPUT_ERROR);
-        }
-        std::cout << "Connection created!" << std::endl;
-    }
-
 }
 
 vector<OperatorID> LazySearch::get_successor_operators(
@@ -133,58 +117,11 @@ void LazySearch::generate_successors() {
 SearchStatus LazySearch::fetch_next_state() {
     if (open_list->empty()) {
         cout << "Completely explored state space -- no solution!" << endl;
-        if (rl) {
-            rl_client.send_msg("0047Completely explored state space -- no solution!");
-            rl_client.closeConn();
-        }
         return FAILED;
     }
-  
-    std::string answer = "";
-    int selectionAction = -1;
-    if (rl) {
-        if (rl_steps_until_control == 0) {
-            rl_steps_until_control = rl_control_interval;
-            double last_step_time = rl_timer();
-            std::map<std::string, double> stats;
-            stats["reward"] = -last_step_time;
-            stats["done"] = 0;
-            std::cout << "Sending Message" << std::endl;
-            rl_client.send_msg(open_list->get_lists_statistics(), stats);
-            answer = rl_client.read_msg();
-            rl_timer.reset();
-            if (answer.empty()) {
-                return FAILED;  // This can only happen if the RL agent crashes
-            }
-            int msg_size = std::atoi(answer.substr(0,4).c_str());
-            std::string msg = answer.substr(4, msg_size);
-            if (msg == "END") {  // Handle RL-request to close connection
-                printf("\nReceived %s\n\n", msg.c_str());
-                rl_client.closeConn();
-                // set_plan needed to pass fake SOLVE to avoid raising an Error
-                Plan p;
-                set_plan(p);
-                return SOLVED;
-//            } else if (std::atoi(msg.c_str()) == 0) {  // Used for sanity checking if the agent learns to avoid expensive actions
-//                int a = 0;
-//                for (int i = 0; i < 99999999; i++) {
-//                    if (i % 2 == 0) {
-//                        a = i + 1;
-//                    } else {
-//                        a = i - 1;
-//                    }
-//                    printf("%d\n", a);
-//                    selectionAction = std::atoi(msg.c_str());
-//                }
-            } else {  // We assume only correct action values are received (i.e. valid integers)
-                selectionAction = std::atoi(msg.c_str());
-            }
-        } else {
-            rl_steps_until_control--;
-        }
-    }
 
-    EdgeOpenListEntry next = (rl && !answer.empty()) ? open_list->remove_min(selectionAction) : open_list->remove_min();
+    EdgeOpenListEntry next = open_list->remove_min();
+
     current_predecessor_id = next.first;
     current_operator_id = next.second;
     GlobalState current_predecessor = state_registry.lookup_state(current_predecessor_id);
@@ -249,17 +186,8 @@ SearchStatus LazySearch::step() {
                 }
             }
             node.close();
-            if (check_goal_and_set_plan(current_state)) {
-                if (rl) {
-                    double last_step_time = rl_timer();
-                    std::map<std::string, double> stats;
-                    stats["reward"] = -last_step_time;
-                    stats["done"] = 1;
-                    rl_client.send_msg(open_list->get_lists_statistics(), stats);
-                    rl_client.closeConn();
-                }
+            if (check_goal_and_set_plan(current_state))
                 return SOLVED;
-            }
             if (search_progress.check_progress(current_eval_context)) {
                 print_checkpoint_line(current_g);
                 reward_progress();

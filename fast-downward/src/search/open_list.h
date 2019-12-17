@@ -130,17 +130,17 @@ public:
       return 0;
     }
 
-    virtual std::map<std::string, double> get_statistics() const {
-      return std::map<std::string, double>();
+    virtual void get_open_list_statistics(std::map<std::string, double>& /*stats*/) const {
+    }
+
+    virtual void get_open_lists_statistics(std::map<int, std::map<std::string, double>>& /*open_lists_stats*/) const {
+      // get_open_list_statistics(open_lists_stats[0]);
     }
 
     virtual std::string get_description() const {
       return "";
     }
 
-    virtual std::map<int, std::map<std::string, double>> get_lists_statistics() const {
-      return std::map<int, std::map<std::string, double>>();
-    }
 };
 
 

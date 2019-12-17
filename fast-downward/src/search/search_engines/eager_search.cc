@@ -122,20 +122,20 @@ void EagerSearch::print_checkpoint_line(int g) const {
     cout << "]" << endl;
 }
 
-void EagerSearch::update_rl_stats(bool done) {
-    double last_step_time = rl_timer();
-    rl_timer.reset();
-    rl_stats["expanded_states"] = statistics.get_expanded();
-    rl_stats["evaluated_states"] = statistics.get_evaluated_states();
-    rl_stats["evaluations"] = statistics.get_evaluations();
-    rl_stats["generated_states"] = statistics.get_generated();
-    rl_stats["reopened_states"] = statistics.get_reopened();
-    rl_stats["generated_ops"] = statistics.get_generated_ops();
-    rl_stats["registered_states"] = state_registry.size();
-    rl_stats["num_variables"] = state_registry.get_num_variables();
-    rl_stats["step_time"] = last_step_time;
-    rl_stats["reward"] = -(rl_control_interval+1);
-    rl_stats["done"] = done ? 1 : 0;
+void EagerSearch::update_engine_stats(bool done) {
+    double last_step_time = engine_timer();
+    engine_timer.reset();
+    engine_stats["expanded_states"] = statistics.get_expanded();
+    engine_stats["evaluated_states"] = statistics.get_evaluated_states();
+    engine_stats["evaluations"] = statistics.get_evaluations();
+    engine_stats["generated_states"] = statistics.get_generated();
+    engine_stats["reopened_states"] = statistics.get_reopened();
+    engine_stats["generated_ops"] = statistics.get_generated_ops();
+    engine_stats["registered_states"] = state_registry.size();
+    engine_stats["num_variables"] = state_registry.get_num_variables();
+    engine_stats["step_time"] = last_step_time;
+    engine_stats["reward"] = -(rl_control_interval+1);
+    engine_stats["done"] = done ? 1 : 0;
 }
 
 void EagerSearch::print_statistics() const {
@@ -159,8 +159,9 @@ SearchStatus EagerSearch::step() {
             // std::cout << "controll step: " << rl_steps_until_control << std::endl;
             if (rl_steps_until_control == 0) {
                 rl_steps_until_control = rl_control_interval;
-                update_rl_stats(false);
-                rl_client.send_msg(open_list->get_lists_statistics(), rl_stats);
+                update_engine_stats(false);
+                open_list->get_open_lists_statistics(open_lists_stats);
+                rl_client.send_msg(open_lists_stats, engine_stats);
                 rl_answer = rl_client.read_msg();
                 // std::cout << "RL-Action: " << rl_answer.substr(4,1) << std::endl;
             } else {
@@ -229,8 +230,9 @@ SearchStatus EagerSearch::step() {
     GlobalState s = node->get_state();
     if (check_goal_and_set_plan(s)) {
         if (rl) {
-            update_rl_stats(true);
-            rl_client.send_msg(open_list->get_lists_statistics(), rl_stats);
+            update_engine_stats(true);
+            open_list->get_open_lists_statistics(open_lists_stats);
+            rl_client.send_msg(open_lists_stats, engine_stats);
         }
         return SOLVED;
     }
