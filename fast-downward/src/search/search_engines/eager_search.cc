@@ -8,6 +8,7 @@
 
 #include "../algorithms/ordered_set.h"
 #include "../task_utils/successor_generator.h"
+#include "../task_utils/causal_graph.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -125,6 +126,11 @@ void EagerSearch::print_checkpoint_line(int g) const {
 void EagerSearch::update_engine_stats(bool done) {
     double last_step_time = engine_timer();
     engine_timer.reset();
+    auto cg = task_proxy.get_causal_graph();
+    engine_stats["num_variables"] = state_registry.get_num_variables();
+    engine_stats["cg_num_pre_to_eff"] = cg.get_num_pre_to_eff();
+    engine_stats["cg_num_eff_to_pre"] = cg.get_num_eff_to_pre();
+    engine_stats["cg_num_eff_to_eff"] = cg.get_num_eff_to_eff();
     engine_stats["expanded_states"] = statistics.get_expanded();
     engine_stats["evaluated_states"] = statistics.get_evaluated_states();
     engine_stats["evaluations"] = statistics.get_evaluations();
@@ -132,7 +138,6 @@ void EagerSearch::update_engine_stats(bool done) {
     engine_stats["reopened_states"] = statistics.get_reopened();
     engine_stats["generated_ops"] = statistics.get_generated_ops();
     engine_stats["registered_states"] = state_registry.size();
-    engine_stats["num_variables"] = state_registry.get_num_variables();
     engine_stats["step_time"] = last_step_time;
     engine_stats["reward"] = -(rl_control_interval+1);
     engine_stats["done"] = done ? 1 : 0;
