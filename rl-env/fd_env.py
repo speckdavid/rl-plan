@@ -58,7 +58,7 @@ class FDEnvSelHeur(Env):
         self._prev_state = None
         self.num_steps = num_steps
 
-        self.__state_type = state_type
+        self.__state_type = StateType(state_type)
         self.__norm_vals = []
         self._config_dir = config_dir
         self._port_file_id = port_file_id

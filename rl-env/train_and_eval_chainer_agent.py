@@ -29,6 +29,7 @@ from chainerrl import q_functions
 from chainerrl import replay_buffer
 from chainerrl.agents.double_dqn import DoubleDQN as DDQN
 from fd_env import FDEnvSelHeur
+from evaluate import eval_performance
 from gym import spaces
 
 
@@ -248,7 +249,7 @@ def main():
     eval_env = make_env(test=True)
 
     if args.evaluate:
-        eval_stats = experiments.eval_performance(
+        eval_stats = eval_performance(
             env=eval_env,
             agent=agent,
             n_steps=None,
