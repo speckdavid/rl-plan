@@ -30,7 +30,8 @@ counter=1
 DIR=$(cd `dirname $0` && pwd)
 while [ $counter -le $3 ] 
 do
-    #python3 $DIR/fast-downward.py $1 --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])]),rl=true,rl_control_interval=$2)" || exit 1
-    python3 $DIR/fast-downward.py $1 --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)])]),rl=true,rl_control_interval=$2)" || exit 1
+    python3 $DIR/fast-downward.py $1 --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])]),rl=true,rl_control_interval=$2)" || exit 1
+    #python3 $DIR/fast-downward.py $1 --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)])]),rl=true,rl_control_interval=$2)" || exit 1
+    #python3 $DIR/fast-downward.py $1 --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)]),tiebreaking([cea(),weight(g(),-1)])]),rl=true,rl_control_interval=$2)" || exit 1
     ((counter++))
 done
