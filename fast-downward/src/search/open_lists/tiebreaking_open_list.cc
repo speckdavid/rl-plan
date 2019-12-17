@@ -154,6 +154,7 @@ void TieBreakingOpenList<Entry>::get_open_list_statistics(std::map<std::string, 
     stats["Min Value"] = std::numeric_limits<double>::infinity();
     stats["Max Value"] = -std::numeric_limits<double>::infinity();
     stats["Average Value"] = 0;
+    stats["Varianz"] = 0;
     for (auto& entry : buckets) {
         stats["Min Value"] = std::min(stats["Min Value"], (double) entry.first.at(0));
         stats["Max Value"] = std::max(stats["Min Value"], (double) entry.first.at(0));
@@ -161,6 +162,9 @@ void TieBreakingOpenList<Entry>::get_open_list_statistics(std::map<std::string, 
     }
     if (!empty()) {
         stats["Average Value"] /= get_size();
+        for (auto& entry : buckets) {
+            stats["Varianz"] += (entry.second.size() / (0.0 + get_size())) * (entry.first.at(0) - stats["Average Value"]) * (entry.first.at(0) - stats["Average Value"]);
+        }
     }
 }
 

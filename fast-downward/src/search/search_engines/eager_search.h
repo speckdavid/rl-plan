@@ -37,6 +37,7 @@ class EagerSearch : public SearchEngine {
     int rl_steps_until_control;
     std::string rl_answer;
     utils::Timer engine_timer;
+    
     std::map<std::string, double> engine_stats;
     std::map<int,std::map<std::string, double>> open_lists_stats;
 
