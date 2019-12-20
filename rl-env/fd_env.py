@@ -33,12 +33,15 @@ class FDEnvSelHeur(Env):
         Initialize environment
         """
 
-        self._heuristic_state_features = ['Average Value', 'Dead Ends Reliable',
+        self._heuristic_state_features = ['Average Value',  # 'Dead Ends Reliable',
                                           'Max Value', 'Min Value', 'Open List Entries']
         self.action_space = Discrete(num_heuristics)
         self._general_state_features = ['evaluated_states', 'evaluations', 'expanded_states',
-                                        'generated_ops', 'generated_states', 'num_variables',
-                                        'registered_states', 'reopened_states']
+                                        # 'generated_ops',
+                                        'generated_states', 'num_variables',
+                                        'registered_states', 'reopened_states',
+                                        "cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"]
+
         total_state_features = (num_heuristics * len(self._heuristic_state_features))
         self._use_gsi = use_general_state_info
         if use_general_state_info:
@@ -48,6 +51,14 @@ class FDEnvSelHeur(Env):
             high=np.array([np.inf for _ in range(total_state_features)]),
             dtype=np.float32
         )
+
+        self.__skip_transform = [False for _ in range(total_state_features)]
+        if use_general_state_info:
+            self.__skip_transform[4] = True  # skip num_variables transform
+            self.__skip_transform[7] = True
+            self.__skip_transform[8] = True
+            self.__skip_transform[9] = True
+
         self.__num_heuristics = num_heuristics
         self.host = host
         self.port = port
@@ -58,7 +69,7 @@ class FDEnvSelHeur(Env):
         self._prev_state = None
         self.num_steps = num_steps
 
-        self.__state_type = state_type
+        self.__state_type = StateType(state_type)
         self.__norm_vals = []
         self._config_dir = config_dir
         self._port_file_id = port_file_id
@@ -66,25 +77,23 @@ class FDEnvSelHeur(Env):
         self._transformation_func = None
         # create state transformation function with inputs (current state, previous state, normalization values)
         if self.__state_type == StateType.DIFF:
-            self._transformation_func = lambda x, y, z: x - y
+            self._transformation_func = lambda x, y, z, skip: x - y if not skip else x
         elif self.__state_type == StateType.ABSDIFF:
-            self._transformation_func = lambda x, y, z: abs(x - y)
+            self._transformation_func = lambda x, y, z, skip: abs(x - y) if not skip else x
         elif self.__state_type == StateType.NORMAL:
-            self._transformation_func = lambda x, y, z: FDEnvSelHeur._save_div(x, z)
+            self._transformation_func = lambda x, y, z, skip: FDEnvSelHeur._save_div(x, z) if not skip else x
         elif self.__state_type == StateType.NORMDIFF:
-            self._transformation_func = lambda x, y, z: FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z)
+            self._transformation_func = lambda x, y, z, skip: \
+                FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z) if not skip else x
         elif self.__state_type == StateType.NORMABSDIFF:
-            self._transformation_func = lambda x, y, z: abs(FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z))
+            self._transformation_func = lambda x, y, z, skip:\
+                abs(FDEnvSelHeur._save_div(x, z) - FDEnvSelHeur._save_div(y, z)) if not skip else x
 
         self.rng = np.random.RandomState(seed=seed)
         self.max_rand_steps = max_rand_steps
         self.__step = 0
         self.__start_time = None
         self.done = True  # Starts as true as the expected behavior is that before normal resets an episode was done.
-
-    @staticmethod
-    def _save_div(a, b):
-        return np.divide(a, b, out=np.zeros_like(a), where=b != 0)
 
     @staticmethod
     def _save_div(a, b):
@@ -143,6 +152,7 @@ class FDEnvSelHeur(Env):
         done = data['done']
         del data['reward']
         del data['done']
+
         state = []
 
         if self._use_gsi:
@@ -157,7 +167,8 @@ class FDEnvSelHeur(Env):
             self._prev_state = deepcopy(state)
         if self.__state_type != StateType.RAW:  # Transform state to DIFF state or normalize
             tmp_state = state
-            state = list(map(self._transformation_func, state, self._prev_state, self.__norm_vals))
+            state = list(map(self._transformation_func, state, self._prev_state, self.__norm_vals,
+                             self.__skip_transform))
             self._prev_state = tmp_state
         return np.array(state), r, done
 
@@ -183,10 +194,6 @@ class FDEnvSelHeur(Env):
         if d:
             self.done = True
             self.kill_connection()
-            # r = -1*(time.time() - self.__start_time)
-        #     r = -self.__step
-        # else:
-        #     r = 0
         return s, r, d, {}
 
     def reset(self):
@@ -225,9 +232,10 @@ class FDEnvSelHeur(Env):
         self.socket.listen()
         self.conn, address = self.socket.accept()
         s, _, _ = self._process_data()
-        num_rand_steps = self.rng.randint(self.max_rand_steps + 1)
-        for i in range(num_rand_steps):  # Random initial steps
-            # s, _, _, _ = self.step(self.action_space.sample())
+        if self.max_rand_steps > 1:
+            for _ in range(self.rng.randint(1, self.max_rand_steps + 1)):
+                s, _, _, _ = self.step(self.action_space.sample())
+        else:
             s, _, _, _ = self.step(0)  # hard coded to zero as initial step
 
         remove(fp)  # remove the port file such that there is no chance of loading the old port
