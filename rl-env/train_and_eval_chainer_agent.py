@@ -28,8 +28,8 @@ from chainerrl import misc
 from chainerrl import q_functions
 from chainerrl import replay_buffer
 from chainerrl.agents.double_dqn import DoubleDQN as DDQN
-from fd_env import FDEnvSelHeur
 from evaluate import eval_performance
+from fd_env import FDEnvSelHeur
 from gym import spaces
 
 
@@ -86,6 +86,8 @@ def main():
                              ' a compute cluster.')
     parser.add_argument('--checkpoint_frequency', type=int, default=1e3,
                         help="Nuber of steps to checkpoint after")
+    parser.add_argument('--num-heuristics', default=2, type=int, choices=[2, 3, 4, 5, 6, 7, 8, 9],
+                        help='Number of heuristics used with fast-downward')
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
     parser.add_argument('--port', default=None, help='port to use', type=int)
     parser.add_argument('--use-gsi', '-u', action='store_true', help='Use general state features')
@@ -140,8 +142,8 @@ def main():
         # TODO don't hardcode env params
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir=args.outdir, port_file_id=args.pfid,
-                           use_general_state_info=args.use_gsi, state_type=args.state,
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=args.num_heuristics, config_dir=args.outdir,
+                           port_file_id=args.pfid, use_general_state_info=args.use_gsi, state_type=args.state,
                            max_rand_steps=0 if test else 5)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
