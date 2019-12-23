@@ -193,10 +193,16 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
-        if d or self.__step >= self.time_step_limit:
+        info = {}
+        if d:
             self.done = True
             self.kill_connection()
-        return s, r, d, {}
+        if self.__step > self.time_step_limit:
+            info['needs_reset'] = True
+            self.send_msg(str.encode("END"))
+            self.kill_connection()
+            self.done = True
+        return s, r, d, info
 
     def reset(self):
         """
@@ -214,9 +220,6 @@ class FDEnvSelHeur(Env):
             self.conn.shutdown(2)
             self.conn.close()
             self.conn = None
-            self.socket.shutdown(2)
-            self.socket.close()
-            self.socket = None
         if not self.socket:
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
