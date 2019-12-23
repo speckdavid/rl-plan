@@ -28,7 +28,8 @@ class FDEnvSelHeur(Env):
     def __init__(self, num_heuristics: int, host: str = '', port: int = 12345,
                  num_steps=None, state_type: Union[int, StateType] = StateType.RAW,
                  seed: int = 12345, max_rand_steps: int = 0, config_dir: str = '.',
-                 port_file_id=None, use_general_state_info: bool = True):
+                 port_file_id=None, use_general_state_info: bool = True,
+                 time_step_limit: int = -1):
         """
         Initialize environment
         """
@@ -68,6 +69,7 @@ class FDEnvSelHeur(Env):
 
         self._prev_state = None
         self.num_steps = num_steps
+        self.time_step_limit = time_step_limit
 
         self.__state_type = StateType(state_type)
         self.__norm_vals = []
@@ -191,7 +193,7 @@ class FDEnvSelHeur(Env):
             msg = str(action)
         self.send_msg(str.encode(msg))
         s, r, d = self._process_data()
-        if d:
+        if d or self.__step >= self.time_step_limit:
             self.done = True
             self.kill_connection()
         return s, r, d, {}

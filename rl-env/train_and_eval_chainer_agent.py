@@ -89,6 +89,8 @@ def main():
     parser.add_argument('--num-heuristics', default=2, type=int, choices=[2, 3, 4, 5, 6, 7, 8, 9],
                         help='Number of heuristics used with fast-downward')
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
+    parser.add_argument('--max-rand-step', help='Max number of random steps at beginning of training episode',
+                        type=int, default=5)
     parser.add_argument('--port', default=None, help='port to use', type=int)
     parser.add_argument('--use-gsi', '-u', action='store_true', help='Use general state features')
     parser.add_argument('--state', choices=[1, 2, 3, 4, 5, 6], help='State Type: '
@@ -143,8 +145,9 @@ def main():
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
         env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=args.num_heuristics, config_dir=args.outdir,
-                           port_file_id=args.pfid, use_general_state_info=args.use_gsi, state_type=args.state,
-                           max_rand_steps=0 if test else 5)
+                           timestep_limit=args.time_step_limit, port_file_id=args.pfid,
+                           use_general_state_info=args.use_gsi, state_type=args.state,
+                           max_rand_steps=0 if test else args.max_rand_step)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
