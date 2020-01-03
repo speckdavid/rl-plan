@@ -29,21 +29,26 @@ class StaticAgent:
 
 
 class RRAgent:
-    def __init__(self, start_act, switch):
-        self.__start_act = start_act
-        self._act = start_act
+    def __init__(self, switch, nactions):
+        self.__actions = list(range(nactions))
         self._switch = switch
         self.__steps = 0
+        self.__at = 0
+        np.random.shuffle(self.__actions)
+
+    def set_action_list(self, act_list):
+        self.__actions = act_list
 
     def act(self, observation):
-        if self.__steps > 0 and self.__steps % self._switch == 0:
-            self._act = int(not self._act)
+        if self.__steps % self._switch == 0:
+            self.__at += 1
+        act = self.__actions[self.__at % len(self.__actions)]
         self.__steps += 1
-        return self._act
+        return act
 
     def stop_episode(self):
         self.__steps = 0
-        self._act = self.__start_act
+        self.__at = 0
         return True
 
 
@@ -58,11 +63,12 @@ if __name__ == '__main__':
     parser.add_argument('--random', '-r', action='store_true', help='Use debug log-level')
     parser.add_argument('--rr-steps', default=None, type=int, help='Number of steps to switch between heuristics in '
                                                                    'a round robin fashion.')
+    parser.add_argument('--rr-order', nargs='+', type=int, help='RR order of actions', default=None)
     parser.add_argument('--use-gsi', '-u', action='store_true', help='Use general state features')
     parser.add_argument('--eval-n-runs', type=int, default=1)
     parser.add_argument('--time-step-limit', type=int, default=1e5)
     parser.add_argument('--save-eval-stats', default=None, help='File name in which evaluation data will be saved')
-    parser.add_argument('--num-heuristics', default=2, type=int, choices=[2, 3, 4, 5, 6, 7, 8, 9],
+    parser.add_argument('--num-heuristics', default=2, type=int, choices=[1, 2, 3, 4, 5, 6, 7, 8, 9],
                         help='Number of heuristics used with fast-downward')
     parser.add_argument('--port-file-id', default=None, type=int, dest='pfid',
                         help='ID (int) appended to port file. Useful when running multiple environment instances on'
@@ -96,7 +102,9 @@ if __name__ == '__main__':
 
     env = make_env(test=False)
     if args.rr_steps:
-        agent = RRAgent(start_act=args.action, switch=args.rr_steps)
+        agent = RRAgent(nactions=args.num_heuristics, switch=args.rr_steps)
+        if args.rr_order:
+            agent.set_action_list(args.rr_order)
     elif args.random:
         agent = RandomAgent(nactions=args.num_heuristics)
     else:
