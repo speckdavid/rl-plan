@@ -7,8 +7,11 @@ from fd_env import FDEnvSelHeur
 
 
 class RandomAgent:
+    def __init__(self, nactions):
+        self.__actions = list(range(nactions))
+
     def act(self, observation):
-        return int(np.random.choice([0, 1]))
+        return int(np.random.choice(self.__actions))
 
     def stop_episode(self):
         return True
@@ -49,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=0,
                         help='Random seed [0, 2 ** 32)')
     parser.add_argument('--action', type=int, default=0,
-                        choices=[0, 1],
+                        choices=[0, 1, 2, 3, 4, 5, 6, 7, 8],
                         help='Which action to play')
     parser.add_argument('--verbose', '-v', action='store_true', help='Use debug log-level')
     parser.add_argument('--random', '-r', action='store_true', help='Use debug log-level')
@@ -59,6 +62,12 @@ if __name__ == '__main__':
     parser.add_argument('--eval-n-runs', type=int, default=1)
     parser.add_argument('--time-step-limit', type=int, default=1e5)
     parser.add_argument('--save-eval-stats', default=None, help='File name in which evaluation data will be saved')
+    parser.add_argument('--num-heuristics', default=2, type=int, choices=[2, 3, 4, 5, 6, 7, 8, 9],
+                        help='Number of heuristics used with fast-downward')
+    parser.add_argument('--port-file-id', default=None, type=int, dest='pfid',
+                        help='ID (int) appended to port file. Useful when running multiple environment instances on'
+                             ' a compute cluster.')
+    parser.add_argument('--port', default=None, help='port to use', type=int)
     args = parser.parse_args()
     import logging
     logging.basicConfig(level=logging.INFO if not args.verbose else logging.DEBUG)
@@ -69,13 +78,17 @@ if __name__ == '__main__':
 
     def make_env(test):
         HOST = ''  # The server's hostname or IP address
-        PORT = 54321  # The port used by the server
+        if args.port:
+            PORT = args.port
+        else:
+            PORT = 54321  # The port used by the server
         if test:  # Just such that eval and train env don't have the same port
             PORT += 1
 
         # outdir doesn't append time strings. Otherwise it will get hard to use on the cluster
-        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=2, config_dir='.', port_file_id=None,
-                           use_general_state_info=args.use_gsi)
+        env = FDEnvSelHeur(host=HOST, port=PORT, num_heuristics=args.num_heuristics, config_dir='.',
+                           port_file_id=args.pfid, use_general_state_info=args.use_gsi,
+                           time_step_limit=args.time_step_limit)
         # Use different random seeds for train and test envs
         env_seed = 2 ** 32 - 1 - args.seed if test else args.seed
         env.seed(env_seed)
@@ -85,7 +98,7 @@ if __name__ == '__main__':
     if args.rr_steps:
         agent = RRAgent(start_act=args.action, switch=args.rr_steps)
     elif args.random:
-        agent = RandomAgent()
+        agent = RandomAgent(nactions=args.num_heuristics)
     else:
         agent = StaticAgent(action=args.action)
 
