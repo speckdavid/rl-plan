@@ -1,6 +1,7 @@
 import logging
 import statistics
 import numpy as np
+import time
 
 import chainerrl
 
@@ -27,14 +28,17 @@ def run_evaluation_episodes(env, agent, n_steps, n_episodes,
     logger = logger or logging.getLogger(__name__)
     scores = []
     trajectories = []
+    times = []
     terminate = False
     timestep = 0
+    start_time = time.time()
 
     reset = True
     while not terminate:
         if reset:
             obs = env.reset()
             done = False
+            start_time = time.time()
             test_r = 0
             traj = []
             episode_len = 0
@@ -54,6 +58,7 @@ def run_evaluation_episodes(env, agent, n_steps, n_episodes,
             # functions, here every score is cast to float.
             scores.append(float(test_r))
             trajectories.append(traj)
+            times.append(time.time() - start_time)
         if n_steps is None:
             terminate = len(scores) >= n_episodes
         else:
@@ -65,7 +70,7 @@ def run_evaluation_episodes(env, agent, n_steps, n_episodes,
         scores.append(float(test_r))
         logger.info('evaluation episode %s length:%s R:%s',
                     len(scores), episode_len, test_r)
-    return scores, trajectories
+    return scores, trajectories, times
 
 
 def eval_performance(env, agent, n_steps: int, n_episodes: int, max_episode_len=None,
@@ -88,7 +93,7 @@ def eval_performance(env, agent, n_steps: int, n_episodes: int, max_episode_len=
 
     assert (n_steps is None) != (n_episodes is None)
 
-    scores, trajectories = run_evaluation_episodes(
+    scores, trajectories, times = run_evaluation_episodes(
         env, agent, n_steps, n_episodes,
         max_episode_len=max_episode_len,
         logger=logger)
@@ -99,6 +104,7 @@ def eval_performance(env, agent, n_steps: int, n_episodes: int, max_episode_len=
         stdev=statistics.stdev(scores) if len(scores) >= 2 else 0.0,
         max=np.max(scores),
         min=np.min(scores),
-        trajectories=trajectories
+        trajectories=trajectories,
+        times_per_episode=times
     )
     return stats
