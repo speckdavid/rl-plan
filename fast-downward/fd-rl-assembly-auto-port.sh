@@ -46,6 +46,11 @@ do
             tmpcount=999
         fi
     done
+    if [ $tmpcount -eq 21 ]
+    then
+        echo "No portfile found"
+        exit 0
+    fi
     port=$(<$5)
     echo "Port: $port"
 
