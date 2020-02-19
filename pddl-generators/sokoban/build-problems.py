@@ -156,12 +156,13 @@ def create_pddl(filename, prob_name, desc, track, hex):
 def translate_suite(suite, hex=False):
     input_file = open("sources/%s.data" % suite)
     for no, desc in enumerate(split_descriptions(input_file)):
-        for track in ["sequential", "temporal"]:
-            name = "p%03d-%s-%s" % (no + 1, suite, track)
+        for track in ["sequential"]:#, "temporal"]:
+            name = "p%d-%s-%s" % (no + 1, suite, track)
             create_pddl("pddl/%s.pddl" % name, name, desc, track, hex)
 
 
 if __name__ == "__main__":
     translate_suite("microban")
-    translate_suite("multiban")
-    translate_suite("hexoban", hex=True)
+    translate_suite("microban-2")
+    #translate_suite("multiban")
+    #translate_suite("hexoban", hex=True)
