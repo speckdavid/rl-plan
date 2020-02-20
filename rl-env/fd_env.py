@@ -35,7 +35,8 @@ class FDEnvSelHeur(Env):
         """
 
         self._heuristic_state_features = ['Average Value',  # 'Dead Ends Reliable',
-                                          'Max Value', 'Min Value', 'Open List Entries']
+                                          'Max Value', 'Min Value', 'Open List Entries',
+                                          'Varianz']
         self.action_space = Discrete(num_heuristics)
         self._general_state_features = ['evaluated_states', 'evaluations', 'expanded_states',
                                         # 'generated_ops',
