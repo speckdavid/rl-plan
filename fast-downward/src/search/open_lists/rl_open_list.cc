@@ -6,6 +6,8 @@
 
 #include "../utils/memory.h"
 #include "../utils/system.h"
+#include "../utils/rng.h"
+#include "../utils/rng_options.h"
 
 #include <cassert>
 #include <memory>
@@ -17,6 +19,7 @@ using utils::ExitCode;
 namespace rl_open_list {
 template<class Entry>
 class RLOpenList : public OpenList<Entry> {
+    shared_ptr<utils::RandomNumberGenerator> rng;
     vector<unique_ptr<OpenList<Entry>>> open_lists;
 
 protected:
@@ -43,7 +46,9 @@ public:
 
 
 template<class Entry>
-RLOpenList<Entry>::RLOpenList(const Options &opts) {
+RLOpenList<Entry>::RLOpenList(const Options &opts) 
+    : rng(utils::parse_rng_from_options(opts))
+{
     vector<shared_ptr<OpenListFactory>> open_list_factories(
         opts.get_list<shared_ptr<OpenListFactory>>("sublists"));
     open_lists.reserve(open_list_factories.size());
@@ -79,6 +84,18 @@ Entry RLOpenList<Entry>::remove_min(int choice) {
     //for (size_t i = 0; i < open_lists.size(); ++i) {
     //    std::cout << "Size of open list " << i << ": " << open_lists[i]->get_size() << std::endl;
     //}
+    
+    // Open list is empty => random choice
+    if (open_lists[choice]->empty()) {
+        std::vector<int> choices;
+        for (size_t i = 0; i < open_lists.size(); ++i) {
+             if (!open_lists[i]->empty()) {
+                 choices.push_back(i);
+             }
+        }
+        choice = choices[(*rng)(choices.size())]; 
+    }
+
     const auto &best_list = open_lists[choice];
     assert(!best_list->empty());
     return best_list->remove_min();
@@ -155,11 +172,13 @@ RLOpenListFactory::create_edge_open_list() {
 
 static shared_ptr<OpenListFactory> _parse(OptionParser &parser) {
     parser.document_synopsis("RL open list",
-                             "alternates between several open lists.");
+                             "rl open lists.");
     parser.add_list_option<shared_ptr<OpenListFactory>>(
         "sublists",
         "open lists between which this one alternates");
 
+    utils::add_rng_options(parser);
+    
     Options opts = parser.parse();
     opts.verify_list_non_empty<shared_ptr<OpenListFactory>>("sublists");
     if (parser.dry_run())
