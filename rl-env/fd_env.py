@@ -150,6 +150,12 @@ class FDEnvSelHeur(Env):
         :return:
         """
         msg = self.recv_msg().decode()
+        #print("----------------------------")
+        #print(msg)
+        #print("=>")
+        msg = msg.replace('-inf', '0')
+        msg = msg.replace('inf', '0')
+        #print(msg)
         data = eval(msg)
         r = data['reward']
         done = data['done']

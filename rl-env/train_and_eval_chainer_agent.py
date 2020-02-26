@@ -138,8 +138,8 @@ def main():
             PORT = args.port
         else:
             PORT = 54321  # The port used by the server
-        if test:  # Just such that eval and train env don't have the same port
-            PORT += 1
+        #if test:  # Just such that eval and train env don't have the same port
+        #    PORT += 1
 
         # TODO don't hardcode env params
         # TODO if we use this solution (i.e. write port to file and read it with FD) we would have to make sure that
