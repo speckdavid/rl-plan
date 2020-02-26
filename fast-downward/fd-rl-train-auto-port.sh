@@ -3,18 +3,18 @@
 
 
 display_usage() {
-	echo -e "\nUsage:\nfast-downward-rl.sh [instance directory] [domain file] [#control interval] [#runs] [port file] \n"
+	echo -e "\nUsage:\nfast-downward-rl.sh [instance directory] [domain file] [#control interval] [#runs] [seed] [port file] \n"
 	}
 
 # if less than two arguments supplied, display usage
-	if [ $# -le 2 ]
+	if [ $# -le 5 ]
 	then
 		display_usage
 		exit 1
 	fi
 
 # if more than two arguments supplied, display usage
-        if [ $# -ge 6 ]
+        if [ $# -ge 7 ]
         then
                 display_usage
                 exit 1
@@ -39,7 +39,7 @@ do
     tmpcount=0
     while [ $tmpcount -le 20 ]
     do
-        if [ ! -f "$5" ]
+        if [ ! -f "$6" ]
         then
             sleep 1
             ((tmpcount++))
@@ -52,7 +52,7 @@ do
         echo "No portfile found"
         exit 0
     fi
-    port=$(<$5)
+    port=$(<$6)
     echo "Port: $port"
 
     if [ $filenumber -ge ${#files[@]} ]
@@ -65,7 +65,7 @@ do
 
     #python3 $DIR/fast-downward.py $file --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])]),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
     >&2 echo $file
-    python3 $DIR/fast-downward.py $2 $file --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)]),tiebreaking([cea(),weight(g(),-1)]),tiebreaking([add(),weight(g(),-1)])]),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+    python3 $DIR/fast-downward.py $2 $file --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)]),tiebreaking([cea(),weight(g(),-1)]),tiebreaking([add(),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
 
     ((counter++))
 done
