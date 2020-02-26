@@ -19,6 +19,7 @@ using utils::ExitCode;
 namespace rl_open_list {
 template<class Entry>
 class RLOpenList : public OpenList<Entry> {
+    bool handle_empty_list;
     shared_ptr<utils::RandomNumberGenerator> rng;
     vector<unique_ptr<OpenList<Entry>>> open_lists;
 
@@ -47,7 +48,8 @@ public:
 
 template<class Entry>
 RLOpenList<Entry>::RLOpenList(const Options &opts) 
-    : rng(utils::parse_rng_from_options(opts))
+    : handle_empty_list(opts.get<bool>("handle_empty_list")),
+      rng(utils::parse_rng_from_options(opts))
 {
     vector<shared_ptr<OpenListFactory>> open_list_factories(
         opts.get_list<shared_ptr<OpenListFactory>>("sublists"));
@@ -87,6 +89,11 @@ Entry RLOpenList<Entry>::remove_min(int choice) {
     
     // Open list is empty => random choice
     if (open_lists[choice]->empty()) {
+        if (!handle_empty_list) {
+           std::cout << "No solution - FAILED" << std::endl;
+           utils::exit_with(utils::ExitCode::SEARCH_UNSOLVED_INCOMPLETE);
+           exit(12); 
+        }
         std::vector<int> choices;
         for (size_t i = 0; i < open_lists.size(); ++i) {
              if (!open_lists[i]->empty()) {
@@ -176,6 +183,8 @@ static shared_ptr<OpenListFactory> _parse(OptionParser &parser) {
     parser.add_list_option<shared_ptr<OpenListFactory>>(
         "sublists",
         "open lists between which this one alternates");
+    
+    parser.add_option<bool>("handle_empty_list", "handles empty list with random choice", "true");
 
     utils::add_rng_options(parser);
     

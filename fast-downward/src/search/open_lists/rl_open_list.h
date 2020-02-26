@@ -6,7 +6,7 @@
 
 
 /*
-  Type-based open list based on Xie et al. (AAAI 2014; see detailed
+  See Type-based open list based on Xie et al. (AAAI 2014; see detailed
   reference in plug-in documentation).
 
   The original implementation uses a std::map for storing and looking
