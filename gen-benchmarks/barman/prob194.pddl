@@ -3,7 +3,7 @@
  (:objects 
       shaker1 - shaker
       left right - hand
-      shot1 shot2 shot3 shot4 - shot
+      shot1 shot2 shot3 shot4 shot5 - shot
       ingredient1 ingredient2 ingredient3 - ingredient
       cocktail1 cocktail2 cocktail3 cocktail4 - cocktail
       dispenser1 dispenser2 dispenser3 - dispenser
@@ -15,6 +15,7 @@
   (ontable shot2)
   (ontable shot3)
   (ontable shot4)
+  (ontable shot5)
   (dispenses dispenser1 ingredient1)
   (dispenses dispenser2 ingredient2)
   (dispenses dispenser3 ingredient3)
@@ -23,11 +24,13 @@
   (clean shot2)
   (clean shot3)
   (clean shot4)
+  (clean shot5)
   (empty shaker1)
   (empty shot1)
   (empty shot2)
   (empty shot3)
   (empty shot4)
+  (empty shot5)
   (handempty left)
   (handempty right)
   (shaker-empty-level shaker1 l0)

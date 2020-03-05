@@ -68,7 +68,7 @@ class Task(object):
             file=out,
         )
         print("; constant factor of %s" % self.const_ratio, file=out)
-        print("; random seed: %d" % self.seed, file=out)
+        #print("; random seed: %d" % self.seed, file=out)
         print(file=out)
         print("(define (problem prob-snack)", file=out)
         print("  (:domain child-snack)", file=out)
