@@ -19,7 +19,7 @@
 (at_person girl1 place0)
 (walked couple1 place0)
 (at_tent tent1 place0)
-(up tent1)
+(down tent1)
 (at_car car0 place0)
 (at_car car1 place0)
 (at_car car2 place0)

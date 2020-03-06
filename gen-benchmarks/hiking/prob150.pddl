@@ -1,7 +1,7 @@
-(define (problem Hiking-4-5-8)
+(define (problem Hiking-4-7-8)
 (:domain hiking)
 (:objects 
- car0 car1 car2 car3 car4 - car
+ car0 car1 car2 car3 car4 car5 car6 - car
  tent0 tent1 tent2 tent3 - tent
  couple0 couple1 couple2 couple3 - couple
  place0 place1 place2 place3 place4 place5 place6 place7 - place
@@ -37,6 +37,8 @@
 (at_car car2 place0)
 (at_car car3 place0)
 (at_car car4 place0)
+(at_car car5 place0)
+(at_car car6 place0)
 (next place0 place1)
 (next place1 place2)
 (next place2 place3)

@@ -1,10 +1,10 @@
-(define (problem Hiking-4-5-5)
+(define (problem Hiking-4-6-4)
 (:domain hiking)
 (:objects 
- car0 car1 car2 car3 car4 - car
+ car0 car1 car2 car3 car4 car5 - car
  tent0 tent1 tent2 tent3 - tent
  couple0 couple1 couple2 couple3 - couple
- place0 place1 place2 place3 place4 - place
+ place0 place1 place2 place3 - place
  guy0 girl0 guy1 girl1 guy2 girl2 guy3 girl3 - person
 )
 (:init
@@ -31,23 +31,23 @@
 (at_person girl3 place0)
 (walked couple3 place0)
 (at_tent tent3 place0)
-(down tent3)
+(up tent3)
 (at_car car0 place0)
 (at_car car1 place0)
 (at_car car2 place0)
 (at_car car3 place0)
 (at_car car4 place0)
+(at_car car5 place0)
 (next place0 place1)
 (next place1 place2)
 (next place2 place3)
-(next place3 place4)
 )
 (:goal
 (and
-(walked couple0 place4)
-(walked couple1 place4)
-(walked couple2 place4)
-(walked couple3 place4)
+(walked couple0 place3)
+(walked couple1 place3)
+(walked couple2 place3)
+(walked couple3 place3)
 )
 )
 )
