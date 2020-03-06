@@ -7,28 +7,26 @@
   (:init
     (at-curb car_5)
     (at-curb-num car_5 curb_00)
-    (car-clear car_5)
-    (at-curb car_0)
-    (at-curb-num car_0 curb_01)
-    (car-clear car_0)
-    (at-curb car_6)
-    (at-curb-num car_6 curb_02)
-    (car-clear car_6)
-    (at-curb car_2)
-    (at-curb-num car_2 curb_03)
+    (behind-car car_2 car_5)
     (car-clear car_2)
     (at-curb car_7)
-    (at-curb-num car_7 curb_04)
-    (car-clear car_7)
-    (at-curb car_1)
-    (at-curb-num car_1 curb_05)
-    (car-clear car_1)
+    (at-curb-num car_7 curb_01)
+    (behind-car car_6 car_7)
+    (car-clear car_6)
     (at-curb car_3)
-    (at-curb-num car_3 curb_06)
+    (at-curb-num car_3 curb_02)
     (car-clear car_3)
+    (at-curb car_1)
+    (at-curb-num car_1 curb_03)
+    (car-clear car_1)
+    (at-curb car_0)
+    (at-curb-num car_0 curb_04)
+    (car-clear car_0)
     (at-curb car_4)
-    (at-curb-num car_4 curb_07)
+    (at-curb-num car_4 curb_05)
     (car-clear car_4)
+    (curb-clear curb_06)
+    (curb-clear curb_07)
     (curb-clear curb_08)
     (curb-clear curb_09)
     (curb-clear curb_10)
@@ -52,14 +50,14 @@
   )
 )
 ; =========== INIT =========== 
-;  curb_00: car_5 
-;  curb_01: car_0 
-;  curb_02: car_6 
-;  curb_03: car_2 
-;  curb_04: car_7 
-;  curb_05: car_1 
-;  curb_06: car_3 
-;  curb_07: car_4 
+;  curb_00: car_5 car_2 
+;  curb_01: car_7 car_6 
+;  curb_02: car_3 
+;  curb_03: car_1 
+;  curb_04: car_0 
+;  curb_05: car_4 
+;  curb_06: 
+;  curb_07: 
 ;  curb_08: 
 ;  curb_09: 
 ;  curb_10: 

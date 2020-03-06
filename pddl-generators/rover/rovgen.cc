@@ -661,7 +661,7 @@ public:
 
 	void write(ostream & o) const
 	{
-		o << "(define (problem roverprob" << seed << ") (:domain Rover)\n(:objects\n\t";
+		o << "(define (problem roverprob" << ") (:domain Rover)\n(:objects\n\t";
 		
 		o << "general ";
 		if(typing==ON) o << "- Lander\n\t";
