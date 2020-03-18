@@ -72,7 +72,7 @@ do
 	    python3 $DIR/fast-downward.py $2 $file --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
 
         else
-	    python3 $DIR/fast-downward.py $2 $file --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+	    python3 $DIR/fast-downward.py $file --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
     fi
 
 
