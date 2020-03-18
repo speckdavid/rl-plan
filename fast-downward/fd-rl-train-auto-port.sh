@@ -65,7 +65,16 @@ do
 
     #python3 $DIR/fast-downward.py $file --search "eager(rl([tiebreaking([pdb(pattern=manual_pattern([0,1])),weight(g(),-1)]), tiebreaking([pdb(pattern=manual_pattern([0,2])),weight(g(),-1)])]),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
     >&2 echo $file
-    python3 $DIR/fast-downward.py $2 $file --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)]),tiebreaking([cea(),weight(g(),-1)]),tiebreaking([add(),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+
+    # SAS Files do not need a domain file
+    if [[ "$file" == *pddl ]]
+        then
+            python3 $DIR/fast-downward.py $2 $file --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)]),tiebreaking([cea(),weight(g(),-1)]),tiebreaking([add(),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+
+        else
+            python3 $DIR/fast-downward.py $file --search "eager(rl([tiebreaking([ff(),weight(g(),-1)]), tiebreaking([cg(),weight(g(),-1)]),tiebreaking([cea(),weight(g(),-1)]),tiebreaking([add(),weight(g(),-1)])],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+    fi
+
 
     ((counter++))
 done
