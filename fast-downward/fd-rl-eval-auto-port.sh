@@ -2,7 +2,8 @@
 
 
 display_usage() {
-	echo -e "\nUsage:\nfast-downward-rl.sh [domain file] [instance file] [#control interval] [seed] [static] [#port] \n"
+	echo -e "\nUsage:\nfast-downward-rl.sh [domain.pddl file] [instance.pddl file] [#control interval] [seed] [static] [#port] \n"
+	echo -e "\nUsage:\nfast-downward-rl.sh [dummy file] [instance.sas file] [#control interval] [seed] [static] [#port] \n"
 	}
 
 # if less than two arguments supplied, display usage

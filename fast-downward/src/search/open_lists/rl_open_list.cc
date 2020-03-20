@@ -71,9 +71,6 @@ void RLOpenList<Entry>::do_insertion(
 
 template<class Entry>
 Entry RLOpenList<Entry>::remove_min() {
-    /*for (size_t i = 0; i < open_lists.size(); ++i) {
-        std::cout << "Size of open list " << i << ": " << open_lists[i]->get_size() << std::endl;
-    }*/
     int best = 1;
     assert(best != -1);
     const auto &best_list = open_lists[best];
@@ -83,10 +80,6 @@ Entry RLOpenList<Entry>::remove_min() {
 
 template<class Entry>
 Entry RLOpenList<Entry>::remove_min(int choice) {
-    //for (size_t i = 0; i < open_lists.size(); ++i) {
-    //    std::cout << "Size of open list " << i << ": " << open_lists[i]->get_size() << std::endl;
-    //}
-    
     // Open list is empty => random choice
     if (open_lists[choice]->empty()) {
         if (!handle_empty_list) {

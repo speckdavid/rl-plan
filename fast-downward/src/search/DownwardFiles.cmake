@@ -761,6 +761,8 @@ fast_downward_plugin(
     SOURCES
         open_lists/rl_open_list
         search_engines/rl_client
+        search_engines/rl_eager_search
+        search_engines/plugin_rl_eager
 )
 
 fast_downward_add_plugin_sources(PLANNER_SOURCES)

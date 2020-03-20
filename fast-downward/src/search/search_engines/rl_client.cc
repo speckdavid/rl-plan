@@ -44,8 +44,7 @@ void RLClient::send_msg(const std::string& msg) const {
     delete[] cstr_msg;
 }
 
-void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open_lists_stats, 
-                const std::map<std::string, double>& engine_stats) const {
+void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open_lists_stats, double reward, bool done) const {
     std::string py_dict = "{";
     for (auto& config_values : open_lists_stats) {
         int config = config_values.first;
@@ -57,20 +56,16 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open
         py_dict = py_dict.substr(0, py_dict.size() - 1);
         py_dict += "},";
     }
-
-
-    for (auto& value_pair : engine_stats) {
-        py_dict += "\"" + value_pair.first + "\" : " + std::to_string(value_pair.second) + ",";
-    }
-    py_dict = py_dict.substr(0, py_dict.size() - 1);
-
+    py_dict += "\"reward\" : " + std::to_string(reward);
+    py_dict += ",\"done\" : ";
+    py_dict += done ? std::to_string((double)1) : std::to_string((double)0);
     py_dict += "}";
     std::string msg = std::to_string(py_dict.size());
     for (size_t i = 0; i < 4 - msg.size(); i++) {
         msg = "0" + msg;
     }
     msg += py_dict;
-    // std::cout << msg << std::endl;
+    std::cout << msg << std::endl;
     send_msg(msg);
 }
 
@@ -78,6 +73,7 @@ std::string RLClient::read_msg() const {
     char buffer[1024] = {0};
     int valread = read( sock, buffer, 1024);
     std::string msg(buffer);
+    std::cout << "Receiverd: " << msg << std::endl;
     if (msg.find("END") != std::string::npos) {
         std::cout << "Termination due to RL agent" << std::endl;
         exit(0);

@@ -41,6 +41,7 @@ public:
     virtual bool is_reliable_dead_end(
         EvaluationContext &eval_context) const override;
     virtual int get_size() const override;
+    virtual void get_open_list_statistics(std::map<std::string, double>& stats) const override;
     virtual std::string get_description() const override;
 };
 
@@ -115,6 +116,27 @@ bool BestFirstOpenList<Entry>::is_reliable_dead_end(
 template<class Entry>
 int BestFirstOpenList<Entry>::get_size() const {
     return size;
+}
+
+template<class Entry>
+void BestFirstOpenList<Entry>::get_open_list_statistics(std::map<std::string, double>& stats) const {
+    stats["Open List Entries"] = get_size();
+    // stats["Dead Ends Reliable"] = evaluators.at(0)->dead_ends_are_reliable();
+    stats["Min Value"] = std::numeric_limits<double>::infinity();
+    stats["Max Value"] = -std::numeric_limits<double>::infinity();
+    stats["Average Value"] = 0;
+    stats["Varianz"] = 0;
+    for (auto& entry : buckets) {
+        stats["Min Value"] = std::min(stats["Min Value"], (double) entry.first);
+        stats["Max Value"] = std::max(stats["Min Value"], (double) entry.first);
+        stats["Average Value"] += entry.first * entry.second.size();
+    }
+    if (!empty()) {
+        stats["Average Value"] /= (0.0 + get_size());
+        for (auto& entry : buckets) {
+            stats["Varianz"] += (entry.second.size() / (0.0 + get_size())) * (entry.first - stats["Average Value"]) * (entry.first - stats["Average Value"]);
+        }
+    }
 }
 
 template<class Entry>

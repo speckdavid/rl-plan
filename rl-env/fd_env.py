@@ -38,11 +38,12 @@ class FDEnvSelHeur(Env):
                                           'Max Value', 'Min Value', 'Open List Entries',
                                           'Varianz']
         self.action_space = Discrete(num_heuristics)
-        self._general_state_features = ['evaluated_states', 'evaluations', 'expanded_states',
+        self._general_state_features = [#'evaluated_states', 'evaluations', 'expanded_states',
                                         # 'generated_ops',
-                                        'generated_states', 'num_variables',
-                                        'registered_states', 'reopened_states',
-                                        "cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"]
+                                        #'generated_states', 'num_variables',
+                                        #'registered_states', 'reopened_states',
+                                        #"cg_num_eff_to_eff", "cg_num_eff_to_pre", "cg_num_pre_to_eff"
+                                        ]
 
         total_state_features = (num_heuristics * len(self._heuristic_state_features))
         self._use_gsi = use_general_state_info
