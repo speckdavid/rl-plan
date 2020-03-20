@@ -177,7 +177,7 @@ static shared_ptr<OpenListFactory> _parse(OptionParser &parser) {
         "sublists",
         "open lists between which this one alternates");
     
-    parser.add_option<bool>("handle_empty_list", "handles empty list with random choice", "true");
+    parser.add_option<bool>("handle_empty_list", "handles empty list with random choice. necessary for unsafe heuristics", "true");
 
     utils::add_rng_options(parser);
     
