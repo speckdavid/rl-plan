@@ -1,28 +1,12 @@
-#ifndef OPEN_LISTS_OPEN_LIST_H
-#define OPEN_LISTS_OPEN_LIST_H
+#ifndef OPEN_LISTS_RL_OPEN_LIST_H
+#define OPEN_LISTS_RL_OPEN_LIST_H
 
 #include "../open_list_factory.h"
 #include "../option_parser_util.h"
 
 
 /*
-  RL Open list is based on Type-based open list based on 
-  Xie et al. (AAAI 2014; see detailed
-  reference in plug-in documentation).
-
-  The original implementation uses a std::map for storing and looking
-  up buckets. Our implementation stores the buckets in a std::vector
-  and uses a std::unordered_map for looking up indexes in the vector.
-
-  In the table below we list the amortized worst-case time complexities
-  for the original implementation and the version below.
-
-    n = number of entries
-    m = number of buckets
-
-                            Original    Code below
-    Insert entry            O(log(m))   O(1)
-    Remove entry            O(m)        O(1)        # both use swap+pop
+  RL Open list based on alternation open list
 */
 
 namespace rl_open_list {

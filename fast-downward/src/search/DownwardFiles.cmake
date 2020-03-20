@@ -760,6 +760,7 @@ fast_downward_plugin(
     HELP "Type-based open list"
     SOURCES
         open_lists/rl_open_list
+        open_lists/rnd_open_list
         search_engines/rl_client
         search_engines/rl_eager_search
         search_engines/plugin_rl_eager
