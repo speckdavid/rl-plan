@@ -69,10 +69,10 @@ do
     # SAS Files do not need a domain file
     if [[ "$file" == *pddl ]]
         then
-            python3 $DIR/../fast-downward/fast-downward.py $1 $file --search "eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+            python3 $DIR/../fast-downward/fast-downward.py $1 $file --search "rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed=$5),rl_control_interval=$3,rl_client_port=$port)" || exit 1
 
         else
-            python3 $DIR/../fast-downward/fast-downward.py $file --search "eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed=$5),rl=true,rl_control_interval=$3,rl_client_port=$port)" || exit 1
+            python3 $DIR/../fast-downward/fast-downward.py $file --search "rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed=$5),rl_control_interval=$3,rl_client_port=$port)" || exit 1
     fi
 
 
