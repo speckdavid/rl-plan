@@ -5,14 +5,13 @@ import itertools
 
 #### Eval FD with RL client
 
-exp_name = "rl-plan-rl-20-03-2020"
+exp_name = "rl-plan-rl-22-03-2020"
 main_path = "/home/speckd/git/rl-plan/"
 num_runs = 50 # Seeds
 queue = 'gki_cpu-cascadelake'
 
 
-domains = ["barman"]
-#domains = ["barman", "blocksworld", "logistics", "rovers", "satellite", "sokoban","transport", "visitall"]
+domains = ["barman", "blocksworld", "logistics", "rovers", "satellite", "sokoban","transport", "visitall"]
 configs = ["nn1", "nn2", "nn3", "nn4", "nn5", "rnd", "rr", "static0", "static1", "static2", "static3"]
 
 
@@ -21,6 +20,7 @@ configs = ["nn1", "nn2", "nn3", "nn4", "nn5", "rnd", "rr", "static0", "static1",
 FD = main_path + "fast-downward/fast-downward.py"
 results_dir = main_path + "experiments/results/" + exp_name
 rl_call = 'python ' + main_path + 'rl-env/train_and_eval_chainer_agent.py '
+rl_static_call = 'python ' + main_path + 'rl-env/run_static.py '
 fd_call = main_path + 'experiments/fd-rl-eval-auto-port.sh ' 
 
 # domain on level below
@@ -35,7 +35,7 @@ for d in domains:
         if "nn" in c:
             configs_path[d][c] = main_path + "experiments/" + d + "/" + d + "_full_train_set_2-75-" + str(i+1) + "/best"
 seeds = [i for i in range(1,num_runs+1)]
-port = 2000
+port = 10000
 timeout = "300" # sec
 
 if os.path.exists(results_dir):
@@ -99,7 +99,7 @@ def create_nn_task(domain, instance_file, port, config, seed, run_dir):
     return s 
 
 def create_rnd_task(domain, instance_file, port, seed, run_dir):
-    s = rl_call
+    s = rl_static_call
     s += '-r '
     s += '--port-file-id ' + str(port) + ' '
     s += '--seed ' + str(seed) + ' '
@@ -125,8 +125,7 @@ def create_rnd_task(domain, instance_file, port, seed, run_dir):
     return s 
 
 def create_rr_task(domain, instance_file, port, order, seed, run_dir):
-    s = rl_call
-    s += '-r '
+    s = rl_static_call
     s += '--rr-order ' + ' '.join(str(x) for x in order) + ' '
     s += '--rr-steps 1 '
     s += '--port-file-id ' + str(port) + ' '
@@ -153,7 +152,7 @@ def create_rr_task(domain, instance_file, port, order, seed, run_dir):
     return s 
 
 def create_static_task(choice, domain, instance_file, port, seed, run_dir):
-    s = rl_call
+    s = rl_static_call
     s += '--action ' + str(choice) + ' '
     s += '--port-file-id ' + str(port) + ' '
     s += '--seed ' + str(seed) + ' '
