@@ -3,13 +3,25 @@ import json
 import sys
 import itertools
 
+#### Eval FD with RL client
+
+exp_name = "rl-plan-rl-20-03-2020"
+main_path = "/home/speckd/git/rl-plan/"
+num_runs = 50 # Seeds
 queue = 'gki_cpu-cascadelake'
 
-exp_name = "rl-plan-09-03-2020"
-num_runs = 50
-domains = ["barman", "blocksworld", "childsnack", "gripper", "logistics", "rovers", "satellite", "sokoban","transport", "visitall"]
-results_dir = "/home/speckd/rl-plan_test/bridge/results/" + exp_name
+
+domains = ["barman"]
+#domains = ["barman", "blocksworld", "logistics", "rovers", "satellite", "sokoban","transport", "visitall"]
 configs = ["nn1", "nn2", "nn3", "nn4", "nn5", "rnd", "rr", "static0", "static1", "static2", "static3"]
+
+
+#### Setup everything
+
+FD = main_path + "fast-downward/fast-downward.py"
+results_dir = main_path + "experiments/results/" + exp_name
+rl_call = 'python ' + main_path + 'rl-env/train_and_eval_chainer_agent.py '
+fd_call = main_path + 'experiments/fd-rl-eval-auto-port.sh ' 
 
 # domain on level below
 test_dirs = dict()
@@ -17,11 +29,11 @@ configs_path = dict()
 domain_files = dict()
 for d in domains:
     configs_path[d] = dict()
-    domain_files[d] = "/home/speckd/rl-plan_test/bridge/" + d + "/" + d + "/domain.pddl"
-    test_dirs[d] = "/home/speckd/rl-plan_test/bridge/" + d + "/" + d + "/test/"
+    domain_files[d] = main_path + "experiments/" + d + "/" + d + "/domain.pddl"
+    test_dirs[d] = main_path + "experiments/" + d + "/" + d + "/test/"
     for i, c in enumerate(configs):
         if "nn" in c:
-            configs_path[d][c] = "/home/speckd/rl-plan_test/bridge/" + d + "/" + d + "_full_train_set_2-75-" + str(i+1) + "/best"
+            configs_path[d][c] = main_path + "experiments/" + d + "/" + d + "_full_train_set_2-75-" + str(i+1) + "/best"
 seeds = [i for i in range(1,num_runs+1)]
 port = 2000
 timeout = "300" # sec
@@ -51,7 +63,7 @@ with open(props_path, "w") as fp:
 tasks = []
 
 def create_nn_task(domain, instance_file, port, config, seed, run_dir):
-    s = 'python /home/speckd/rl-plan_test/gkigit/rl-env/train_and_eval_chainer_agent.py '
+    s = rl_call 
     s += '--port-file-id ' + str(port) + ' '
     s += '--load ' + configs_path[domain][config] + ' '
     s += '--evaluate ' 
@@ -75,7 +87,7 @@ def create_nn_task(domain, instance_file, port, config, seed, run_dir):
     s += 'sleep 10 && '
     s += 'cd ' + run_dir + ' && '
     # FD call
-    s += '/home/speckd/rl-plan_test/gkigit/fast-downward/fd-rl-eval-auto-port.sh ' 
+    s += fd_call 
     s += domain_files[domain] + ' '
     s += instance_file + ' '
     s += '0 '
@@ -87,7 +99,7 @@ def create_nn_task(domain, instance_file, port, config, seed, run_dir):
     return s 
 
 def create_rnd_task(domain, instance_file, port, seed, run_dir):
-    s = 'python /home/speckd/rl-plan_test/gkigit/rl-env/run_static.py '
+    s = rl_call
     s += '-r '
     s += '--port-file-id ' + str(port) + ' '
     s += '--seed ' + str(seed) + ' '
@@ -101,7 +113,7 @@ def create_rnd_task(domain, instance_file, port, seed, run_dir):
     s += 'sleep 10 && '
     s += 'cd ' + run_dir + ' && '
     # FD call
-    s += '/home/speckd/rl-plan_test/gkigit/fast-downward/fd-rl-eval-auto-port.sh ' 
+    s += fd_call 
     s += domain_files[domain] + ' '
     s += instance_file + ' '
     s += '0 '
@@ -113,7 +125,7 @@ def create_rnd_task(domain, instance_file, port, seed, run_dir):
     return s 
 
 def create_rr_task(domain, instance_file, port, order, seed, run_dir):
-    s = 'python /home/speckd/rl-plan_test/gkigit/rl-env/run_static.py '
+    s = rl_call
     s += '-r '
     s += '--rr-order ' + ' '.join(str(x) for x in order) + ' '
     s += '--rr-steps 1 '
@@ -129,7 +141,7 @@ def create_rr_task(domain, instance_file, port, order, seed, run_dir):
     s += 'sleep 10 && '
     s += 'cd ' + run_dir + ' && '
     # FD call
-    s += '/home/speckd/rl-plan_test/gkigit/fast-downward/fd-rl-eval-auto-port.sh ' 
+    s += fd_call 
     s += domain_files[domain] + ' '
     s += instance_file + ' '
     s += '0 '
@@ -141,7 +153,7 @@ def create_rr_task(domain, instance_file, port, order, seed, run_dir):
     return s 
 
 def create_static_task(choice, domain, instance_file, port, seed, run_dir):
-    s = 'python /home/speckd/rl-plan_test/gkigit/rl-env/run_static.py '
+    s = rl_call
     s += '--action ' + str(choice) + ' '
     s += '--port-file-id ' + str(port) + ' '
     s += '--seed ' + str(seed) + ' '
@@ -155,7 +167,7 @@ def create_static_task(choice, domain, instance_file, port, seed, run_dir):
     s += 'sleep 10 && '
     s += 'cd ' + run_dir + ' && '
     # FD call
-    s += '/home/speckd/rl-plan_test/gkigit/fast-downward/fd-rl-eval-auto-port.sh ' 
+    s += fd_call 
     s += domain_files[domain] + ' '
     s += instance_file + ' '
     s += '0 '
@@ -243,6 +255,8 @@ main_job_s = [
           '#SBATCH --error=' + os.path.join(results_dir, "slurm.err"),
           '#SBATCH --output=' + os.path.join(results_dir, "slurm.log"),
           '#SBATCH -J ' + exp_name,
+          '',
+          'source /home/speckd/.bashrc',
           ''
              ]
 
@@ -267,10 +281,4 @@ for line in main_job_s:
 f.close()
 
 os.system("chmod u+x " + os.path.join(results_dir, "jobs_files", "*"))
-
-#conda activate base
-
-# Andere /home/speckd/rl-plan_test/experiments_andre/grid/val_rand.sh
-
-#python /home/speckd/rl-plan_test/gkigit/rl-env/train_and_eval_chainer_agent.py --port-file-id $PORT --load /home/speckd/rl-plan_test/bridge/sokoban/sokoban_full_train_set_2-75-1/best --evaluate --save-eval-stats $SET-$LAYERS-$UNITS-seed$SEED.json --max-rand-step 0 --eval-n-runs $NUM_INSTS --time-step-limit 1000000 --seed $SEED --state $STATETYPE --num-heuristics 4 --steps 1000000 --port $PORT --n-hidden-channels $UNITS --n-hidden-layers $LAYERS --eval-interval 5000 --checkpoint_frequency 100000 > rl.log 2> rl.err & sleep 3 && /home/speckd/rl-plan_test/gkigit/fast-downward/fd-rl-assembly-auto-port.sh /home/speckd/rl-plan_test/bridge/sokoban/sokoban/test/ /home/speckd/rl-plan_test/bridge/sokoban/sokoban/domain.pddl 0 $NUM_INSTS /home/speckd/rl-plan_test/bridge/sokoban/sokoban_full_train_set_2-75-1/best/port_$PORT.txt > fd.log 2> fd.err
 

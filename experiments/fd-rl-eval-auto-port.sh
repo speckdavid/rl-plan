@@ -29,7 +29,7 @@ display_usage() {
 
 DIR=$(cd `dirname $0` && pwd)
 #>&2 echo $file
-if [[ "$file" == *pddl ]]
+if [[ "$2" == *pddl ]]
 	then
 		python3 $DIR/../fast-downward/fast-downward.py --overall-time-limit 300 --overall-memory-limit 4G $1 $2 --search "rl_eager(rl([single(ff()),single(cg()),single(cea()),single(add())],random_seed=$4,handle_empty_list=$5),rl_control_interval=$3,rl_client_port=$6)"
 	else

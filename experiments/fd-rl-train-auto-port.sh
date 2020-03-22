@@ -38,7 +38,7 @@ filenumber=0
 while [ $counter -le $4 ]
 do
     tmpcount=0
-    while [ $tmpcount -le 20 ]
+    while [ $tmpcount -le 100 ]
     do
         if [ ! -f "$6" ]
         then
@@ -48,7 +48,7 @@ do
             tmpcount=999
         fi
     done
-    if [ $tmpcount -eq 21 ]
+    if [ $tmpcount -eq 101 ]
     then
         echo "No portfile found"
         exit 0
