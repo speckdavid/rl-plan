@@ -101,8 +101,8 @@ if __name__ == '__main__':
         return env
 
     env = make_env(test=False)
-    if args.rr_steps:
-        agent = RRAgent(nactions=args.num_heuristics, switch=args.rr_steps)
+    if args.rr_steps is not None:
+        agent = RRAgent(nactions=args.num_heuristics, switch=(args.rr_steps + 1))
         if args.rr_order:
             agent.set_action_list(args.rr_order)
     elif args.random:
