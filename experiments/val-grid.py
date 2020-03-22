@@ -127,7 +127,7 @@ def create_rnd_task(domain, instance_file, port, seed, run_dir):
 def create_rr_task(domain, instance_file, port, order, seed, run_dir):
     s = rl_static_call
     s += '--rr-order ' + ' '.join(str(x) for x in order) + ' '
-    s += '--rr-steps 1 '
+    s += '--rr-steps 0 '
     s += '--port-file-id ' + str(port) + ' '
     s += '--seed ' + str(seed) + ' '
     s += '--save-eval-stats ' + os.path.join(run_dir, 'test-layer2-seed' + str(seed) + '.json') + ' '
