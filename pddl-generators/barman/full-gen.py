@@ -4,11 +4,11 @@ seeds = [i for i in range(1,6)]
 num = 0
 
 # cocktails
-for i in range(2,5):
+for i in range(3,6):
     # ingredience
-    for j in range(2,5):
+    for j in range(3,6):
         # shots
-        for k in range(i,8):
+        for k in range(i+1,10):
             for s in seeds:
                 if num >= 200:
                     exit(0)

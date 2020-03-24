@@ -1,6 +1,6 @@
-; Transport city-sequential-18nodes-1000size-4degree-100mindistance-3trucks-5packages-1seed
+; Transport city-sequential-18nodes-1000size-4degree-100mindistance-3trucks-10packages-1seed
 
-(define (problem transport-city-sequential-18nodes-1000size-4degree-100mindistance-3trucks-5packages-1seed)
+(define (problem transport-city-sequential-18nodes-1000size-4degree-100mindistance-3trucks-10packages-1seed)
  (:domain transport)
  (:objects
   city-loc-1 - location
@@ -29,6 +29,11 @@
   package-3 - package
   package-4 - package
   package-5 - package
+  package-6 - package
+  package-7 - package
+  package-8 - package
+  package-9 - package
+  package-10 - package
   capacity-0 - capacity-number
   capacity-1 - capacity-number
   capacity-2 - capacity-number
@@ -220,19 +225,29 @@
   (at package-3 city-loc-1)
   (at package-4 city-loc-13)
   (at package-5 city-loc-7)
-  (at truck-1 city-loc-1)
+  (at package-6 city-loc-14)
+  (at package-7 city-loc-1)
+  (at package-8 city-loc-17)
+  (at package-9 city-loc-8)
+  (at package-10 city-loc-15)
+  (at truck-1 city-loc-18)
   (capacity truck-1 capacity-3)
-  (at truck-2 city-loc-8)
-  (capacity truck-2 capacity-4)
-  (at truck-3 city-loc-16)
-  (capacity truck-3 capacity-3)
+  (at truck-2 city-loc-12)
+  (capacity truck-2 capacity-2)
+  (at truck-3 city-loc-8)
+  (capacity truck-3 capacity-2)
  )
  (:goal (and
-  (at package-1 city-loc-18)
-  (at package-2 city-loc-8)
-  (at package-3 city-loc-12)
-  (at package-4 city-loc-8)
-  (at package-5 city-loc-8)
+  (at package-1 city-loc-15)
+  (at package-2 city-loc-10)
+  (at package-3 city-loc-14)
+  (at package-4 city-loc-18)
+  (at package-5 city-loc-4)
+  (at package-6 city-loc-6)
+  (at package-7 city-loc-10)
+  (at package-8 city-loc-4)
+  (at package-9 city-loc-11)
+  (at package-10 city-loc-17)
  ))
  (:metric minimize (total-cost))
 )
