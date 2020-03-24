@@ -4,13 +4,13 @@ seeds = [i for i in range(5,6)]
 num = 0
 
 # airplains
-for a in range(1,4):
+for a in range(11,14):
     # cities
-    for c in range(10,14,1):
+    for c in range(20,27,1):
         # cities size
-        for z in range(6,13,2):
+        for z in range(9,13,2):
             # packages
-            for p in range(23,30,1):
+            for p in range(23,32,2):
                 for s in seeds:
                     if num >= 200:
                         exit(0)
