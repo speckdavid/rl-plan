@@ -73,7 +73,7 @@ std::string RLClient::read_msg() const {
     char buffer[1024] = {0};
     int valread = read( sock, buffer, 1024);
     std::string msg(buffer);
-    // std::cout << "Receiverd: " << msg << std::endl;
+    // std::cout << "Received: " << msg << std::endl;
     if (msg.find("END") != std::string::npos) {
         std::cout << "Termination due to RL agent" << std::endl;
         exit(0);
