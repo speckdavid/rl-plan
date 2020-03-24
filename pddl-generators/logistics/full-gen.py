@@ -1,6 +1,6 @@
 import os
 
-seeds = [i for i in range(5,6)]
+seeds = [i for i in range(1,2)]
 num = 0
 
 # airplains
