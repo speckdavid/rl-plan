@@ -76,7 +76,7 @@ Entry RndOpenList<Entry>::remove_min() {
         }
     }
     int choice = choices[(*rng)(choices.size())];
-    std::cout << "Choice: " << choice << std::endl;
+    // std::cout << "Choice: " << choice << std::endl;
     return open_lists[choice]->remove_min();
 }
 
