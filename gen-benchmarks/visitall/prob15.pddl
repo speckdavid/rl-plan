@@ -105,8 +105,8 @@
         
 )
 (:init
-	(at-robot loc-x2-y7)
-	(visited loc-x2-y7)
+	(at-robot loc-x4-y8)
+	(visited loc-x4-y8)
 	(connected loc-x0-y0 loc-x1-y0)
  	(connected loc-x0-y0 loc-x0-y1)
  	(connected loc-x0-y1 loc-x1-y1)

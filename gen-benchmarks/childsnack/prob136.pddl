@@ -7,7 +7,7 @@
     child1 child2 child3 child4 child5 child6 - child
     bread1 bread2 bread3 bread4 bread5 bread6 - bread-portion
     content1 content2 content3 content4 content5 content6 - content-portion
-    tray1 tray2 tray3 - tray
+    tray1 tray2 tray3 tray4 - tray
     table1 table2 table3 - place
     sandw1 sandw2 sandw3 sandw4 sandw5 sandw6 sandw7 sandw8 - sandwich
   )
@@ -15,6 +15,7 @@
      (at tray1 kitchen)
      (at tray2 kitchen)
      (at tray3 kitchen)
+     (at tray4 kitchen)
      (at_kitchen_bread bread1)
      (at_kitchen_bread bread2)
      (at_kitchen_bread bread3)
@@ -27,22 +28,22 @@
      (at_kitchen_content content4)
      (at_kitchen_content content5)
      (at_kitchen_content content6)
-     (no_gluten_bread bread5)
      (no_gluten_bread bread1)
-     (no_gluten_content content4)
+     (no_gluten_bread bread6)
+     (no_gluten_content content1)
      (no_gluten_content content3)
-     (allergic_gluten child6)
-     (allergic_gluten child1)
-     (not_allergic_gluten child3)
+     (allergic_gluten child2)
+     (allergic_gluten child3)
      (not_allergic_gluten child4)
      (not_allergic_gluten child5)
-     (not_allergic_gluten child2)
-     (waiting child1 table1)
+     (not_allergic_gluten child1)
+     (not_allergic_gluten child6)
+     (waiting child1 table2)
      (waiting child2 table3)
-     (waiting child3 table3)
-     (waiting child4 table2)
-     (waiting child5 table3)
-     (waiting child6 table2)
+     (waiting child3 table1)
+     (waiting child4 table3)
+     (waiting child5 table1)
+     (waiting child6 table3)
      (notexist sandw1)
      (notexist sandw2)
      (notexist sandw3)

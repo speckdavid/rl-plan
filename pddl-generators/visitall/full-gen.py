@@ -1,11 +1,15 @@
 import os
 
-seeds = [1,2,3]
+seeds = [1,2]
 num = 0
 unavailable = 0
 
 # num grid size
-for n in range(10,31):
+for n in range(8,45,1):
+    if n >= 20:
+        seeds = [1,2]
+    else:
+        seeds = [1]
     # goal percentage
     for g in [0.1,0.25,0.5,0.75,1]:
         # packages

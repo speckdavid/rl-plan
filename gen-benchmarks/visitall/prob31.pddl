@@ -1,4 +1,4 @@
-(define (problem grid-12)
+(define (problem grid-14)
 (:domain grid-visit-all)
 (:objects 
 	loc-x0-y0
@@ -13,6 +13,8 @@
 	loc-x0-y9
 	loc-x0-y10
 	loc-x0-y11
+	loc-x0-y12
+	loc-x0-y13
 	loc-x1-y0
 	loc-x1-y1
 	loc-x1-y2
@@ -25,6 +27,8 @@
 	loc-x1-y9
 	loc-x1-y10
 	loc-x1-y11
+	loc-x1-y12
+	loc-x1-y13
 	loc-x2-y0
 	loc-x2-y1
 	loc-x2-y2
@@ -37,6 +41,8 @@
 	loc-x2-y9
 	loc-x2-y10
 	loc-x2-y11
+	loc-x2-y12
+	loc-x2-y13
 	loc-x3-y0
 	loc-x3-y1
 	loc-x3-y2
@@ -49,6 +55,8 @@
 	loc-x3-y9
 	loc-x3-y10
 	loc-x3-y11
+	loc-x3-y12
+	loc-x3-y13
 	loc-x4-y0
 	loc-x4-y1
 	loc-x4-y2
@@ -61,6 +69,8 @@
 	loc-x4-y9
 	loc-x4-y10
 	loc-x4-y11
+	loc-x4-y12
+	loc-x4-y13
 	loc-x5-y0
 	loc-x5-y1
 	loc-x5-y2
@@ -73,6 +83,8 @@
 	loc-x5-y9
 	loc-x5-y10
 	loc-x5-y11
+	loc-x5-y12
+	loc-x5-y13
 	loc-x6-y0
 	loc-x6-y1
 	loc-x6-y2
@@ -85,6 +97,8 @@
 	loc-x6-y9
 	loc-x6-y10
 	loc-x6-y11
+	loc-x6-y12
+	loc-x6-y13
 	loc-x7-y0
 	loc-x7-y1
 	loc-x7-y2
@@ -97,6 +111,8 @@
 	loc-x7-y9
 	loc-x7-y10
 	loc-x7-y11
+	loc-x7-y12
+	loc-x7-y13
 	loc-x8-y0
 	loc-x8-y1
 	loc-x8-y2
@@ -109,6 +125,8 @@
 	loc-x8-y9
 	loc-x8-y10
 	loc-x8-y11
+	loc-x8-y12
+	loc-x8-y13
 	loc-x9-y0
 	loc-x9-y1
 	loc-x9-y2
@@ -121,6 +139,8 @@
 	loc-x9-y9
 	loc-x9-y10
 	loc-x9-y11
+	loc-x9-y12
+	loc-x9-y13
 	loc-x10-y0
 	loc-x10-y1
 	loc-x10-y2
@@ -133,6 +153,8 @@
 	loc-x10-y9
 	loc-x10-y10
 	loc-x10-y11
+	loc-x10-y12
+	loc-x10-y13
 	loc-x11-y0
 	loc-x11-y1
 	loc-x11-y2
@@ -145,12 +167,42 @@
 	loc-x11-y9
 	loc-x11-y10
 	loc-x11-y11
+	loc-x11-y12
+	loc-x11-y13
+	loc-x12-y0
+	loc-x12-y1
+	loc-x12-y2
+	loc-x12-y3
+	loc-x12-y4
+	loc-x12-y5
+	loc-x12-y6
+	loc-x12-y7
+	loc-x12-y8
+	loc-x12-y9
+	loc-x12-y10
+	loc-x12-y11
+	loc-x12-y12
+	loc-x12-y13
+	loc-x13-y0
+	loc-x13-y1
+	loc-x13-y2
+	loc-x13-y3
+	loc-x13-y4
+	loc-x13-y5
+	loc-x13-y6
+	loc-x13-y7
+	loc-x13-y8
+	loc-x13-y9
+	loc-x13-y10
+	loc-x13-y11
+	loc-x13-y12
+	loc-x13-y13
 - place 
         
 )
 (:init
-	(at-robot loc-x10-y4)
-	(visited loc-x10-y4)
+	(at-robot loc-x2-y12)
+	(visited loc-x2-y12)
 	(connected loc-x0-y0 loc-x1-y0)
  	(connected loc-x0-y0 loc-x0-y1)
  	(connected loc-x0-y1 loc-x1-y1)
@@ -185,6 +237,12 @@
  	(connected loc-x0-y10 loc-x0-y11)
  	(connected loc-x0-y11 loc-x1-y11)
  	(connected loc-x0-y11 loc-x0-y10)
+ 	(connected loc-x0-y11 loc-x0-y12)
+ 	(connected loc-x0-y12 loc-x1-y12)
+ 	(connected loc-x0-y12 loc-x0-y11)
+ 	(connected loc-x0-y12 loc-x0-y13)
+ 	(connected loc-x0-y13 loc-x1-y13)
+ 	(connected loc-x0-y13 loc-x0-y12)
  	(connected loc-x1-y0 loc-x0-y0)
  	(connected loc-x1-y0 loc-x2-y0)
  	(connected loc-x1-y0 loc-x1-y1)
@@ -231,6 +289,14 @@
  	(connected loc-x1-y11 loc-x0-y11)
  	(connected loc-x1-y11 loc-x2-y11)
  	(connected loc-x1-y11 loc-x1-y10)
+ 	(connected loc-x1-y11 loc-x1-y12)
+ 	(connected loc-x1-y12 loc-x0-y12)
+ 	(connected loc-x1-y12 loc-x2-y12)
+ 	(connected loc-x1-y12 loc-x1-y11)
+ 	(connected loc-x1-y12 loc-x1-y13)
+ 	(connected loc-x1-y13 loc-x0-y13)
+ 	(connected loc-x1-y13 loc-x2-y13)
+ 	(connected loc-x1-y13 loc-x1-y12)
  	(connected loc-x2-y0 loc-x1-y0)
  	(connected loc-x2-y0 loc-x3-y0)
  	(connected loc-x2-y0 loc-x2-y1)
@@ -277,6 +343,14 @@
  	(connected loc-x2-y11 loc-x1-y11)
  	(connected loc-x2-y11 loc-x3-y11)
  	(connected loc-x2-y11 loc-x2-y10)
+ 	(connected loc-x2-y11 loc-x2-y12)
+ 	(connected loc-x2-y12 loc-x1-y12)
+ 	(connected loc-x2-y12 loc-x3-y12)
+ 	(connected loc-x2-y12 loc-x2-y11)
+ 	(connected loc-x2-y12 loc-x2-y13)
+ 	(connected loc-x2-y13 loc-x1-y13)
+ 	(connected loc-x2-y13 loc-x3-y13)
+ 	(connected loc-x2-y13 loc-x2-y12)
  	(connected loc-x3-y0 loc-x2-y0)
  	(connected loc-x3-y0 loc-x4-y0)
  	(connected loc-x3-y0 loc-x3-y1)
@@ -323,6 +397,14 @@
  	(connected loc-x3-y11 loc-x2-y11)
  	(connected loc-x3-y11 loc-x4-y11)
  	(connected loc-x3-y11 loc-x3-y10)
+ 	(connected loc-x3-y11 loc-x3-y12)
+ 	(connected loc-x3-y12 loc-x2-y12)
+ 	(connected loc-x3-y12 loc-x4-y12)
+ 	(connected loc-x3-y12 loc-x3-y11)
+ 	(connected loc-x3-y12 loc-x3-y13)
+ 	(connected loc-x3-y13 loc-x2-y13)
+ 	(connected loc-x3-y13 loc-x4-y13)
+ 	(connected loc-x3-y13 loc-x3-y12)
  	(connected loc-x4-y0 loc-x3-y0)
  	(connected loc-x4-y0 loc-x5-y0)
  	(connected loc-x4-y0 loc-x4-y1)
@@ -369,6 +451,14 @@
  	(connected loc-x4-y11 loc-x3-y11)
  	(connected loc-x4-y11 loc-x5-y11)
  	(connected loc-x4-y11 loc-x4-y10)
+ 	(connected loc-x4-y11 loc-x4-y12)
+ 	(connected loc-x4-y12 loc-x3-y12)
+ 	(connected loc-x4-y12 loc-x5-y12)
+ 	(connected loc-x4-y12 loc-x4-y11)
+ 	(connected loc-x4-y12 loc-x4-y13)
+ 	(connected loc-x4-y13 loc-x3-y13)
+ 	(connected loc-x4-y13 loc-x5-y13)
+ 	(connected loc-x4-y13 loc-x4-y12)
  	(connected loc-x5-y0 loc-x4-y0)
  	(connected loc-x5-y0 loc-x6-y0)
  	(connected loc-x5-y0 loc-x5-y1)
@@ -415,6 +505,14 @@
  	(connected loc-x5-y11 loc-x4-y11)
  	(connected loc-x5-y11 loc-x6-y11)
  	(connected loc-x5-y11 loc-x5-y10)
+ 	(connected loc-x5-y11 loc-x5-y12)
+ 	(connected loc-x5-y12 loc-x4-y12)
+ 	(connected loc-x5-y12 loc-x6-y12)
+ 	(connected loc-x5-y12 loc-x5-y11)
+ 	(connected loc-x5-y12 loc-x5-y13)
+ 	(connected loc-x5-y13 loc-x4-y13)
+ 	(connected loc-x5-y13 loc-x6-y13)
+ 	(connected loc-x5-y13 loc-x5-y12)
  	(connected loc-x6-y0 loc-x5-y0)
  	(connected loc-x6-y0 loc-x7-y0)
  	(connected loc-x6-y0 loc-x6-y1)
@@ -461,6 +559,14 @@
  	(connected loc-x6-y11 loc-x5-y11)
  	(connected loc-x6-y11 loc-x7-y11)
  	(connected loc-x6-y11 loc-x6-y10)
+ 	(connected loc-x6-y11 loc-x6-y12)
+ 	(connected loc-x6-y12 loc-x5-y12)
+ 	(connected loc-x6-y12 loc-x7-y12)
+ 	(connected loc-x6-y12 loc-x6-y11)
+ 	(connected loc-x6-y12 loc-x6-y13)
+ 	(connected loc-x6-y13 loc-x5-y13)
+ 	(connected loc-x6-y13 loc-x7-y13)
+ 	(connected loc-x6-y13 loc-x6-y12)
  	(connected loc-x7-y0 loc-x6-y0)
  	(connected loc-x7-y0 loc-x8-y0)
  	(connected loc-x7-y0 loc-x7-y1)
@@ -507,6 +613,14 @@
  	(connected loc-x7-y11 loc-x6-y11)
  	(connected loc-x7-y11 loc-x8-y11)
  	(connected loc-x7-y11 loc-x7-y10)
+ 	(connected loc-x7-y11 loc-x7-y12)
+ 	(connected loc-x7-y12 loc-x6-y12)
+ 	(connected loc-x7-y12 loc-x8-y12)
+ 	(connected loc-x7-y12 loc-x7-y11)
+ 	(connected loc-x7-y12 loc-x7-y13)
+ 	(connected loc-x7-y13 loc-x6-y13)
+ 	(connected loc-x7-y13 loc-x8-y13)
+ 	(connected loc-x7-y13 loc-x7-y12)
  	(connected loc-x8-y0 loc-x7-y0)
  	(connected loc-x8-y0 loc-x9-y0)
  	(connected loc-x8-y0 loc-x8-y1)
@@ -553,6 +667,14 @@
  	(connected loc-x8-y11 loc-x7-y11)
  	(connected loc-x8-y11 loc-x9-y11)
  	(connected loc-x8-y11 loc-x8-y10)
+ 	(connected loc-x8-y11 loc-x8-y12)
+ 	(connected loc-x8-y12 loc-x7-y12)
+ 	(connected loc-x8-y12 loc-x9-y12)
+ 	(connected loc-x8-y12 loc-x8-y11)
+ 	(connected loc-x8-y12 loc-x8-y13)
+ 	(connected loc-x8-y13 loc-x7-y13)
+ 	(connected loc-x8-y13 loc-x9-y13)
+ 	(connected loc-x8-y13 loc-x8-y12)
  	(connected loc-x9-y0 loc-x8-y0)
  	(connected loc-x9-y0 loc-x10-y0)
  	(connected loc-x9-y0 loc-x9-y1)
@@ -599,6 +721,14 @@
  	(connected loc-x9-y11 loc-x8-y11)
  	(connected loc-x9-y11 loc-x10-y11)
  	(connected loc-x9-y11 loc-x9-y10)
+ 	(connected loc-x9-y11 loc-x9-y12)
+ 	(connected loc-x9-y12 loc-x8-y12)
+ 	(connected loc-x9-y12 loc-x10-y12)
+ 	(connected loc-x9-y12 loc-x9-y11)
+ 	(connected loc-x9-y12 loc-x9-y13)
+ 	(connected loc-x9-y13 loc-x8-y13)
+ 	(connected loc-x9-y13 loc-x10-y13)
+ 	(connected loc-x9-y13 loc-x9-y12)
  	(connected loc-x10-y0 loc-x9-y0)
  	(connected loc-x10-y0 loc-x11-y0)
  	(connected loc-x10-y0 loc-x10-y1)
@@ -645,61 +775,186 @@
  	(connected loc-x10-y11 loc-x9-y11)
  	(connected loc-x10-y11 loc-x11-y11)
  	(connected loc-x10-y11 loc-x10-y10)
+ 	(connected loc-x10-y11 loc-x10-y12)
+ 	(connected loc-x10-y12 loc-x9-y12)
+ 	(connected loc-x10-y12 loc-x11-y12)
+ 	(connected loc-x10-y12 loc-x10-y11)
+ 	(connected loc-x10-y12 loc-x10-y13)
+ 	(connected loc-x10-y13 loc-x9-y13)
+ 	(connected loc-x10-y13 loc-x11-y13)
+ 	(connected loc-x10-y13 loc-x10-y12)
  	(connected loc-x11-y0 loc-x10-y0)
+ 	(connected loc-x11-y0 loc-x12-y0)
  	(connected loc-x11-y0 loc-x11-y1)
  	(connected loc-x11-y1 loc-x10-y1)
+ 	(connected loc-x11-y1 loc-x12-y1)
  	(connected loc-x11-y1 loc-x11-y0)
  	(connected loc-x11-y1 loc-x11-y2)
  	(connected loc-x11-y2 loc-x10-y2)
+ 	(connected loc-x11-y2 loc-x12-y2)
  	(connected loc-x11-y2 loc-x11-y1)
  	(connected loc-x11-y2 loc-x11-y3)
  	(connected loc-x11-y3 loc-x10-y3)
+ 	(connected loc-x11-y3 loc-x12-y3)
  	(connected loc-x11-y3 loc-x11-y2)
  	(connected loc-x11-y3 loc-x11-y4)
  	(connected loc-x11-y4 loc-x10-y4)
+ 	(connected loc-x11-y4 loc-x12-y4)
  	(connected loc-x11-y4 loc-x11-y3)
  	(connected loc-x11-y4 loc-x11-y5)
  	(connected loc-x11-y5 loc-x10-y5)
+ 	(connected loc-x11-y5 loc-x12-y5)
  	(connected loc-x11-y5 loc-x11-y4)
  	(connected loc-x11-y5 loc-x11-y6)
  	(connected loc-x11-y6 loc-x10-y6)
+ 	(connected loc-x11-y6 loc-x12-y6)
  	(connected loc-x11-y6 loc-x11-y5)
  	(connected loc-x11-y6 loc-x11-y7)
  	(connected loc-x11-y7 loc-x10-y7)
+ 	(connected loc-x11-y7 loc-x12-y7)
  	(connected loc-x11-y7 loc-x11-y6)
  	(connected loc-x11-y7 loc-x11-y8)
  	(connected loc-x11-y8 loc-x10-y8)
+ 	(connected loc-x11-y8 loc-x12-y8)
  	(connected loc-x11-y8 loc-x11-y7)
  	(connected loc-x11-y8 loc-x11-y9)
  	(connected loc-x11-y9 loc-x10-y9)
+ 	(connected loc-x11-y9 loc-x12-y9)
  	(connected loc-x11-y9 loc-x11-y8)
  	(connected loc-x11-y9 loc-x11-y10)
  	(connected loc-x11-y10 loc-x10-y10)
+ 	(connected loc-x11-y10 loc-x12-y10)
  	(connected loc-x11-y10 loc-x11-y9)
  	(connected loc-x11-y10 loc-x11-y11)
  	(connected loc-x11-y11 loc-x10-y11)
+ 	(connected loc-x11-y11 loc-x12-y11)
  	(connected loc-x11-y11 loc-x11-y10)
+ 	(connected loc-x11-y11 loc-x11-y12)
+ 	(connected loc-x11-y12 loc-x10-y12)
+ 	(connected loc-x11-y12 loc-x12-y12)
+ 	(connected loc-x11-y12 loc-x11-y11)
+ 	(connected loc-x11-y12 loc-x11-y13)
+ 	(connected loc-x11-y13 loc-x10-y13)
+ 	(connected loc-x11-y13 loc-x12-y13)
+ 	(connected loc-x11-y13 loc-x11-y12)
+ 	(connected loc-x12-y0 loc-x11-y0)
+ 	(connected loc-x12-y0 loc-x13-y0)
+ 	(connected loc-x12-y0 loc-x12-y1)
+ 	(connected loc-x12-y1 loc-x11-y1)
+ 	(connected loc-x12-y1 loc-x13-y1)
+ 	(connected loc-x12-y1 loc-x12-y0)
+ 	(connected loc-x12-y1 loc-x12-y2)
+ 	(connected loc-x12-y2 loc-x11-y2)
+ 	(connected loc-x12-y2 loc-x13-y2)
+ 	(connected loc-x12-y2 loc-x12-y1)
+ 	(connected loc-x12-y2 loc-x12-y3)
+ 	(connected loc-x12-y3 loc-x11-y3)
+ 	(connected loc-x12-y3 loc-x13-y3)
+ 	(connected loc-x12-y3 loc-x12-y2)
+ 	(connected loc-x12-y3 loc-x12-y4)
+ 	(connected loc-x12-y4 loc-x11-y4)
+ 	(connected loc-x12-y4 loc-x13-y4)
+ 	(connected loc-x12-y4 loc-x12-y3)
+ 	(connected loc-x12-y4 loc-x12-y5)
+ 	(connected loc-x12-y5 loc-x11-y5)
+ 	(connected loc-x12-y5 loc-x13-y5)
+ 	(connected loc-x12-y5 loc-x12-y4)
+ 	(connected loc-x12-y5 loc-x12-y6)
+ 	(connected loc-x12-y6 loc-x11-y6)
+ 	(connected loc-x12-y6 loc-x13-y6)
+ 	(connected loc-x12-y6 loc-x12-y5)
+ 	(connected loc-x12-y6 loc-x12-y7)
+ 	(connected loc-x12-y7 loc-x11-y7)
+ 	(connected loc-x12-y7 loc-x13-y7)
+ 	(connected loc-x12-y7 loc-x12-y6)
+ 	(connected loc-x12-y7 loc-x12-y8)
+ 	(connected loc-x12-y8 loc-x11-y8)
+ 	(connected loc-x12-y8 loc-x13-y8)
+ 	(connected loc-x12-y8 loc-x12-y7)
+ 	(connected loc-x12-y8 loc-x12-y9)
+ 	(connected loc-x12-y9 loc-x11-y9)
+ 	(connected loc-x12-y9 loc-x13-y9)
+ 	(connected loc-x12-y9 loc-x12-y8)
+ 	(connected loc-x12-y9 loc-x12-y10)
+ 	(connected loc-x12-y10 loc-x11-y10)
+ 	(connected loc-x12-y10 loc-x13-y10)
+ 	(connected loc-x12-y10 loc-x12-y9)
+ 	(connected loc-x12-y10 loc-x12-y11)
+ 	(connected loc-x12-y11 loc-x11-y11)
+ 	(connected loc-x12-y11 loc-x13-y11)
+ 	(connected loc-x12-y11 loc-x12-y10)
+ 	(connected loc-x12-y11 loc-x12-y12)
+ 	(connected loc-x12-y12 loc-x11-y12)
+ 	(connected loc-x12-y12 loc-x13-y12)
+ 	(connected loc-x12-y12 loc-x12-y11)
+ 	(connected loc-x12-y12 loc-x12-y13)
+ 	(connected loc-x12-y13 loc-x11-y13)
+ 	(connected loc-x12-y13 loc-x13-y13)
+ 	(connected loc-x12-y13 loc-x12-y12)
+ 	(connected loc-x13-y0 loc-x12-y0)
+ 	(connected loc-x13-y0 loc-x13-y1)
+ 	(connected loc-x13-y1 loc-x12-y1)
+ 	(connected loc-x13-y1 loc-x13-y0)
+ 	(connected loc-x13-y1 loc-x13-y2)
+ 	(connected loc-x13-y2 loc-x12-y2)
+ 	(connected loc-x13-y2 loc-x13-y1)
+ 	(connected loc-x13-y2 loc-x13-y3)
+ 	(connected loc-x13-y3 loc-x12-y3)
+ 	(connected loc-x13-y3 loc-x13-y2)
+ 	(connected loc-x13-y3 loc-x13-y4)
+ 	(connected loc-x13-y4 loc-x12-y4)
+ 	(connected loc-x13-y4 loc-x13-y3)
+ 	(connected loc-x13-y4 loc-x13-y5)
+ 	(connected loc-x13-y5 loc-x12-y5)
+ 	(connected loc-x13-y5 loc-x13-y4)
+ 	(connected loc-x13-y5 loc-x13-y6)
+ 	(connected loc-x13-y6 loc-x12-y6)
+ 	(connected loc-x13-y6 loc-x13-y5)
+ 	(connected loc-x13-y6 loc-x13-y7)
+ 	(connected loc-x13-y7 loc-x12-y7)
+ 	(connected loc-x13-y7 loc-x13-y6)
+ 	(connected loc-x13-y7 loc-x13-y8)
+ 	(connected loc-x13-y8 loc-x12-y8)
+ 	(connected loc-x13-y8 loc-x13-y7)
+ 	(connected loc-x13-y8 loc-x13-y9)
+ 	(connected loc-x13-y9 loc-x12-y9)
+ 	(connected loc-x13-y9 loc-x13-y8)
+ 	(connected loc-x13-y9 loc-x13-y10)
+ 	(connected loc-x13-y10 loc-x12-y10)
+ 	(connected loc-x13-y10 loc-x13-y9)
+ 	(connected loc-x13-y10 loc-x13-y11)
+ 	(connected loc-x13-y11 loc-x12-y11)
+ 	(connected loc-x13-y11 loc-x13-y10)
+ 	(connected loc-x13-y11 loc-x13-y12)
+ 	(connected loc-x13-y12 loc-x12-y12)
+ 	(connected loc-x13-y12 loc-x13-y11)
+ 	(connected loc-x13-y12 loc-x13-y13)
+ 	(connected loc-x13-y13 loc-x12-y13)
+ 	(connected loc-x13-y13 loc-x13-y12)
  
 )
 (:goal
 (and 
-	(visited loc-x0-y3)
-	(visited loc-x1-y6)
-	(visited loc-x2-y1)
-	(visited loc-x3-y11)
-	(visited loc-x4-y1)
+	(visited loc-x0-y13)
+	(visited loc-x2-y5)
+	(visited loc-x2-y10)
+	(visited loc-x2-y12)
+	(visited loc-x3-y3)
+	(visited loc-x3-y10)
+	(visited loc-x4-y12)
 	(visited loc-x5-y10)
-	(visited loc-x7-y0)
-	(visited loc-x7-y8)
-	(visited loc-x8-y8)
+	(visited loc-x6-y10)
+	(visited loc-x7-y10)
+	(visited loc-x8-y0)
+	(visited loc-x8-y1)
 	(visited loc-x9-y6)
-	(visited loc-x10-y0)
-	(visited loc-x10-y4)
-	(visited loc-x10-y5)
-	(visited loc-x10-y7)
-	(visited loc-x11-y2)
-	(visited loc-x11-y5)
-	(visited loc-x11-y10)
+	(visited loc-x9-y8)
+	(visited loc-x10-y1)
+	(visited loc-x10-y6)
+	(visited loc-x10-y8)
+	(visited loc-x12-y3)
+	(visited loc-x13-y0)
+	(visited loc-x13-y13)
 )
 )
 )

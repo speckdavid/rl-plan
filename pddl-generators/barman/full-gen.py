@@ -1,14 +1,14 @@
 import os
 
-seeds = [i for i in range(1,6)]
+seeds = [i for i in range(1,4)]
 num = 0
 
-# cocktails
-for i in range(3,6):
-    # ingredience
-    for j in range(3,6):
-        # shots
-        for k in range(i+1,10):
+# shots
+for k in range(3,12,2):
+    # cocktails
+    for i in range(2,k,1):
+        # ingredience
+        for j in range(6,10):
             for s in seeds:
                 if num >= 200:
                     exit(0)
