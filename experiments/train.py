@@ -45,4 +45,4 @@ os.system(replace_str)
 replace_str = "sed -i 's/DOMAIN/" + str(benchmark) + "/g' " + new_job_file
 print(replace_str)
 os.system(replace_str)
-os.system("sbatch " + new_job_file)
+#os.system("sbatch " + new_job_file)
