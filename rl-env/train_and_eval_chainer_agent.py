@@ -108,6 +108,7 @@ def main():
     # Set a random seed used in ChainerRL ALSO SETS NUMPY SEED!
     misc.set_random_seed(args.seed)
 
+
     if not args.evaluate:
         if args.outdir and not args.load:
             outdir_suffix_dict = {'none': '', 'empty': '', 'time': '%Y%m%dT%H%M%S.%f'}
@@ -127,7 +128,8 @@ def main():
 
         logging.info('Output files are saved in {}'.format(args.outdir))
     else:
-        args.outdir = args.load
+        pass
+        #args.outdir = args.load
 
     def clip_action_filter(a):
         return np.clip(a, action_space.low, action_space.high)
