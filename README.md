@@ -1,6 +1,13 @@
 # Learning Heuristic Selection with Dynamic Algorithm Configuration
 
-TODO: Ref
+    @article{speck-et-al-arxiv20,
+      author    = {David Speck and Andr\'e Biedenkapp and Frank Hutter and Robert Mattm\"uller and Mmarius Lindauer},
+      title     = {Learning Heuristic Selection with Dynamic Algorithm Configuration},
+      journal   = {arXiv:2006.08246 [cs.AI]},
+      year      = {2020},
+      month     = jun
+    }
+
 
 In the following, we will explain how to use our extension for Fast-Downward, which makes it possible to communicate with a controller (dynamic configurator) via TCP/IP in order to send relevant information (state feature) in each time/expansion step and thus to dynamically select an heuristic.
 
