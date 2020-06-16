@@ -1,11 +1,10 @@
 # Learning Heuristic Selection with Dynamic Algorithm Configuration
 
-    @article{speck-et-al-arxiv20,
-      author    = {David Speck and Andr\'e Biedenkapp and Frank Hutter and Robert Mattm\"uller and Marius Lindauer},
-      title     = {Learning Heuristic Selection with Dynamic Algorithm Configuration},
-      journal   = {arXiv:2006.08246 [cs.AI]},
-      year      = {2020},
-      month     = jun
+    @Misc{speck-et-al-arxiv2020,
+      author         = {David Speck and Andr\'e Biedenkapp and Frank Hutter and Robert Mattm\"uller and Marius Lindauer},
+      title          = {Learning Heuristic Selection with Dynamic Algorithm Configuration},
+      year           = {2020},
+      howpublished   = {arXiv:2006.08246 [cs.AI]}
     }
 
 
