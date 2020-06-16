@@ -1,5 +1,9 @@
 # Learning Heuristic Selection with Dynamic Algorithm Configuration
 
+David Speck, André Biedenkapp, Frank Hutter, Robert Mattmüller und Marius Lindauer.
+Learning Heuristic Selection with Dynamic Algorithm Configuration.
+arXiv:2006.08246 [cs.AI], 2020. ([pdf](http://arxiv.org/abs/2006.08246))
+
     @Misc{speck-et-al-arxiv2020,
       author         = {David Speck and Andr\'e Biedenkapp and Frank Hutter and Robert Mattm\"uller and Marius Lindauer},
       title          = {Learning Heuristic Selection with Dynamic Algorithm Configuration},
