@@ -1,4 +1,4 @@
-# Artifical Benchmark
+# Artifical Benchmark (White-Box Experiments)
 
 We use two pattern database heuristics and greedy best-first search with a slightly different tie-breaking rule.
 
