@@ -45,8 +45,8 @@ $ source rl-plan-venv/bin/activate
 We create a new folder where we will execute and save all results.
 
 ```console
-mkdir results-controller
-cd results-controller
+$ mkdir results-controller
+$ cd results-controller
 ```
 
 Several different controllers can be started:
