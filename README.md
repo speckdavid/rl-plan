@@ -43,8 +43,11 @@ $ source rl-plan-venv/bin/activate
 ### Starting a Controller
 
 We create a new folder where we will execute and save all results.
+
+```console
 mkdir results-controller
 cd results-controller
+```
 
 Several different controllers can be started:
  - A dynamic control policy based on a trained neural network
