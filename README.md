@@ -57,7 +57,7 @@ Several different controllers can be started:
 
 Note that the first control step is often ignored, as it is irrelevant, since it always expands the initial state.
 
-#### Dynamic Policy (Trained Neural Network)
+##### Dynamic Policy (Trained Neural Network)
 
 The following command starts a dynamic control policy for the domain [blocksworld](gen-benchmarks/blocksworld/). All trained policies can be found in the [experiments](experiments/) folder.
 
@@ -119,7 +119,7 @@ $ ../fast-downward/fast-downward.py --overall-time-limit 300 --overall-memory-li
 $ ../fast-downward/fast-downward.py --overall-time-limit 300 --overall-memory-limit 4G ../gen-benchmarks/blocksworld/domain.pddl ../gen-benchmarks/blocksworld/prob1.pddl --search "eager(single(ff()))"
 ```
 
-## Training a Dynamic Controller with Reinformanct Learning
+## Train a Dynamic Controller with Reinformanct Learning
 Here we explain how it is possible to train our own dynamic controller. We have modified the parameters for a small example with a single instance. The parameters can be adjusted accordingly. Again we create a new folder where we execute and save all results.
 
 ```console
