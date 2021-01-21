@@ -49,15 +49,15 @@ $ mkdir results-controller
 $ cd results-controller
 ```
 
-Several different controllers can be started:
- - A dynamic control policy based on a trained neural network
- - A random control policy
- - An alternation control policy
- - A single heuristic control policy
+Several different controllers can be started (choose one):
+ - a) A dynamic control policy based on a trained neural network
+ - b) A random control policy
+ - c) An alternation control policy
+ - d) A single heuristic control policy
 
 Note that the first control step is often ignored, as it is irrelevant, since it always expands the initial state.
 
-##### Dynamic Policy (Trained Neural Network)
+#### a) Dynamic Policy (Trained Neural Network)
 
 The following command starts a dynamic control policy for the domain [blocksworld](gen-benchmarks/blocksworld/). All trained policies can be found in the [experiments](experiments/) folder.
 
@@ -65,20 +65,20 @@ The following command starts a dynamic control policy for the domain [blocksworl
 $ python ../rl-env/train_and_eval_chainer_agent.py --outdir . --port-file-id 12345 --load ../experiments/blocksworld/blocksworld_full_train_set_2-75-1/best --evaluate --save-eval-stats nn-test-layer2-seed1.json --eval-n-runs 1 --seed 1 --state 2 --num-heuristics 4 --steps 9223372036854775807 --port 12345 --n-hidden-channels 75 --n-hidden-layers 2 --eval-interval 9223372036854775807 --checkpoint_frequency 9223372036854775807
 ```
 
-#### Random
+#### b) Random
 Executes a control policy that randomly selects one of four heuristics (note the fixed seed).
 ```console
 $ python ../rl-env/run_static.py -r --port-file-id 12345 --seed 1 --save-eval-stats rnd-test-layer2-seed1.json --eval-n-runs 1 --num-heuristics 4 --time-step-limit 9223372036854775807 --port 12345
 ```
 
-#### Alternation
+#### c) Alternation
 The following command starts an alternation control policy (0,1,2,3,0,1...).
 
 ```console
 $ python ../rl-env/run_static.py --rr-order 0 1 2 3 --rr-steps 0 --port-file-id 12345 --seed 1 --save-eval-stats rr-test-layer2-seed1.json --eval-n-runs 1 --num-heuristics 4 --time-step-limit 9223372036854775807 --port 12345
 ```
 
-#### Single heuristic 
+#### d) Single heuristic 
 The following command starts a single control policy which always selects 0.
 
 ```console
@@ -104,17 +104,17 @@ $ mkdir results-fd
 $ cd results-fd
 ```
 
-### Alternation
+### a) Alternation
 ```console
 $ ../fast-downward/fast-downward.py --overall-time-limit 300 --overall-memory-limit 4G ../gen-benchmarks/blocksworld/domain.pddl ../gen-benchmarks/blocksworld/prob1.pddl --search "eager(alt([single(ff()),single(cg()),single(cea()),single(add())]))"
 ```
 
-### Random
+### b) Random
 ```console
 $ ../fast-downward/fast-downward.py --overall-time-limit 300 --overall-memory-limit 4G ../gen-benchmarks/blocksworld/domain.pddl ../gen-benchmarks/blocksworld/prob1.pddl --search "eager(rnd([single(ff()),single(cg()),single(cea()),single(add())]),random_seed=1)"
 ```
 
-### Single heuristic
+### c) Single heuristic
 ```console
 $ ../fast-downward/fast-downward.py --overall-time-limit 300 --overall-memory-limit 4G ../gen-benchmarks/blocksworld/domain.pddl ../gen-benchmarks/blocksworld/prob1.pddl --search "eager(single(ff()))"
 ```
