@@ -2,14 +2,16 @@
 
 David Speck, André Biedenkapp, Frank Hutter, Robert Mattmüller und Marius Lindauer.
 Learning Heuristic Selection with Dynamic Algorithm Configuration.
-arXiv:2006.08246 [cs.AI], 2020. ([pdf](http://arxiv.org/abs/2006.08246))
+In Proceedings of the 31st International Conference on Automated Planning and Scheduling (ICAPS 2021). 2021. ([pdf](http://arxiv.org/abs/2006.08246))
 
-    @Misc{speck-et-al-arxiv2020,
+    @Misc{speck-et-al-icaps2021,
         author =       "David Speck and Andr{\'e} Biedenkapp and Frank Hutter and 
                         Robert Mattm{\"u}ller and Marius Lindauer",
         title =        "Learning Heuristic Selection with Dynamic Algorithm Configuration",
-        year =         "2020",
-        howpublished = "arXiv:2006.08246 [cs.AI]"
+        booktitle =    "Proceedings of the Thirty-First International Conference on
+                        Automated Planning and Scheduling (ICAPS 2021)",
+        year =         "2021",
+        publisher =    "AAAI Press"
     }
 
 
