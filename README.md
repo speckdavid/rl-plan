@@ -5,7 +5,7 @@ Learning Heuristic Selection with Dynamic Algorithm Configuration.
 In Proceedings of the 31st International Conference on Automated Planning and Scheduling (ICAPS 2021). 2021. ([pdf](http://arxiv.org/abs/2006.08246))
 
 ```console
-    @InProceedings{speck-et-al-icaps2021,
+@InProceedings{speck-et-al-icaps2021,
     author =       "David Speck and Andr{\'e} Biedenkapp and Frank Hutter and 
                     Robert Mattm{\"u}ller and Marius Lindauer",
     title =        "Learning Heuristic Selection with Dynamic Algorithm Configuration",
