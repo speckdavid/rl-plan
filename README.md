@@ -6,15 +6,15 @@ In Proceedings of the 31st International Conference on Automated Planning and Sc
 
 ```console
     @InProceedings{speck-et-al-icaps2021,
-        author =       "David Speck and Andr{\'e} Biedenkapp and Frank Hutter and 
-                        Robert Mattm{\"u}ller and Marius Lindauer",
-        title =        "Learning Heuristic Selection with Dynamic Algorithm Configuration",
-        booktitle =    "Proceedings of the Thirty-First International Conference on
-                        Automated Planning and Scheduling (ICAPS 2021)",
-        year =         "2021",
-        publisher =    "AAAI Press",
-        note =         "to appear"
-    }
+    author =       "David Speck and Andr{\'e} Biedenkapp and Frank Hutter and 
+                    Robert Mattm{\"u}ller and Marius Lindauer",
+    title =        "Learning Heuristic Selection with Dynamic Algorithm Configuration",
+    booktitle =    "Proceedings of the Thirty-First International Conference on
+                    Automated Planning and Scheduling (ICAPS 2021)",
+    year =         "2021",
+    publisher =    "AAAI Press",
+    note =         "to appear"
+}
 ```
 
 In the following, we will explain how to use our extension for Fast-Downward, which makes it possible to communicate with a controller (dynamic configurator) via TCP/IP in order to send relevant information (state feature) in each time/expansion step and thus to dynamically select an heuristic.
