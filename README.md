@@ -23,7 +23,7 @@ We will use the the four heuristics used in the paper. For more information, ple
 
 ## Install
 
-Tested with Python 3.8.16.
+Tested with Python 3.8.16. You can find the latest version of the rl-plan code in the branch [latest](https://github.com/speckdavid/rl-plan/tree/latest).
 
 ```console
 $ sudo apt install cmake g++ git make python3.8 python3.8-venv
