@@ -14,6 +14,10 @@
   can be one of the bottlenecks in our code.)
 */
 
+namespace utils {
+class LogProxy;
+}
+
 namespace merge_and_shrink {
 class TransitionSystem;
 
@@ -48,7 +52,7 @@ public:
     void compute_distances(
         bool compute_init_distances,
         bool compute_goal_distances,
-        Verbosity verbosity);
+        utils::LogProxy &log);
 
     /*
       Update distances according to the given abstraction. If the abstraction
@@ -63,7 +67,7 @@ public:
         const StateEquivalenceRelation &state_equivalence_relation,
         bool compute_init_distances,
         bool compute_goal_distances,
-        Verbosity verbosity);
+        utils::LogProxy &log);
 
     int get_init_distance(int state) const {
         assert(are_init_distances_computed());
@@ -75,8 +79,8 @@ public:
         return goal_distances[state];
     }
 
-    void dump() const;
-    void statistics() const;
+    void dump(utils::LogProxy &log) const;
+    void statistics(utils::LogProxy &log) const;
 };
 }
 

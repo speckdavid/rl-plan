@@ -75,7 +75,7 @@ Entry RndOpenList<Entry>::remove_min() {
             choices.push_back(i);
         }
     }
-    int choice = choices[(*rng)(choices.size())];
+    int choice = choices[rng->random(choices.size())];
     // std::cout << "Choice: " << choice << std::endl;
     return open_lists[choice]->remove_min();
 }

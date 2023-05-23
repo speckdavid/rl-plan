@@ -5,6 +5,8 @@
 
 #include "../task_proxy.h"
 
+#include "../utils/logging.h"
+
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -60,12 +62,23 @@ int MergeAndShrinkRepresentationLeaf::get_value(const State &state) const {
     return lookup_table[value];
 }
 
-void MergeAndShrinkRepresentationLeaf::dump() const {
-    cout << "lookup table: ";
-    for (const auto &value : lookup_table) {
-        cout << value << ", ";
+bool MergeAndShrinkRepresentationLeaf::is_total() const {
+    for (int entry : lookup_table) {
+        if (entry == PRUNED_STATE) {
+            return false;
+        }
     }
-    cout << endl;
+    return true;
+}
+
+void MergeAndShrinkRepresentationLeaf::dump(utils::LogProxy &log) const {
+    if (log.is_at_least_debug()) {
+        log << "lookup table (leaf): ";
+        for (const auto &value : lookup_table) {
+            log << value << ", ";
+        }
+        log << endl;
+    }
 }
 
 
@@ -122,18 +135,30 @@ int MergeAndShrinkRepresentationMerge::get_value(
     return lookup_table[state1][state2];
 }
 
-void MergeAndShrinkRepresentationMerge::dump() const {
-    cout << "lookup table: ";
-    for (const auto &row : lookup_table) {
-        for (const auto &value : row) {
-            cout << value << ", ";
+bool MergeAndShrinkRepresentationMerge::is_total() const {
+    for (const vector<int> &row : lookup_table) {
+        for (int entry : row) {
+            if (entry == PRUNED_STATE) {
+                return false;
+            }
         }
-        cout << endl;
     }
-    cout << endl;
-    cout << "dump left child:" << endl;
-    left_child->dump();
-    cout << "dump right child:" << endl;
-    right_child->dump();
+    return left_child->is_total() && right_child->is_total();
+}
+
+void MergeAndShrinkRepresentationMerge::dump(utils::LogProxy &log) const {
+    if (log.is_at_least_debug()) {
+        log << "lookup table (merge): " << endl;
+        for (const auto &row : lookup_table) {
+            for (const auto &value : row) {
+                log << value << ", ";
+            }
+            log << endl;
+        }
+        log << "left child:" << endl;
+        left_child->dump(log);
+        log << "right child:" << endl;
+        right_child->dump(log);
+    }
 }
 }

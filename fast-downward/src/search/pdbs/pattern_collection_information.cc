@@ -4,6 +4,7 @@
 #include "pattern_cliques.h"
 #include "validation.h"
 
+#include "../utils/logging.h"
 #include "../utils/timer.h"
 
 #include <algorithm>
@@ -16,13 +17,15 @@ using namespace std;
 namespace pdbs {
 PatternCollectionInformation::PatternCollectionInformation(
     const TaskProxy &task_proxy,
-    const shared_ptr<PatternCollection> &patterns)
+    const shared_ptr<PatternCollection> &patterns,
+    utils::LogProxy &log)
     : task_proxy(task_proxy),
       patterns(patterns),
       pdbs(nullptr),
-      pattern_cliques(nullptr) {
+      pattern_cliques(nullptr),
+      log(log) {
     assert(patterns);
-    validate_and_normalize_patterns(task_proxy, *patterns);
+    validate_and_normalize_patterns(task_proxy, *patterns, log);
 }
 
 bool PatternCollectionInformation::information_is_valid() const {
@@ -56,25 +59,34 @@ void PatternCollectionInformation::create_pdbs_if_missing() {
     assert(patterns);
     if (!pdbs) {
         utils::Timer timer;
-        cout << "Computing PDBs for pattern collection..." << endl;
+        if (log.is_at_least_normal()) {
+            log << "Computing PDBs for pattern collection..." << endl;
+        }
         pdbs = make_shared<PDBCollection>();
         for (const Pattern &pattern : *patterns) {
             shared_ptr<PatternDatabase> pdb =
                 make_shared<PatternDatabase>(task_proxy, pattern);
             pdbs->push_back(pdb);
         }
-        cout << "Done computing PDBs for pattern collection: " << timer << endl;
+        if (log.is_at_least_normal()) {
+            log << "Done computing PDBs for pattern collection: "
+                << timer << endl;
+        }
     }
 }
 
 void PatternCollectionInformation::create_pattern_cliques_if_missing() {
     if (!pattern_cliques) {
         utils::Timer timer;
-        cout << "Computing pattern cliques for pattern collection..." << endl;
+        if (log.is_at_least_normal()) {
+            log << "Computing pattern cliques for pattern collection..." << endl;
+        }
         VariableAdditivity are_additive = compute_additive_vars(task_proxy);
         pattern_cliques = compute_pattern_cliques(*patterns, are_additive);
-        cout << "Done computing pattern cliques for pattern collection: "
-             << timer << endl;
+        if (log.is_at_least_normal()) {
+            log << "Done computing pattern cliques for pattern collection: "
+                << timer << endl;
+        }
     }
 }
 

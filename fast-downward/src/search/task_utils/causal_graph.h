@@ -66,10 +66,6 @@ class CausalGraph {
     IntRelation successors;
     IntRelation predecessors;
 
-    size_t num_pre_to_eff;
-    size_t num_eff_to_pre;
-    size_t num_eff_to_eff;
-
     void dump(const TaskProxy &task_proxy) const;
 public:
     /* Use the factory function get_causal_graph to create causal graphs
@@ -114,19 +110,6 @@ public:
     const std::vector<int> &get_predecessors(int var) const {
         return predecessors[var];
     }
-
-    size_t get_num_pre_to_eff() const {
-        return num_pre_to_eff;
-    }
-
-    size_t get_num_eff_to_pre() const {
-        return num_eff_to_pre;
-    }
-
-    size_t get_num_eff_to_eff() const {
-        return num_eff_to_eff;
-    }
-
 };
 
 /* Create or retrieve a causal graph from cache. If causal graphs are created
