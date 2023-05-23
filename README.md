@@ -23,8 +23,10 @@ We will use the the four heuristics used in the paper. For more information, ple
 
 ## Install
 
+Tested with Python 3.8.16.
+
 ```console
-$ sudo apt install cmake g++ mercurial make python3 python3-venv
+$ sudo apt install cmake g++ git make python3.8 python3.8-venv
 
 $ git clone repo
 $ cd rl-plan
