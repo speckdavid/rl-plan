@@ -167,12 +167,9 @@ struct CausalGraphBuilder {
     }
 };
 
-CausalGraph::CausalGraph(const TaskProxy &task_proxy) : 
-    num_pre_to_eff(0),
-    num_eff_to_pre(0),
-    num_eff_to_eff(0) {
+CausalGraph::CausalGraph(const TaskProxy &task_proxy) {
     utils::Timer timer;
-    cout << "building causal graph..." << flush;
+    utils::g_log << "building causal graph..." << flush;
     int num_variables = task_proxy.get_variables().size();
     CausalGraphBuilder cg_builder(num_variables);
 
@@ -189,29 +186,20 @@ CausalGraph::CausalGraph(const TaskProxy &task_proxy) :
     cg_builder.pred_builder.compute_relation(predecessors);
     cg_builder.succ_builder.compute_relation(successors);
 
-    for (size_t i = 0; i < pre_to_eff.size(); i++)
-        num_pre_to_eff++;
-    
-    for (size_t i = 0; i < eff_to_pre.size(); i++)
-        num_eff_to_pre++;
-    
-    for (size_t i = 0; i < eff_to_eff.size(); i++)
-        num_eff_to_eff++;
-
     // dump(task_proxy);
-    cout << "done! [t=" << timer << "]" << endl;
+    utils::g_log << "done! [t=" << timer << "]" << endl;
 }
 
 void CausalGraph::dump(const TaskProxy &task_proxy) const {
-    cout << "Causal graph: " << endl;
+    utils::g_log << "Causal graph: " << endl;
     for (VariableProxy var : task_proxy.get_variables()) {
         int var_id = var.get_id();
-        cout << "#" << var_id << " [" << var.get_name() << "]:" << endl
-             << "    pre->eff arcs: " << pre_to_eff[var_id] << endl
-             << "    eff->pre arcs: " << eff_to_pre[var_id] << endl
-             << "    eff->eff arcs: " << eff_to_eff[var_id] << endl
-             << "    successors: " << successors[var_id] << endl
-             << "    predecessors: " << predecessors[var_id] << endl;
+        utils::g_log << "#" << var_id << " [" << var.get_name() << "]:" << endl
+                     << "    pre->eff arcs: " << pre_to_eff[var_id] << endl
+                     << "    eff->pre arcs: " << eff_to_pre[var_id] << endl
+                     << "    eff->eff arcs: " << eff_to_eff[var_id] << endl
+                     << "    successors: " << successors[var_id] << endl
+                     << "    predecessors: " << predecessors[var_id] << endl;
     }
 }
 

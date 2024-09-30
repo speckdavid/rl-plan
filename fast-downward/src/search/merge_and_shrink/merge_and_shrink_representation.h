@@ -6,6 +6,10 @@
 
 class State;
 
+namespace utils {
+class LogProxy;
+}
+
 namespace merge_and_shrink {
 class Distances;
 class MergeAndShrinkRepresentation {
@@ -16,16 +20,23 @@ public:
     explicit MergeAndShrinkRepresentation(int domain_size);
     virtual ~MergeAndShrinkRepresentation() = 0;
 
-    // Store distances instead of abstract state numbers.
-    virtual void set_distances(const Distances &) = 0;
     int get_domain_size() const;
 
-    // Return the abstract state or the goal distance, depending on whether
-    // set_distances has been used or not.
-    virtual int get_value(const State &state) const = 0;
+    // Store distances instead of abstract state numbers.
+    virtual void set_distances(const Distances &) = 0;
     virtual void apply_abstraction_to_lookup_table(
         const std::vector<int> &abstraction_mapping) = 0;
-    virtual void dump() const = 0;
+    /*
+      Return the value that state is mapped to. This is either an abstract
+      state (if set_distances has not been called) or a distance (if it has).
+      If the represented function is not total, the returned value is DEAD_END
+      if the abstract state is PRUNED_STATE or if the (distance) value is INF.
+    */
+    virtual int get_value(const State &state) const = 0;
+    /* Return true iff the represented function is total, i.e., does not map
+       to PRUNED_STATE. */
+    virtual bool is_total() const = 0;
+    virtual void dump(utils::LogProxy &log) const = 0;
 };
 
 
@@ -41,7 +52,8 @@ public:
     virtual void apply_abstraction_to_lookup_table(
         const std::vector<int> &abstraction_mapping) override;
     virtual int get_value(const State &state) const override;
-    virtual void dump() const override;
+    virtual bool is_total() const override;
+    virtual void dump(utils::LogProxy &log) const override;
 };
 
 
@@ -59,7 +71,8 @@ public:
     virtual void apply_abstraction_to_lookup_table(
         const std::vector<int> &abstraction_mapping) override;
     virtual int get_value(const State &state) const override;
-    virtual void dump() const override;
+    virtual bool is_total() const override;
+    virtual void dump(utils::LogProxy &log) const override;
 };
 }
 

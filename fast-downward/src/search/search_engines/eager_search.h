@@ -11,6 +11,7 @@ class Evaluator;
 class PruningMethod;
 
 namespace options {
+class OptionParser;
 class Options;
 }
 
@@ -31,8 +32,6 @@ protected:
     void start_f_value_statistics(EvaluationContext &eval_context);
     void update_f_value_statistics(EvaluationContext &eval_context);
     void reward_progress();
-    void print_checkpoint_line(int g) const;
-
 
     virtual void initialize() override;
     virtual SearchStatus step() override;
@@ -45,6 +44,8 @@ public:
 
     void dump_search_space() const;
 };
+
+extern void add_options_to_parser(options::OptionParser &parser);
 }
 
 #endif

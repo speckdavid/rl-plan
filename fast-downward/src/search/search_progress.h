@@ -6,6 +6,10 @@
 class EvaluationContext;
 class Evaluator;
 
+namespace utils {
+class LogProxy;
+}
+
 /*
   This class helps track search progress.
 

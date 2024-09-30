@@ -19,8 +19,10 @@ using namespace std;
 
 namespace cegar {
 static vector<CartesianHeuristicFunction> generate_heuristic_functions(
-    const options::Options &opts) {
-    utils::g_log << "Initializing additive Cartesian heuristic..." << endl;
+    const options::Options &opts, utils::LogProxy &log) {
+    if (log.is_at_least_normal()) {
+        log << "Initializing additive Cartesian heuristic..." << endl;
+    }
     vector<shared_ptr<SubtaskGenerator>> subtask_generators =
         opts.get_list<shared_ptr<SubtaskGenerator>>("subtasks");
     shared_ptr<utils::RandomNumberGenerator> rng =
@@ -31,9 +33,9 @@ static vector<CartesianHeuristicFunction> generate_heuristic_functions(
         opts.get<int>("max_transitions"),
         opts.get<double>("max_time"),
         opts.get<bool>("use_general_costs"),
-        static_cast<PickSplit>(opts.get<int>("pick")),
+        opts.get<PickSplit>("pick"),
         *rng,
-        opts.get<bool>("debug"));
+        log);
     return cost_saturation.generate_heuristic_functions(
         opts.get<shared_ptr<AbstractTask>>("transform"));
 }
@@ -41,15 +43,11 @@ static vector<CartesianHeuristicFunction> generate_heuristic_functions(
 AdditiveCartesianHeuristic::AdditiveCartesianHeuristic(
     const options::Options &opts)
     : Heuristic(opts),
-      heuristic_functions(generate_heuristic_functions(opts)) {
+      heuristic_functions(generate_heuristic_functions(opts, log)) {
 }
 
-int AdditiveCartesianHeuristic::compute_heuristic(const GlobalState &global_state) {
-    State state = convert_global_state(global_state);
-    return compute_heuristic(state);
-}
-
-int AdditiveCartesianHeuristic::compute_heuristic(const State &state) {
+int AdditiveCartesianHeuristic::compute_heuristic(const State &ancestor_state) {
+    State state = convert_ancestor_state(ancestor_state);
     int sum_h = 0;
     for (const CartesianHeuristicFunction &function : heuristic_functions) {
         int value = function.get_value(state);
@@ -118,7 +116,7 @@ static shared_ptr<Heuristic> _parse(OptionParser &parser) {
         "max_transitions",
         "maximum sum of real transitions (excluding self-loops) over "
         " all abstractions",
-        "1000000",
+        "1M",
         Bounds("0", "infinity"));
     parser.add_option<double>(
         "max_time",
@@ -133,18 +131,15 @@ static shared_ptr<Heuristic> _parse(OptionParser &parser) {
     pick_strategies.push_back("MAX_REFINED");
     pick_strategies.push_back("MIN_HADD");
     pick_strategies.push_back("MAX_HADD");
-    parser.add_enum_option(
+    parser.add_enum_option<PickSplit>(
         "pick", pick_strategies, "split-selection strategy", "MAX_REFINED");
     parser.add_option<bool>(
         "use_general_costs",
         "allow negative costs in cost partitioning",
         "true");
-    parser.add_option<bool>(
-        "debug",
-        "print debugging output",
-        "false");
     Heuristic::add_options_to_parser(parser);
     utils::add_rng_options(parser);
+
     Options opts = parser.parse();
 
     if (parser.dry_run())

@@ -3,10 +3,12 @@
 #include "evaluation_context.h"
 #include "evaluator.h"
 
+#include "../utils/logging.h"
+
 #include <iostream>
 #include <string>
-using namespace std;
 
+using namespace std;
 
 bool SearchProgress::process_evaluator_value(const Evaluator *evaluator, int value) {
     /*

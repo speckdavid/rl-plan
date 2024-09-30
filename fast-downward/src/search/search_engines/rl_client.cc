@@ -1,6 +1,8 @@
 #include "rl_client.h"
 #include <iostream>
 
+#include "../utils/logging.h"
+
 namespace rl_client {
 
 RLClient::RLClient(int port, std::string ip_address) : port(port), ip_address(ip_address), sock(0) {}
@@ -65,7 +67,7 @@ void RLClient::send_msg(const std::map<int, std::map<std::string, double>>& open
         msg = "0" + msg;
     }
     msg += py_dict;
-    // std::cout << msg << std::endl;
+    // utils::g_log << msg << std::endl;
     send_msg(msg);
 }
 
@@ -73,9 +75,9 @@ std::string RLClient::read_msg() const {
     char buffer[1024] = {0};
     int valread = read( sock, buffer, 1024);
     std::string msg(buffer);
-    // std::cout << "Received: " << msg << std::endl;
+    // utils::g_log << "Received: " << msg << std::endl;
     if (msg.find("END") != std::string::npos) {
-        std::cout << "Termination due to RL agent" << std::endl;
+        utils::g_log << "Termination due to RL agent" << std::endl;
         exit(0);
     }
     return msg;

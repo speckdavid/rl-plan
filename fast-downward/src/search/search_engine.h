@@ -10,6 +10,8 @@
 #include "state_registry.h"
 #include "task_proxy.h"
 
+#include "utils/logging.h"
+
 #include <vector>
 
 namespace options {
@@ -38,6 +40,7 @@ protected:
     // Use task_proxy to access task information.
     TaskProxy task_proxy;
 
+    mutable utils::LogProxy log;
     PlanManager plan_manager;
     StateRegistry state_registry;
     const successor_generator::SuccessorGenerator &successor_generator;
@@ -53,12 +56,12 @@ protected:
     virtual SearchStatus step() = 0;
 
     void set_plan(const Plan &plan);
-    bool check_goal_and_set_plan(const GlobalState &state);
+    bool check_goal_and_set_plan(const State &state);
     int get_adjusted_cost(const OperatorProxy &op) const;
 public:
     SearchEngine(const options::Options &opts);
     virtual ~SearchEngine();
-    virtual void print_statistics() const;
+    virtual void print_statistics() const = 0;
     virtual void save_plan_if_necessary();
     bool found_solution() const;
     SearchStatus get_status() const;
@@ -79,7 +82,8 @@ public:
 /*
   Print evaluator values of all evaluators evaluated in the evaluation context.
 */
-extern void print_initial_evaluator_values(const EvaluationContext &eval_context);
+extern void print_initial_evaluator_values(
+    const EvaluationContext &eval_context);
 
 extern void collect_preferred_operators(
     EvaluationContext &eval_context, Evaluator *preferred_operator_evaluator,

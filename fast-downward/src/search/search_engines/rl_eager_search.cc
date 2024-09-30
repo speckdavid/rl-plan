@@ -7,6 +7,7 @@
 
 #include "../algorithms/ordered_set.h"
 #include "../task_utils/successor_generator.h"
+#include "../utils/logging.h"
 
 #include <optional.hh>
 
@@ -24,12 +25,12 @@ RLEagerSearch::RLEagerSearch(const Options &opts)
 void RLEagerSearch::initialize() {
     EagerSearch::initialize();
     assert(rl_control_interval >= 0);
-    std::cout << "Setup connection to RL Agent!" << std::endl;
+    log << "Setup connection to RL Agent!" << std::endl;
     bool success = rl_client.init_connection();
     if (!success) {
         utils::exit_with(utils::ExitCode::SEARCH_INPUT_ERROR);
     }
-    std::cout << "Connection created!" << std::endl;
+    log << "Connection created!" << std::endl;
 }
 
 // Mainly the step of eager search
@@ -37,7 +38,7 @@ SearchStatus RLEagerSearch::step() {
     tl::optional<SearchNode> node;
     while (true) {
         if (open_list->empty()) {
-            cout << "Completely explored state space -- no solution!" << endl;
+            log << "Completely explored state space -- no solution!" << endl;
             // Send fail to RL agent
             rl_client.send_msg("0047Completely explored state space -- no solution!");
             return FAILED;
@@ -49,7 +50,7 @@ SearchStatus RLEagerSearch::step() {
             open_list->get_open_lists_statistics(open_lists_stats);
             rl_client.send_msg(open_lists_stats, -(rl_control_interval+1), false);
             rl_answer = rl_client.read_msg();
-            // std::cout << "RL-Action: " << rl_answer.substr(4,1) << std::endl;
+            // log << "RL-Action: " << rl_answer.substr(4,1) << std::endl;
         } else {
             rl_steps_until_control--;
         }
@@ -60,7 +61,7 @@ SearchStatus RLEagerSearch::step() {
         //      recreate it outside of this function with node.get_state()?
         //      One way would be to store GlobalState objects inside SearchNodes
         //      instead of StateIDs
-        GlobalState s = state_registry.lookup_state(id);
+        State s = state_registry.lookup_state(id);
         node.emplace(search_space.get_node(s));
 
         if (node->is_closed())
@@ -112,7 +113,7 @@ SearchStatus RLEagerSearch::step() {
         break;
     }
 
-    GlobalState s = node->get_state();
+    State s = node->get_state();
     if (check_goal_and_set_plan(s)) {
         open_list->get_open_lists_statistics(open_lists_stats);
         rl_client.send_msg(open_lists_stats, -(rl_control_interval+1), true);
@@ -142,7 +143,7 @@ SearchStatus RLEagerSearch::step() {
         if ((node->get_real_g() + op.get_cost()) >= bound)
             continue;
 
-        GlobalState succ_state = state_registry.get_successor_state(s, op);
+        State succ_state = state_registry.get_successor_state(s, op);
         statistics.inc_generated();
         bool is_preferred = preferred_operators.contains(op_id);
 
@@ -178,7 +179,7 @@ SearchStatus RLEagerSearch::step() {
 
             open_list->insert(succ_eval_context, succ_state.get_id());
             if (search_progress.check_progress(succ_eval_context)) {
-                print_checkpoint_line(succ_node.get_g());
+                statistics.print_checkpoint_line(succ_node.get_g());
                 reward_progress();
             }
         } else if (succ_node.get_g() > node->get_g() + get_adjusted_cost(op)) {

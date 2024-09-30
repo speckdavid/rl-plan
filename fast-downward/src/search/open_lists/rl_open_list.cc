@@ -93,7 +93,7 @@ Entry RLOpenList<Entry>::remove_min(int choice) {
                  choices.push_back(i);
              }
         }
-        choice = choices[(*rng)(choices.size())]; 
+        choice = choices[rng->random(choices.size())]; 
     }
 
     const auto &best_list = open_lists[choice];
