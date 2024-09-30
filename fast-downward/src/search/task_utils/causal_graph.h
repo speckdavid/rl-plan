@@ -50,6 +50,7 @@
   generalization is useful anywhere in the code.
 */
 
+#include <cstddef>
 #include <vector>
 
 typedef std::vector<std::vector<int>> IntRelation;
