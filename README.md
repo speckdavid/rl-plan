@@ -23,8 +23,7 @@ We will use the the four heuristics used in the paper. For more information, ple
 
 ## Install
 
-Tested with Python 3.8.16. You can find the latest version of the rl-plan code in the branch [latest](https://github.com/speckdavid/rl-plan/tree/latest).
-
+Tested with Python 3.8.16. You can find the original AAAI 2023 version of the rl-plan code, along with some fixes for newer compilers, in the branch [aaai2021-code](https://github.com/speckdavid/rl-plan/tree/aaai2021-code). The untouched version of the code is available as the tag [aaai2021](https://github.com/speckdavid/rl-plan/releases/tag/aaai2021).
 ```console
 $ sudo apt install cmake g++ git make python3.8 python3.8-venv
 
